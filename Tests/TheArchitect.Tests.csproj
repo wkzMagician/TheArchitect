@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>true</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="TheArchitect">
+      <HintPath>..\.artifacts\build\TheArchitect.dll</HintPath>
+    </Reference>
+    <Reference Include="sts2">
+      <HintPath>D:\SteamLibrary\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\sts2.dll</HintPath>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>D:\SteamLibrary\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="BaseLib">
+      <HintPath>..\packages\alchyr.sts2.baselib\0.2.3\lib\net9.0\BaseLib.dll</HintPath>
+    </Reference>
+    <Reference Include="GodotSharp">
+      <HintPath>..\packages\godotsharp\4.5.1\lib\net8.0\GodotSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
