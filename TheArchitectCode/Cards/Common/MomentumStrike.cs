@@ -16,7 +16,7 @@ public sealed class MomentumStrike() : TheArchitectCard(1, CardType.Attack, Card
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new DamageVar(9, ValueProp.Move),
-        new DynamicVar("Momentum", 5)
+        new DynamicVar("Momentum", 4)
     ];
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Momentum, DynamicVars["Momentum"].IntValue);
@@ -24,7 +24,12 @@ public sealed class MomentumStrike() : TheArchitectCard(1, CardType.Attack, Card
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         await ArchitectEnchantmentHelper.Attack(this, choiceContext, play.Target, DynamicVars.Damage.BaseValue);
-        CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", static _ => true, this);
+        CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(
+            choiceContext,
+            Owner,
+            $"{Id.Entry}.selectionScreenPrompt",
+            target => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(target, ArchitectEnchantKind.Momentum),
+            this);
         if (card != null)
         {
             ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Momentum, DynamicVars["Momentum"].IntValue);
@@ -33,6 +38,6 @@ public sealed class MomentumStrike() : TheArchitectCard(1, CardType.Attack, Card
 
     protected override void OnUpgrade()
     {
-        DynamicVars["Momentum"].UpgradeValueBy(4m);
+        DynamicVars["Momentum"].UpgradeValueBy(2m);
     }
 }

@@ -8,6 +8,8 @@ using TheArchitect.TheArchitectCode.Powers.Architect;
 
 namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
+// todo: 英文名字太长了
+// todo: ImmovableAsTheMountainPower 的回合结束触发逻辑调用了选择界面，但缺少对应的 prompt 配置，导致结束回合时报错。
 public sealed class ImmovableAsTheMountain() : TheArchitectCard(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Cards", 1)];

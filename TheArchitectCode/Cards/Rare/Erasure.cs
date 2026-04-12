@@ -19,7 +19,12 @@ public sealed class Erasure() : TheArchitectCard(0, CardType.Skill, CardRarity.R
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", static _ => true, this);
+        CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(
+            choiceContext,
+            Owner,
+            $"{Id.Entry}.selectionScreenPrompt",
+            target => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(target, ArchitectEnchantKind.SoulPower),
+            this);
         if (card != null)
         {
             ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.SoulPower, 1m);

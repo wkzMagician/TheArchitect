@@ -117,5 +117,6 @@ public static partial class BehaviorCatalog
         Drowsy card = ctx.CardInHand<Drowsy>();
         await MegaCrit.Sts2.Core.Commands.CardCmd.AutoPlay(ctx.ChoiceContext, card, null);
         AssertEx.False(ctx.Player.PlayerCombatState!.Hand.Cards.Contains(card), "Drowsy should leave hand when auto-played");
+        AssertEx.True(ctx.Player.PlayerCombatState.ExhaustPile.Cards.Contains(card), "Drowsy should exhaust when played");
     }
 }

@@ -32,10 +32,6 @@ public sealed class ChannelPower() : TheArchitectCard(0, CardType.Skill, CardRar
         }
 
         int repeats = ResolveEnergyXValue() + (IsUpgraded ? 1 : 0);
-        for (int i = 0; i < repeats; i++)
-        {
-            card.SetToFreeThisTurn();
-            await CardCmd.AutoPlay(choiceContext, card, play.Target);
-        }
+        ArchitectCombatState.SetPendingReplays(card, repeats);
     }
 }

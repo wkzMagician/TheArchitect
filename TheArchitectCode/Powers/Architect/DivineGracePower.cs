@@ -12,6 +12,8 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Powers.Architect;
 
+// todo: 本地化问题： cards.THEARCHITECT-DIVINE_GRADE_POWER.selectionScreenPrompt
+// todo: bug: 可以选中已经附魔的卡牌
 public sealed class DivineGracePower : TheArchitectPower
 {
     public override PowerType Type => PowerType.Buff;

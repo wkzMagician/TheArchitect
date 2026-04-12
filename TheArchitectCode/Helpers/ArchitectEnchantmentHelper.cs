@@ -305,52 +305,37 @@ public static class ArchitectEnchantmentHelper
 
     public static async Task<CardModel?> ChooseFromHand(PlayerChoiceContext choiceContext, Player player, string promptKey, Func<CardModel, bool>? filter, AbstractModel source)
     {
-        return (await CardSelectCmd.FromHand(
-            choiceContext,
-            player,
-            new CardSelectorPrefs(new LocString("cards", promptKey), 1),
-            filter,
-            source)).FirstOrDefault();
+        return await ArchitectCardSelectionHelper.ChooseFromHand(choiceContext, player, promptKey, filter, source);
     }
 
     public static async Task<CardModel?> ChooseFromDrawPile(PlayerChoiceContext choiceContext, Player player, string promptKey, Func<CardModel, bool>? filter)
     {
-        List<CardModel> cards = PileType.Draw.GetPile(player).Cards.Where(filter ?? (_ => true)).ToList();
-        return (await CardSelectCmd.FromSimpleGrid(choiceContext, cards, player, new CardSelectorPrefs(new LocString("cards", promptKey), 1))).FirstOrDefault();
+        return await ArchitectCardSelectionHelper.ChooseFromDrawPile(choiceContext, player, promptKey, filter);
     }
 
     public static async Task<CardModel?> ChooseFromDiscard(PlayerChoiceContext choiceContext, Player player, string promptKey, Func<CardModel, bool>? filter)
     {
-        List<CardModel> cards = PileType.Discard.GetPile(player).Cards.Where(filter ?? (_ => true)).ToList();
-        return (await CardSelectCmd.FromSimpleGrid(choiceContext, cards, player, new CardSelectorPrefs(new LocString("cards", promptKey), 1))).FirstOrDefault();
+        return await ArchitectCardSelectionHelper.ChooseFromDiscard(choiceContext, player, promptKey, filter);
     }
 
     public static async Task<List<CardModel>> ChooseManyFromHand(PlayerChoiceContext choiceContext, Player player, string promptKey, int min, int max, Func<CardModel, bool>? filter, AbstractModel source)
     {
-        return (await CardSelectCmd.FromHand(
-            choiceContext,
-            player,
-            new CardSelectorPrefs(new LocString("cards", promptKey), min, max),
-            filter,
-            source)).ToList();
+        return await ArchitectCardSelectionHelper.ChooseManyFromHand(choiceContext, player, promptKey, min, max, filter, source);
     }
 
     public static async Task<List<CardModel>> ChooseManyFromDrawPile(PlayerChoiceContext choiceContext, Player player, string promptKey, int min, int max, Func<CardModel, bool>? filter)
     {
-        List<CardModel> cards = PileType.Draw.GetPile(player).Cards.Where(filter ?? (_ => true)).ToList();
-        return (await CardSelectCmd.FromSimpleGrid(choiceContext, cards, player, new CardSelectorPrefs(new LocString("cards", promptKey), min, max))).ToList();
+        return await ArchitectCardSelectionHelper.ChooseManyFromDrawPile(choiceContext, player, promptKey, min, max, filter);
     }
 
     public static async Task<List<CardModel>> ChooseManyFromDeck(PlayerChoiceContext choiceContext, Player player, string promptKey, int min, int max, Func<CardModel, bool>? filter)
     {
-        List<CardModel> cards = PileType.Deck.GetPile(player).Cards.Where(filter ?? (_ => true)).ToList();
-        return (await CardSelectCmd.FromSimpleGrid(choiceContext, cards, player, new CardSelectorPrefs(new LocString("cards", promptKey), min, max))).ToList();
+        return await ArchitectCardSelectionHelper.ChooseManyFromDeck(choiceContext, player, promptKey, min, max, filter);
     }
 
     public static async Task<List<CardModel>> ChooseManyFromDiscard(PlayerChoiceContext choiceContext, Player player, string promptKey, int min, int max, Func<CardModel, bool>? filter)
     {
-        List<CardModel> cards = PileType.Discard.GetPile(player).Cards.Where(filter ?? (_ => true)).ToList();
-        return (await CardSelectCmd.FromSimpleGrid(choiceContext, cards, player, new CardSelectorPrefs(new LocString("cards", promptKey), min, max))).ToList();
+        return await ArchitectCardSelectionHelper.ChooseManyFromDiscard(choiceContext, player, promptKey, min, max, filter);
     }
 
     public static List<CardModel> Hand(Player player)
@@ -371,6 +356,19 @@ public static class ArchitectEnchantmentHelper
     public static List<CardModel> Deck(Player player)
     {
         return PileType.Deck.GetPile(player).Cards.ToList();
+    }
+
+    public static IEnumerable<CardModel> AllPlayerCards(Player player)
+    {
+        IEnumerable<CardModel> combatCards = player.PlayerCombatState == null
+            ? []
+            : Hand(player)
+                .Concat(DrawPile(player))
+                .Concat(DiscardPile(player))
+                .Concat(player.PlayerCombatState.ExhaustPile.Cards)
+                .Concat(player.PlayerCombatState.PlayPile.Cards);
+
+        return Deck(player).Concat(combatCards);
     }
 
     public static int CountEnchantedCardsInHand(Player player)
@@ -398,6 +396,7 @@ public static class ArchitectEnchantmentHelper
 
     public static int EnchantAll(IEnumerable<CardModel> cards, ArchitectEnchantKind kind, decimal amount, Func<CardModel, bool>? filter = null)
     {
+        // todo: 附魔系统的检查机制有漏洞。附魔到 Slimed 这种牌，会报错
         int total = 0;
         foreach (CardModel card in cards.Where(filter ?? (_ => true)))
         {
@@ -446,7 +445,7 @@ public static class ArchitectEnchantmentHelper
     {
         for (int i = 0; i < count; i++)
         {
-            CardModel drowsy = player.Creature.CombatState!.CreateCard<Drowsy>(player);
+            CardModel drowsy = player.Creature.CombatState!.CreateCard(ModelDb.Card<Drowsy>(), player);
             await CardPileCmd.AddGeneratedCardToCombat(drowsy, pileType, addedByPlayer: true, pileType == PileType.Draw ? CardPilePosition.Random : CardPilePosition.Bottom);
         }
     }
@@ -476,6 +475,7 @@ public static class ArchitectEnchantmentHelper
 
     public static async Task AttackAll(CardModel card, PlayerChoiceContext choiceContext, decimal damage, int hits = 1, ValueProp props = ValueProp.Move)
     {
+        // todo: 现在是逐个敌人攻击的。是否有同时攻击的动画和结算机制？
         for (int i = 0; i < hits; i++)
         {
             foreach (Creature enemy in card.CombatState!.HittableEnemies)

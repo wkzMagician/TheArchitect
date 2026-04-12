@@ -25,6 +25,7 @@ public sealed class SanctumOfVigorPower : TheArchitectPower
             return;
         }
 
+        // todo: filter
         CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, player, $"{Id.Entry}.selectionScreenPrompt", static _ => true, this);
         if (card != null)
         {

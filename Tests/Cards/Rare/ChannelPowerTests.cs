@@ -1,4 +1,5 @@
-﻿using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Models.Cards.Mocks;
 using TheArchitect.Tests.Infrastructure;
 using TheArchitect.TheArchitectCode.Cards.Rare;
 

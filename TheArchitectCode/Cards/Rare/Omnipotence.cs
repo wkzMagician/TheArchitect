@@ -8,6 +8,7 @@ using TheArchitect.TheArchitectCode.Powers.Architect;
 
 namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
+// todo: 和 FateVortex 效果重复了。怎么回事？
 public sealed class Omnipotence() : TheArchitectCard(2, CardType.Power, CardRarity.Rare, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Cards", 2)];

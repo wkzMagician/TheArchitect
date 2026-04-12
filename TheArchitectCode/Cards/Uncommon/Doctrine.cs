@@ -18,6 +18,8 @@ public sealed class Doctrine() : TheArchitectCard(2, CardType.Skill, CardRarity.
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
+        // todo: 卡片描述以及效果不准确。不是 “有几张牌有 Sharp”，而是手牌有几层 "Sharp"。 Nimble 同理。
+        // todo: 补充效果：褪去这些 Sharp 和 Nimble
         int sharp = ArchitectEnchantmentHelper.Hand(Owner).Count(card => ArchitectEnchantmentHelper.Has<Sharp>(card));
         int nimble = ArchitectEnchantmentHelper.Hand(Owner).Count(card => ArchitectEnchantmentHelper.Has<Nimble>(card));
         if (sharp > 0)

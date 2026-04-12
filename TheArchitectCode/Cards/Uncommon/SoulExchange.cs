@@ -17,6 +17,8 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
+// todo: filter。选择的第二张牌，一定要能够接受第一张牌的附魔
+// todo: 如果第一张牌，无法接受第二张牌的附魔，那么第一张牌不获得附魔，第二张牌附魔丢失
 public sealed class SoulExchange() : TheArchitectCard(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [CardKeyword.Exhaust, CardKeyword.Retain] : [CardKeyword.Exhaust];

@@ -16,6 +16,7 @@ public static class ArchitectCombatState
     private sealed class CardState
     {
         public int TimesPlayedThisCombat;
+        public int PendingReplays;
     }
 
     private static readonly ConditionalWeakTable<CombatState, State> States = new();
@@ -69,5 +70,23 @@ public static class ArchitectCombatState
     public static int TimesPlayed(CardModel card)
     {
         return CardStates.GetValue(card, _ => new CardState()).TimesPlayedThisCombat;
+    }
+
+    public static void SetPendingReplays(CardModel card, int repeats)
+    {
+        if (repeats <= 0)
+        {
+            return;
+        }
+
+        CardStates.GetValue(card, _ => new CardState()).PendingReplays += repeats;
+    }
+
+    public static int ConsumePendingReplays(CardModel card)
+    {
+        CardState state = CardStates.GetValue(card, _ => new CardState());
+        int repeats = state.PendingReplays;
+        state.PendingReplays = 0;
+        return repeats;
     }
 }

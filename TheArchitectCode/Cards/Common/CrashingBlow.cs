@@ -18,7 +18,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class CrashingBlow() : TheArchitectCard(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DynamicVar("Vulnerable", 1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DynamicVar("Vulnerable", 1), new DynamicVar("EnchantVulnerableBonus", 1)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
@@ -26,7 +26,7 @@ public sealed class CrashingBlow() : TheArchitectCard(1, CardType.Attack, CardRa
         decimal vulnerable = DynamicVars["Vulnerable"].BaseValue;
         if (ArchitectEnchantmentHelper.HasAny(this))
         {
-            vulnerable += IsUpgraded ? 2m : 1m;
+            vulnerable += DynamicVars["EnchantVulnerableBonus"].BaseValue;
         }
 
         if (play.Target != null)
@@ -38,11 +38,12 @@ public sealed class CrashingBlow() : TheArchitectCard(1, CardType.Attack, CardRa
     protected override void OnUpgrade()
     {
         DynamicVars.Damage.UpgradeValueBy(3m);
+        DynamicVars["EnchantVulnerableBonus"].UpgradeValueBy(1m);
     }
 
     protected override string GetCombatPreviewText()
     {
-        int vulnerable = DynamicVars["Vulnerable"].IntValue + (ArchitectEnchantmentHelper.HasAny(this) ? (IsUpgraded ? 2 : 1) : 0);
+        int vulnerable = DynamicVars["Vulnerable"].IntValue + (ArchitectEnchantmentHelper.HasAny(this) ? DynamicVars["EnchantVulnerableBonus"].IntValue : 0);
         return $"applies {vulnerable} Vulnerable";
     }
 }

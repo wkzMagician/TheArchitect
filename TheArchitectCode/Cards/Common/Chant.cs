@@ -18,7 +18,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class Chant() : TheArchitectCard(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move), new DynamicVar("Weak", 1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move), new DynamicVar("Weak", 1), new DynamicVar("EnchantWeakBonus", 1)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
@@ -28,7 +28,7 @@ public sealed class Chant() : TheArchitectCard(1, CardType.Skill, CardRarity.Com
             decimal weak = DynamicVars["Weak"].BaseValue;
             if (ArchitectEnchantmentHelper.HasAny(this))
             {
-                weak += IsUpgraded ? 2m : 1m;
+                weak += DynamicVars["EnchantWeakBonus"].BaseValue;
             }
 
             await ArchitectEnchantmentHelper.ApplyWeak(play.Target, weak, Owner.Creature, this);
@@ -38,11 +38,12 @@ public sealed class Chant() : TheArchitectCard(1, CardType.Skill, CardRarity.Com
     protected override void OnUpgrade()
     {
         DynamicVars.Block.UpgradeValueBy(3m);
+        DynamicVars["EnchantWeakBonus"].UpgradeValueBy(1m);
     }
 
     protected override string GetCombatPreviewText()
     {
-        int weak = DynamicVars["Weak"].IntValue + (ArchitectEnchantmentHelper.HasAny(this) ? (IsUpgraded ? 2 : 1) : 0);
+        int weak = DynamicVars["Weak"].IntValue + (ArchitectEnchantmentHelper.HasAny(this) ? DynamicVars["EnchantWeakBonus"].IntValue : 0);
         return $"applies {weak} Weak";
     }
 }

@@ -17,4 +17,12 @@ public static class ChantTests
     {
         return BehaviorCatalog.AssertCardBehavior<Chant>();
     }
+
+    [ArchitectTest]
+    public static void DescriptionDoesNotContainRawFormatTokens()
+    {
+        string description = LocalizationCatalog.CardEntry("THEARCHITECT-CHANT.description");
+
+        AssertEx.False(description.Contains("IfUpgraded:"), "Chant should not expose raw upgrade format tokens.");
+    }
 }

@@ -24,6 +24,7 @@ public sealed class Proliferation() : TheArchitectCard(1, CardType.Attack, CardR
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         int plays = ArchitectCombatState.TimesPlayed(this);
+        // todo: 应该直接更新 Damage.BaseValue 以及 attack times
         decimal damage = DynamicVars.Damage.BaseValue + plays;
         int hits = 1 + plays;
         await DamageCmd.Attack(damage).WithHitCount(hits).FromCard(this).Targeting(play.Target!).Execute(choiceContext);

@@ -23,6 +23,7 @@ public sealed class GrandOpus() : TheArchitectCard(0, CardType.Skill, CardRarity
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(5, ValueProp.Move), new BlockVar(4, ValueProp.Move)];
 
+    // todo: 是造成伤害x次，而不是x*basevalue伤害（格挡同理）
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         int x = ResolveEnergyXValue();

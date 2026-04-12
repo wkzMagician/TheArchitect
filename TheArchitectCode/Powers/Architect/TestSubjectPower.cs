@@ -18,6 +18,8 @@ public sealed class TestSubjectPower : TheArchitectPower
 
     public override PowerStackType StackType => PowerStackType.None;
 
+    // todo: 本地化错误，cards.THEARCHITECT-TEST_SUBJECT_POWER.selectionScreenPrompt
+    // todo: 如果手牌中没有手牌有附魔，不会触发选牌界面
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
         if (player != Owner.Player)

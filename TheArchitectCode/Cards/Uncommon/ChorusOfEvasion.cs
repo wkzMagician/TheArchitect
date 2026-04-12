@@ -17,6 +17,7 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
+// todo: 报错原因：目标过滤不充分，ChorusOfEvasion 试图给不能附 NIMBLE 的 TEMPERING 上附魔，所以崩了。
 public sealed class ChorusOfEvasion() : TheArchitectCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(8, ValueProp.Move), new DynamicVar("Nimble", 1)];

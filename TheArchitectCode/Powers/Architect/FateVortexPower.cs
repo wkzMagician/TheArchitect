@@ -25,6 +25,8 @@ public sealed class FateVortexPower : TheArchitectPower
             return Task.CompletedTask;
         }
 
+        // todo: 能力不起效果，没有附魔任何一张卡
+        // ? 会和 AfterEnergyReset 有关吗？ 难道不是回合开始时？
         List<CardModel> hand = ArchitectEnchantmentHelper.Hand(player).Where(ArchitectEnchantmentHelper.CanTargetForRandomBasic).ToList();
         if (hand.Count == 0)
         {

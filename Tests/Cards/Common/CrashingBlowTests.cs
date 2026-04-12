@@ -17,4 +17,12 @@ public static class CrashingBlowTests
     {
         return BehaviorCatalog.AssertCardBehavior<CrashingBlow>();
     }
+
+    [ArchitectTest]
+    public static void DescriptionDoesNotContainRawFormatTokens()
+    {
+        string description = LocalizationCatalog.CardEntry("THEARCHITECT-CRASHING_BLOW.description");
+
+        AssertEx.False(description.Contains("IfUpgraded:"), "Crashing Blow should not expose raw upgrade format tokens.");
+    }
 }

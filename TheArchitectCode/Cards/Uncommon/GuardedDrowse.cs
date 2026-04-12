@@ -23,7 +23,7 @@ public sealed class GuardedDrowse() : TheArchitectCard(1, CardType.Skill, CardRa
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         await ArchitectEnchantmentHelper.GainBlock(this, play, DynamicVars.Block.BaseValue);
-        await ArchitectEnchantmentHelper.AddDrowsy(Owner, 1, PileType.Hand);
+        await ArchitectEnchantmentHelper.AddDrowsy(Owner, 1, PileType.Hand); // todo： 还是 Drowsy 的问题
     }
 
     protected override void OnUpgrade()

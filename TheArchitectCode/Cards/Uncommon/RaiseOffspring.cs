@@ -17,6 +17,7 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
+// todo: 不需要 CombatPreview。直接修改 Cards.IntValue
 public sealed class RaiseOffspring() : TheArchitectCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(2)];

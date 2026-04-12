@@ -40,9 +40,12 @@ public static partial class BehaviorCatalog
         BlightAnointing card = ctx.CardInHand<BlightAnointing>();
         MockAttackCard attack = ctx.MockAttackInHand();
         MockSkillCard skill = ctx.MockSkillInHand();
+        MockAttackCard futureAttack = ctx.CardInDraw<MockAttackCard>();
         await ctx.Play(card);
+        await CardPileCmd.Add(futureAttack, PileType.Hand);
         AssertEx.True(BehaviorTestContext.HasEnchant<Corrupted>(attack), "BlightAnointing should enchant attacks");
         AssertEx.False(BehaviorTestContext.HasEnchant<Corrupted>(skill), "BlightAnointing should ignore skills");
+        AssertEx.True(BehaviorTestContext.HasEnchant<Corrupted>(futureAttack), "BlightAnointing should affect future attacks entering hand");
     }
 
     private static async Task DivineSelection()

@@ -18,7 +18,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class DoublePlatedGuard() : TheArchitectCard(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(8, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
@@ -31,7 +31,7 @@ public sealed class DoublePlatedGuard() : TheArchitectCard(1, CardType.Skill, Ca
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Block.UpgradeValueBy(3m);
+        DynamicVars.Block.UpgradeValueBy(2m);
     }
 
 }

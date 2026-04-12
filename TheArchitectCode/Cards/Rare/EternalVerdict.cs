@@ -24,6 +24,8 @@ public sealed class EternalVerdict() : TheArchitectCard(2, CardType.Attack, Card
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         await ArchitectEnchantmentHelper.Attack(this, choiceContext, play.Target, DynamicVars.Damage.BaseValue);
+        // todo: 利用接口，需要排除不能被附魔的牌
+        // todo: ember 的意思是 tezcataras_ember
         List<CardModel> commons = ArchitectEnchantmentHelper.Hand(Owner).Where(card => card.Rarity == CardRarity.Common).ToList();
         if (commons.Count > 0)
         {

@@ -11,6 +11,8 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
+// todo: 选牌过滤
+// todo: 报错原因：InstinctAwakened 选中了不能附 INSTINCT 的 DEFEND_ARCHITECT，导致附魔时报错。
 public sealed class InstinctAwakened() : TheArchitectCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [CardKeyword.Exhaust, CardKeyword.Retain] : [CardKeyword.Exhaust];

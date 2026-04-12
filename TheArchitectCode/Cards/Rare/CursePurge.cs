@@ -23,10 +23,18 @@ public sealed class CursePurge() : TheArchitectCard(1, CardType.Skill, CardRarit
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        List<CardModel> curses = ArchitectEnchantmentHelper.Deck(Owner).Where(card => card.Type == CardType.Curse).ToList();
+        List<CardModel> curses = ArchitectEnchantmentHelper.AllPlayerCards(Owner)
+            .Where(card => card.Type == CardType.Curse)
+            .Distinct()
+            .ToList();
         if (curses.Count == 0)
         {
             return;
+        }
+
+        foreach (CardModel curse in curses.Where(card => card.Pile?.Type != PileType.Deck))
+        {
+            await CardPileCmd.Add(curse, PileType.Deck);
         }
 
         await CardPileCmd.RemoveFromDeck(curses);

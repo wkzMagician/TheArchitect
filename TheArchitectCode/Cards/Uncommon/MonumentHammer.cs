@@ -16,6 +16,7 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
+// todo: 报错原因：GetCombatPreviewText() 调 CardsEnchantedThisCombat(null)，ConditionalWeakTable 不接受空 key，所以崩了。
 public sealed class MonumentHammer() : TheArchitectCard(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(10, ValueProp.Move), new DynamicVar("Scaling", 3)];

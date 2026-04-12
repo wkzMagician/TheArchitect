@@ -19,6 +19,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
 public sealed class SkyrendJudgment() : TheArchitectCard(9, CardType.Skill, CardRarity.Rare, TargetType.AllEnemies)
 {
+    // todo: 描述不准确。应该强调 cost 1 less
+    // todo: 效果没有实现。每打出一张附魔牌，费用降低1点
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(50, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

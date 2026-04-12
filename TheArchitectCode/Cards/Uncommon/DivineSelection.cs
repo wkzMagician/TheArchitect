@@ -21,6 +21,7 @@ public sealed class DivineSelection() : TheArchitectCard(1, CardType.Skill, Card
 {
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
+        // todo: 过滤
         CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", static _ => true, this);
         if (card == null)
         {

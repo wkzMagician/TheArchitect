@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using TheArchitect.TheArchitectCode.Cards.Tokens;
+using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Ancient;
@@ -23,12 +24,9 @@ public sealed class InfiniteBlueprint() : TheArchitectCard(2, CardType.Power, Ca
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        foreach (CardModel card in Owner.PlayerCombatState!.AllCards.Where(ArchitectEnchantmentHelper.HasAny))
+        foreach (CardModel card in Owner.PlayerCombatState!.AllCards)
         {
-            foreach (EnchantmentModel enchantment in ArchitectEnchantmentHelper.GetAll(card))
-            {
-                enchantment.Amount = 999;
-            }
+            MultiEnchantRegistry.Register(card);
         }
 
         await Task.CompletedTask;

@@ -21,6 +21,8 @@ public sealed class CyclingEtch() : TheArchitectCard(1, CardType.Attack, CardRar
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move)];
 
+    // todo: bug: 第一次不洗入抽牌堆
+    // todo: bug: 没有刷新这张牌的附魔
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         ShuffleIntoDrawPileThisCombat = true;

@@ -23,6 +23,11 @@ public static class LocalizationCatalog
         AssertHas(Powers.Value, key);
     }
 
+    public static string PowerEntry(string key)
+    {
+        return Get(Powers.Value, key);
+    }
+
     public static void AssertRelicEntry(string key)
     {
         AssertHas(Relics.Value, key);

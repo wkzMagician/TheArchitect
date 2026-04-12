@@ -16,6 +16,7 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
+// todo: AddDrowsy() 生成的卡牌走进了 MockCardPool，刷新显示时触发测试专用接口 ClearOwner()，所以报 You monster!
 public sealed class CelestialWar() : TheArchitectCard(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(16, ValueProp.Move)];

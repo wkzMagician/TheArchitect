@@ -17,6 +17,8 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
+// todo: 名字太长。FinalJudgment 即可
+// todo: bug，未升级时，打出后没有洗入抽牌堆
 public sealed class FinalJudgmentOfTheRadiantScepter() : TheArchitectCard(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(10, ValueProp.Move)];

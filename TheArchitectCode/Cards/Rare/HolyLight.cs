@@ -11,6 +11,9 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
+/*
+ * todo: HolyLight 打出时报错，因为这张牌进入了需要选择界面的流程，但没有定义对应的 SelectionScreenPrompt，于是直接抛出异常并导致 PlayCardAction 失败。
+ */
 public sealed class HolyLight() : TheArchitectCard(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [];

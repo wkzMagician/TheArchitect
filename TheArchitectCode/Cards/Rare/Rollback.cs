@@ -21,6 +21,7 @@ public sealed class Rollback() : TheArchitectCard(1, CardType.Skill, CardRarity.
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain];
 
+    // todo: 同时需要修改卡牌的描述（增加效果描述）
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", card => card != this, this);

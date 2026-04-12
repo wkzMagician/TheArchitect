@@ -17,4 +17,14 @@ public static class DrowsyTests
     {
         return BehaviorCatalog.AssertCardBehavior<Drowsy>();
     }
+
+    [ArchitectTest]
+    public static void DescriptionDoesNotContainRawStatusKeywords()
+    {
+        string description = LocalizationCatalog.CardEntry("THEARCHITECT-DROWSY.description");
+
+        AssertEx.False(description.Contains("Unplayable", System.StringComparison.Ordinal), "Drowsy description should not mention Unplayable.");
+        AssertEx.False(description.Contains("Ethereal", System.StringComparison.Ordinal), "Drowsy description should not mention Ethereal.");
+        AssertEx.True(description.Contains("end of combat", System.StringComparison.OrdinalIgnoreCase), "Drowsy description should explain its end-of-combat return.");
+    }
 }

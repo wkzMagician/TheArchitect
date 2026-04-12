@@ -20,6 +20,7 @@ public sealed class StayTheBlade() : TheArchitectCard(1, CardType.Skill, CardRar
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(15, ValueProp.Move)];
 
+    // todo: bug: 第一次打出后并没有洗入抽牌堆。第二次打出后才洗入抽牌堆。
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         ShuffleIntoDrawPileThisCombat = true;

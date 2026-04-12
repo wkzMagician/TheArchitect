@@ -60,7 +60,9 @@ public static partial class BehaviorCatalog
         MockSkillCard chosen = ctx.MockSkillInHand().MockBlock(5);
         ctx.Select(chosen);
         await ctx.Play(card, ctx.Enemy, xValue: 2);
-        AssertEx.Equal(10, ctx.Player.Creature.Block, "ChannelPower should autoplay selected card X times");
+        AssertEx.Equal(0, ctx.Player.Creature.Block, "ChannelPower should not immediately replay the selected card");
+        await ctx.Play(chosen);
+        AssertEx.Equal(15, ctx.Player.Creature.Block, "ChannelPower should replay the chosen card when it is played");
     }
 
     private static async Task LayeredBrace()
@@ -158,6 +160,7 @@ public static partial class BehaviorCatalog
         MockAttackCard target = ctx.MockAttackInHand();
         ArchitectEnchantmentHelper.Add(target, ArchitectEnchantKind.Sharp, 2m);
         await ctx.Play(card);
-        AssertEx.Equal(999, BehaviorTestContext.EnchantAmount(target), "InfiniteBlueprint should max enchant amounts");
+        AssertEx.NotNull(ArchitectEnchantmentHelper.Add(target, ArchitectEnchantKind.Nimble, 1m),
+            "InfiniteBlueprint should allow adding further enchantments to already enchanted cards");
     }
 }
