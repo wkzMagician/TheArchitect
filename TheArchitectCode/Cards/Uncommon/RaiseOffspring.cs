@@ -12,8 +12,9 @@ public sealed class RaiseOffspring() : TheArchitectCard(1, CardType.Skill, CardR
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        DynamicVars.Cards.IntValue = DynamicVars.Cards.BaseValue + ArchitectCombatState.TimesPlayed(this);
         await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.IntValue, Owner);
+        // DynamicVars.Cards.UpgradeValueBy(ArchitectCombatState.TimesPlayed(this));
+        DynamicVars.Cards.UpgradeValueBy(1);
     }
 
     protected override void OnUpgrade()
