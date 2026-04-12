@@ -1,18 +1,12 @@
-using MegaCrit.Sts2.Core.CardSelection;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Enchantments;
-using MegaCrit.Sts2.Core.ValueProps;
 using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
-// todo: 选牌过滤
-// todo: 报错原因：InstinctAwakened 选中了不能附 INSTINCT 的 DEFEND_ARCHITECT，导致附魔时报错。
 public sealed class InstinctAwakened() : TheArchitectCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [CardKeyword.Exhaust, CardKeyword.Retain] : [CardKeyword.Exhaust];
@@ -21,7 +15,12 @@ public sealed class InstinctAwakened() : TheArchitectCard(1, CardType.Skill, Car
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", static _ => true, this);
+        CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(
+            choiceContext,
+            Owner,
+            $"{Id.Entry}.selectionScreenPrompt",
+            static card => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(card, ArchitectEnchantKind.Instinct),
+            this);
         if (card != null)
         {
             ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Instinct, 1m);

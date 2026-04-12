@@ -1,12 +1,7 @@
-using BaseLib.Extensions;
-using MegaCrit.Sts2.Core.CardSelection;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using TheArchitect.TheArchitectCode.Helpers;
 
@@ -25,8 +20,12 @@ public sealed class SanctumOfVigorPower : TheArchitectPower
             return;
         }
 
-        // todo: filter
-        CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, player, $"{Id.Entry}.selectionScreenPrompt", static _ => true, this);
+        CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(
+            choiceContext,
+            player,
+            $"{Id.Entry}.selectionScreenPrompt",
+            static card => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(card, ArchitectEnchantKind.Vitality),
+            this);
         if (card != null)
         {
             ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Vitality, Amount);

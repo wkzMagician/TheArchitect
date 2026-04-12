@@ -51,5 +51,4 @@ public static class ArchitectEnchantmentHelperTests
 
         AssertEx.False(MultiEnchantRegistry.SupportsMultiEnchant(card), "Ordinary cards should reject multiple enchantments by default.");
     }
-
 }

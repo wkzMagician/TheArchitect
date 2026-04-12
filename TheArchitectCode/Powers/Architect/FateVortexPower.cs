@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using TheArchitect.TheArchitectCode.Helpers;
@@ -18,15 +17,13 @@ public sealed class FateVortexPower : TheArchitectPower
 
     public override PowerStackType StackType => PowerStackType.None;
 
-    public override Task AfterEnergyReset(Player player)
+    public override Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
         if (player != Owner.Player)
         {
             return Task.CompletedTask;
         }
 
-        // todo: 能力不起效果，没有附魔任何一张卡
-        // ? 会和 AfterEnergyReset 有关吗？ 难道不是回合开始时？
         List<CardModel> hand = ArchitectEnchantmentHelper.Hand(player).Where(ArchitectEnchantmentHelper.CanTargetForRandomBasic).ToList();
         if (hand.Count == 0)
         {

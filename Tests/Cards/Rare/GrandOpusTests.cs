@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using TheArchitect.Tests.Infrastructure;
 using TheArchitect.TheArchitectCode.Cards.Rare;
 
@@ -16,5 +16,13 @@ public static class GrandOpusTests
     public static Task SpecificEffect()
     {
         return BehaviorCatalog.AssertCardBehavior<GrandOpus>();
+    }
+
+    [ArchitectTest]
+    public static void DescriptionMentionsRepeatedDamageAndBlock()
+    {
+        string description = LocalizationCatalog.CardEntry("THEARCHITECT-GRAND_OPUS.description");
+
+        AssertEx.True(description.Contains("times", StringComparison.Ordinal), "Grand Opus should describe repeated damage and block triggers.");
     }
 }

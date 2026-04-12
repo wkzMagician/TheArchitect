@@ -17,4 +17,10 @@ public static class HolyLightTests
     {
         return BehaviorCatalog.AssertCardBehavior<HolyLight>();
     }
+
+    [ArchitectTest]
+    public static void LocalizationIncludesSelectionScreenPrompt()
+    {
+        LocalizationCatalog.AssertCardEntry("THEARCHITECT-HOLY_LIGHT.selectionScreenPrompt");
+    }
 }

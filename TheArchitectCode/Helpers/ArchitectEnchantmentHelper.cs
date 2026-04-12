@@ -52,7 +52,7 @@ public static class ArchitectEnchantmentHelper
 
     public static IReadOnlyList<ArchitectEnchantOption> BasicEnchantOptionsFor(CardModel card)
     {
-        return BasicEnchantPool.Where(option => Canonical(option.Kind).CanEnchant(card)).ToArray();
+        return BasicEnchantPool.Where(option => CanApplyCanonicalEnchant(card, option.Kind)).ToArray();
     }
 
     public static bool CanTargetForRandomBasic(CardModel card)
@@ -143,14 +143,26 @@ public static class ArchitectEnchantmentHelper
             return true;
         }
 
-        try
+        return CanApplyCanonicalEnchant(card, kind);
+    }
+
+    public static bool CanReceiveTransferredEnchantments(CardModel target, CardModel source)
+    {
+        IReadOnlyList<EnchantmentModel> sourceEnchantments = GetAll(source);
+        if (sourceEnchantments.Count == 0)
         {
-            return Canonical(kind).CanEnchant(card);
+            return false;
         }
-        catch (KeyNotFoundException)
+
+        foreach (EnchantmentModel enchantment in sourceEnchantments)
         {
-            return true;
+            if (!CanReceiveEnchantmentModel(target, enchantment))
+            {
+                return false;
+            }
         }
+
+        return true;
     }
 
     public static string DescribeSigilbreakerDamage(CardModel card, IEnumerable<CardModel> handCards)
@@ -257,6 +269,28 @@ public static class ArchitectEnchantmentHelper
         return removed;
     }
 
+    public static int RemoveWhere(CardModel card, Func<EnchantmentModel, bool> predicate)
+    {
+        List<EnchantmentModel> kept = GetAll(card)
+            .Where(enchantment => !predicate(enchantment))
+            .Select(enchantment => EnchantmentModel.FromSerializable(enchantment.ToSerializable()))
+            .ToList();
+
+        int removed = GetAll(card).Count - kept.Count;
+        if (removed <= 0)
+        {
+            return 0;
+        }
+
+        RemoveAll(card);
+        foreach (EnchantmentModel enchantment in kept)
+        {
+            AddRaw(card, enchantment, enchantment.Amount);
+        }
+
+        return removed;
+    }
+
     public static void Refresh(CardModel card)
     {
         foreach (EnchantmentModel enchantment in GetAll(card))
@@ -279,6 +313,11 @@ public static class ArchitectEnchantmentHelper
 
     public static void Transfer(CardModel from, CardModel to)
     {
+        if (!CanReceiveTransferredEnchantments(to, from))
+        {
+            return;
+        }
+
         List<EnchantmentModel> moved = GetAll(from)
             .Select(enchantment => EnchantmentModel.FromSerializable(enchantment.ToSerializable()))
             .ToList();
@@ -396,9 +435,8 @@ public static class ArchitectEnchantmentHelper
 
     public static int EnchantAll(IEnumerable<CardModel> cards, ArchitectEnchantKind kind, decimal amount, Func<CardModel, bool>? filter = null)
     {
-        // todo: 附魔系统的检查机制有漏洞。附魔到 Slimed 这种牌，会报错
         int total = 0;
-        foreach (CardModel card in cards.Where(filter ?? (_ => true)))
+        foreach (CardModel card in cards.Where(filter ?? (_ => true)).Where(card => CanTargetForSpecificEnchant(card, kind)))
         {
             if (Add(card, kind, amount) != null)
             {
@@ -414,7 +452,13 @@ public static class ArchitectEnchantmentHelper
         int total = 0;
         foreach (CardModel card in cards.Where(filter ?? (_ => true)))
         {
-            if (Add(card, selector(player), amount) != null)
+            ArchitectEnchantKind kind = selector(player);
+            if (!CanTargetForSpecificEnchant(card, kind))
+            {
+                continue;
+            }
+
+            if (Add(card, kind, amount) != null)
             {
                 total++;
             }
@@ -475,10 +519,20 @@ public static class ArchitectEnchantmentHelper
 
     public static async Task AttackAll(CardModel card, PlayerChoiceContext choiceContext, decimal damage, int hits = 1, ValueProp props = ValueProp.Move)
     {
-        // todo: 现在是逐个敌人攻击的。是否有同时攻击的动画和结算机制？
         for (int i = 0; i < hits; i++)
         {
             foreach (Creature enemy in card.CombatState!.HittableEnemies)
+            {
+                await DamageCmd.Attack(damage).FromCard(card).Targeting(enemy).Execute(choiceContext);
+            }
+        }
+    }
+
+    public static async Task AttackAll(CardModel card, PlayerChoiceContext choiceContext, decimal damage, int hits, IEnumerable<Creature> targets, ValueProp props = ValueProp.Move)
+    {
+        for (int i = 0; i < hits; i++)
+        {
+            foreach (Creature enemy in targets)
             {
                 await DamageCmd.Attack(damage).FromCard(card).Targeting(enemy).Execute(choiceContext);
             }
@@ -601,5 +655,34 @@ public static class ArchitectEnchantmentHelper
             ArchitectEnchantKind.SoulPower => ModelDb.Enchantment<SoulsPower>(),
             _ => ModelDb.Enchantment<Sharp>()
         };
+    }
+
+    private static bool CanApplyCanonicalEnchant(CardModel card, ArchitectEnchantKind kind)
+    {
+        try
+        {
+            return Canonical(kind).CanEnchant(card);
+        }
+        catch (KeyNotFoundException)
+        {
+            return false;
+        }
+    }
+
+    private static bool CanReceiveEnchantmentModel(CardModel card, EnchantmentModel enchantment)
+    {
+        if (!CanReceiveAnotherEnchant(card))
+        {
+            return false;
+        }
+
+        try
+        {
+            return enchantment.CanEnchant(card);
+        }
+        catch (KeyNotFoundException)
+        {
+            return false;
+        }
     }
 }

@@ -1,15 +1,14 @@
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Commands;
-using TheArchitect.TheArchitectCode.Helpers;
 using TheArchitect.TheArchitectCode.Cards.Tokens;
+using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Basic;
 
-// todo: 报错原因：直接 new TemperingSharpChoice()，重复创建了模型；这类卡必须通过 ModelDb 获取，不能手动构造。
 public sealed class Tempering() : TheArchitectCard(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("EnchantAmount", 3)];
@@ -22,8 +21,8 @@ public sealed class Tempering() : TheArchitectCard(1, CardType.Skill, CardRarity
     {
         return kind switch
         {
-            ArchitectEnchantKind.Sharp => new TemperingSharpChoice(),
-            ArchitectEnchantKind.Nimble => new TemperingNimbleChoice(),
+            ArchitectEnchantKind.Sharp => (TemperingChoiceCard)ModelDb.Card<TemperingSharpChoice>().ToMutable(),
+            ArchitectEnchantKind.Nimble => (TemperingChoiceCard)ModelDb.Card<TemperingNimbleChoice>().ToMutable(),
             _ => throw new InvalidOperationException($"Unsupported Tempering option {kind}")
         };
     }
@@ -63,6 +62,7 @@ public sealed class Tempering() : TheArchitectCard(1, CardType.Skill, CardRarity
 
         ArchitectEnchantmentHelper.Add(card, selected.Kind, DynamicVars["EnchantAmount"].IntValue);
     }
+
     protected override void OnUpgrade()
     {
         DynamicVars["EnchantAmount"].UpgradeValueBy(2m);

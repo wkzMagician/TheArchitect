@@ -1,19 +1,11 @@
-using BaseLib.Extensions;
-using MegaCrit.Sts2.Core.CardSelection;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Powers.Architect;
 
-// todo: 本地化问题： cards.THEARCHITECT-DIVINE_GRADE_POWER.selectionScreenPrompt
-// todo: bug: 可以选中已经附魔的卡牌
 public sealed class DivineGracePower : TheArchitectPower
 {
     public override PowerType Type => PowerType.Buff;
@@ -27,7 +19,12 @@ public sealed class DivineGracePower : TheArchitectPower
             return;
         }
 
-        CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner.Player, $"{Id.Entry}.selectionScreenPrompt", static _ => true, this);
+        CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(
+            choiceContext,
+            Owner.Player,
+            $"{Id.Entry}.selectionScreenPrompt",
+            static card => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(card, ArchitectEnchantKind.PerfectFit),
+            this);
         if (card != null)
         {
             ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.PerfectFit, 1m);
