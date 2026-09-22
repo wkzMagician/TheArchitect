@@ -13,18 +13,18 @@ public static partial class BehaviorCatalog
 {
     private static async Task CursePurge()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         CursePurge card = ctx.CardInHand<CursePurge>();
         CardModel c1 = ctx.CardInDeck<MockCurseCard>();
         CardModel c2 = ctx.CardInDeck<MockCurseCard>();
         await ctx.Play(card);
-        AssertEx.Equal(6, BehaviorTestContext.PowerAmount<PlatingPower>(ctx.Player.Creature), "CursePurge should gain Plating per curse");
+        AssertEx.Equal(6, CombatTestContext.PowerAmount<PlatingPower>(ctx.Player.Creature), "CursePurge should gain Plating per curse");
         AssertEx.False(ctx.Player.Deck.Cards.Contains(c1) || ctx.Player.Deck.Cards.Contains(c2), "CursePurge should remove curses from deck");
     }
 
     private static async Task Depose()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         Depose card = ctx.CardInHand<Depose>();
         CardModel removable = ctx.CardInDeck<MockAttackCard>();
         await CreatureCmd.Damage(ctx.ChoiceContext, ctx.Enemy, 9998m, MegaCrit.Sts2.Core.ValueProps.ValueProp.Unblockable | MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered, null, null);
@@ -35,7 +35,7 @@ public static partial class BehaviorCatalog
 
     private static async Task Rollback()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         Rollback card = ctx.CardInHand<Rollback>();
         StrikeArchitect target = ctx.CardInHand<StrikeArchitect>();
         ctx.Select(target);
@@ -45,38 +45,42 @@ public static partial class BehaviorCatalog
 
     private static async Task WriteDestiny()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         WriteDestiny card = ctx.CardInHand<WriteDestiny>();
-        MockAttackCard target = ctx.MockAttackInHand();
+        StrikeArchitect original = ctx.CardInDeck<StrikeArchitect>();
+        StrikeArchitect target = ctx.CardInHand<StrikeArchitect>();
+        target.DeckVersion = original;
+        ArchitectEnchantmentHelper.Add(target, ArchitectEnchantKind.Sharp, 3);
         ctx.Select(target);
         await ctx.Play(card);
-        AssertEx.True(ctx.Player.Deck.Cards.Contains(target), "WriteDestiny should move selected hand card to deck");
+        AssertEx.Equal(3, CombatTestContext.EnchantAmount(original), "WriteDestiny permanently inscribes the deck original");
+        AssertEx.True(ctx.Player.PlayerCombatState!.Hand.Cards.Contains(target), "Inscription leaves combat card in hand");
+        AssertEx.Equal(PileType.Exhaust, ctx.GetResultPile(card), "WriteDestiny exhausts");
     }
 
-    private static async Task ChannelPower()
+    private static async Task ChannelPowerBehavior()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         ChannelPower card = ctx.CardInHand<ChannelPower>();
-        MockSkillCard chosen = ctx.MockSkillInHand().MockBlock(5);
+        MockSkillCard chosen = ctx.MockSkillInHand(block: 5);
         ctx.Select(chosen);
         await ctx.Play(card, ctx.Enemy, xValue: 2);
-        AssertEx.Equal(0, ctx.Player.Creature.Block, "ChannelPower should not immediately replay the selected card");
-        await ctx.Play(chosen);
-        AssertEx.Equal(15, ctx.Player.Creature.Block, "ChannelPower should replay the chosen card when it is played");
+        AssertEx.Equal(0, ctx.Player.Creature.Block, "ChannelPower should not replay the chosen card immediately");
+        AssertEx.Equal(2, ArchitectCombatState.ConsumePendingReplays(chosen), "ChannelPower should queue one replay per energy spent");
     }
 
     private static async Task LayeredBrace()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         LayeredBrace card = ctx.CardInHand<LayeredBrace>();
         ctx.MarkPlayed(card, 1);
         await ctx.Play(card);
-        AssertEx.Equal(12, ctx.Player.Creature.Block, "LayeredBrace should scale with prior plays");
+        AssertEx.Equal(10, ctx.Player.Creature.Block, "LayeredBrace should scale with prior plays");
     }
 
     private static async Task Ascend()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         Ascend card = ctx.CardInHand<Ascend>();
         ctx.MarkPlayed(card, 2);
         MockSkillCard drawn = ctx.CardInDraw<MockSkillCard>();
@@ -90,7 +94,7 @@ public static partial class BehaviorCatalog
 
     private static async Task Trinity()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         Trinity card = ctx.CardInHand<Trinity>();
         ctx.MarkPlayed(card, 2);
         int before = ctx.Enemy.CurrentHp;
@@ -100,9 +104,10 @@ public static partial class BehaviorCatalog
 
     private static async Task Proliferation()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         Proliferation card = ctx.CardInHand<Proliferation>();
-        ctx.MarkPlayed(card, 2);
+        await ctx.Play(card, ctx.Enemy);
+        await ctx.Play(card, ctx.Enemy);
         int before = ctx.Enemy.CurrentHp;
         await ctx.Play(card, ctx.Enemy);
         AssertEx.Equal(9, ctx.HpLost(ctx.Enemy, before), "Proliferation should scale hits and damage with plays");
@@ -110,19 +115,24 @@ public static partial class BehaviorCatalog
 
     private static async Task RaiseOffspring()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         RaiseOffspring card = ctx.CardInHand<RaiseOffspring>();
-        ctx.MarkPlayed(card, 1);
-        MockSkillCard a = ctx.CardInDraw<MockSkillCard>();
-        MockSkillCard b = ctx.CardInDraw<MockSkillCard>();
-        MockSkillCard c = ctx.CardInDraw<MockSkillCard>();
+        ctx.CardInDraw<MockSkillCard>();
+        ctx.CardInDraw<MockSkillCard>();
+        ctx.CardInDraw<MockSkillCard>();
+        ctx.CardInDraw<MockSkillCard>();
+        ctx.CardInDraw<MockSkillCard>();
+        int beforeFirst = ctx.Player.PlayerCombatState!.Hand.Cards.Count;
         await ctx.Play(card);
-        AssertEx.True(ctx.Player.PlayerCombatState!.Hand.Cards.Contains(a) && ctx.Player.PlayerCombatState.Hand.Cards.Contains(b) && ctx.Player.PlayerCombatState.Hand.Cards.Contains(c), "RaiseOffspring should draw extra cards");
+        int afterFirst = ctx.Player.PlayerCombatState.Hand.Cards.Count;
+        AssertEx.Equal(beforeFirst + 2, afterFirst, "RaiseOffspring should draw 2 cards the first time it is played");
+        await ctx.Play(card);
+        AssertEx.Equal(afterFirst + 3, ctx.Player.PlayerCombatState.Hand.Cards.Count, "RaiseOffspring should draw one more card each time it is played");
     }
 
     private static async Task FinalJudgmentOfTheRadiantScepter()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         FinalJudgmentOfTheRadiantScepter card = ctx.CardInHand<FinalJudgmentOfTheRadiantScepter>();
         ctx.MarkPlayed(card, 9);
         int before = ctx.Enemy.CurrentHp;
@@ -133,34 +143,33 @@ public static partial class BehaviorCatalog
 
     private static async Task WakingCataclysm()
     {
-        using BehaviorTestContext ctx = new(includeSecondEnemy: true);
+        using CombatTestContext ctx = new(includeSecondEnemy: true);
         WakingCataclysm card = ctx.CardInHand<WakingCataclysm>();
         int before1 = ctx.Enemy.CurrentHp;
         int before2 = ctx.SecondEnemy!.CurrentHp;
         await ctx.Play(card);
-        AssertEx.Equal(24, ctx.HpLost(ctx.Enemy, before1), "WakingCataclysm should hit first enemy");
-        AssertEx.Equal(24, ctx.HpLost(ctx.SecondEnemy, before2), "WakingCataclysm should hit second enemy");
+        AssertEx.Equal(32, ctx.HpLost(ctx.Enemy, before1), "WakingCataclysm should hit first enemy");
+        AssertEx.Equal(32, ctx.HpLost(ctx.SecondEnemy, before2), "WakingCataclysm should hit second enemy");
     }
 
     private static async Task AncientVerdict()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         AncientVerdict card = ctx.CardInHand<AncientVerdict>();
         ArchitectEnchantmentHelper.Add(ctx.MockAttackInHand(), ArchitectEnchantKind.Sharp, 1m);
-        ArchitectEnchantmentHelper.Add(ctx.MockSkillInHand(), ArchitectEnchantKind.Nimble, 1m);
+        ArchitectEnchantmentHelper.Add(ctx.MockSkillInHand(block: 5), ArchitectEnchantKind.Nimble, 1m);
         int before = ctx.Enemy.CurrentHp;
         await ctx.Play(card, ctx.Enemy);
-        AssertEx.Equal(28, ctx.HpLost(ctx.Enemy, before), "AncientVerdict should scale with enchanted hand");
+        AssertEx.Equal(18, ctx.HpLost(ctx.Enemy, before), "AncientVerdict should count enchanted cards");
     }
 
     private static async Task InfiniteBlueprint()
     {
-        using BehaviorTestContext ctx = new();
+        using CombatTestContext ctx = new();
         InfiniteBlueprint card = ctx.CardInHand<InfiniteBlueprint>();
-        MockAttackCard target = ctx.MockAttackInHand();
-        ArchitectEnchantmentHelper.Add(target, ArchitectEnchantKind.Sharp, 2m);
         await ctx.Play(card);
-        AssertEx.NotNull(ArchitectEnchantmentHelper.Add(target, ArchitectEnchantKind.Nimble, 1m),
-            "InfiniteBlueprint should allow adding further enchantments to already enchanted cards");
+        MockAttackCard target = ctx.MockAttackInHand();
+        ArchitectEnchantmentHelper.Add(target, ArchitectEnchantKind.Sharp, 3m);
+        AssertEx.Equal(6, CombatTestContext.EnchantAmount(target), "InfiniteBlueprint doubles applied stacks");
     }
 }

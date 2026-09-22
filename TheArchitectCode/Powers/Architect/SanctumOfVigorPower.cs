@@ -25,11 +25,11 @@ public sealed class SanctumOfVigorPower : TheArchitectPower
             choiceContext,
             player,
             $"{Id.Entry}.selectionScreenPrompt",
-            static card => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(card, ArchitectEnchantKind.Vitality),
+            static card => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(card, ArchitectEnchantKind.Vigorous),
             this);
         if (card != null)
         {
-            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Vitality, Amount);
+            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Vigorous, Amount);
         }
     }
 }

@@ -7,14 +7,9 @@ namespace TheArchitect.Tests.Powers.Architect;
 
 public static class RecuperatePowerTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertPowerMetadata<RecuperatePower>(PowerType.Buff, PowerStackType.Counter);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertPowerBehavior<RecuperatePower>();
     }

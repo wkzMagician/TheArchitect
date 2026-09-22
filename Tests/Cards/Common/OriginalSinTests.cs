@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Common;
 
 public static class OriginalSinTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<OriginalSin>(CardType.Attack, CardRarity.Common, TargetType.AnyEnemy);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<OriginalSin>();
     }

@@ -30,6 +30,6 @@ public sealed class RequiemPower : TheArchitectPower
             return;
         }
 
-        await PowerCmd.Apply<StrengthPower>(cardPlay.Card.CombatState!.HittableEnemies, -Amount, Owner, null);
+        await PowerCmd.Apply<StrengthPower>(context, cardPlay.Card.CombatState!.HittableEnemies, -Amount, Owner, null);
     }
 }

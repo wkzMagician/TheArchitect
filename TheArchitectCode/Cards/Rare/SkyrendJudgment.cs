@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
@@ -19,7 +20,7 @@ public sealed class SkyrendJudgment() : TheArchitectCard(9, CardType.Skill, Card
     public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay cardPlay)
     {
         await base.AfterCardPlayed(context, cardPlay);
-        if (cardPlay.Card == this || cardPlay.Card.Enchantment == null)
+        if (cardPlay.Card.Owner != Owner || cardPlay.Card == this || !ArchitectCombatState.WasEnchantedOnPlay(cardPlay.Card))
         {
             return;
         }

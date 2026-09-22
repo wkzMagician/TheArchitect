@@ -1,34 +1,33 @@
+using System.Runtime.CompilerServices;
 using HarmonyLib;
-using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Patches;
 
-[HarmonyPatch(typeof(CardModel), nameof(CardModel.AfterCardPlayed))]
+// Use the engine's replay count, so cost, X value, final pile, and exhaustion are
+// handled once by OnPlayWrapper. A replay cannot recursively consume its own mark.
 public static class ChannelReplayPatch
 {
-    public static void Postfix(CardModel __instance, PlayerChoiceContext context, CardPlay cardPlay, ref Task __result)
+    private sealed class PlayContext { public bool IsAutoPlay; }
+    private static readonly ConditionalWeakTable<CardModel, PlayContext> Plays = new();
+
+    [HarmonyPatch(typeof(CardModel), nameof(CardModel.OnPlayWrapper))]
+    private static class CapturePlayKind
     {
-        __result = ReplayAsync(__result, __instance, context, cardPlay);
+        private static void Prefix(CardModel __instance, bool isAutoPlay) => Plays.GetOrCreateValue(__instance).IsAutoPlay = isAutoPlay;
     }
 
-    private static async Task ReplayAsync(Task original, CardModel card, PlayerChoiceContext context, CardPlay cardPlay)
+    [HarmonyPatch(typeof(CardModel), "GeneratePlayCount")]
+    private static class ReplayCount
     {
-        await original;
-
-        if (cardPlay.Card != card || cardPlay.IsAutoPlay)
+        private static void Prefix(CardModel __instance, out int __state)
         {
-            return;
+            __state = ArchitectCombatState.ConsumePendingReplays(__instance);
+            if (!Plays.GetOrCreateValue(__instance).IsAutoPlay)
+                __state += ArchitectCombatState.ConsumePotionReplays(__instance);
         }
-
-        int repeats = ArchitectCombatState.ConsumePendingReplays(card);
-        for (int i = 0; i < repeats; i++)
-        {
-            card.SetToFreeThisTurn();
-            await CardCmd.AutoPlay(context, card, cardPlay.Target);
-        }
+        private static void Postfix(ref Task<int> __result, int __state) => __result = AddReplays(__result, __state);
+        private static async Task<int> AddReplays(Task<int> original, int repeats) => await original + repeats;
     }
 }

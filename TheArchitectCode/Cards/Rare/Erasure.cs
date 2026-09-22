@@ -15,7 +15,7 @@ public sealed class Erasure() : TheArchitectCard(0, CardType.Skill, CardRarity.R
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [CardKeyword.Exhaust, CardKeyword.Retain] : [CardKeyword.Exhaust];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.SoulPower, 1);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.SoulsPower, 1);
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
@@ -23,11 +23,11 @@ public sealed class Erasure() : TheArchitectCard(0, CardType.Skill, CardRarity.R
             choiceContext,
             Owner,
             $"{Id.Entry}.selectionScreenPrompt",
-            target => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(target, ArchitectEnchantKind.SoulPower),
+            target => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(target, ArchitectEnchantKind.SoulsPower),
             this);
         if (card != null)
         {
-            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.SoulPower, 1m);
+        ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.SoulsPower, 1m);
         }
     }
 }

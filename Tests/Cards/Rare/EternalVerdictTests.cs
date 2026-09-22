@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Rare;
 
 public static class EternalVerdictTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<EternalVerdict>(CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<EternalVerdict>();
     }

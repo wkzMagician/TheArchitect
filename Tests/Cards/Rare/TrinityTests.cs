@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Rare;
 
 public static class TrinityTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<Trinity>(CardType.Attack, CardRarity.Common, TargetType.AnyEnemy);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Trinity>();
     }

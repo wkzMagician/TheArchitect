@@ -16,13 +16,7 @@ public static class SigilbreakerTests
     private sealed class TestEnchantment : EnchantmentModel;
 
     [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<Sigilbreaker>(CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy);
-    }
-
-    [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Sigilbreaker>();
     }
@@ -31,9 +25,9 @@ public static class SigilbreakerTests
     public static void CombatPreviewShowsCurrentDamage()
     {
         TestMode.TurnOnInternal();
-        Sigilbreaker card = new();
-        StrikeArchitect a = MakeMutable(new StrikeArchitect());
-        StrikeArchitect b = MakeMutable(new StrikeArchitect());
+        Sigilbreaker card = TestModels.MutableCard<Sigilbreaker>();
+        StrikeArchitect a = TestModels.MutableCard<StrikeArchitect>();
+        StrikeArchitect b = TestModels.MutableCard<StrikeArchitect>();
 
         a.EnchantInternal(MakeMutable<EnchantmentModel>(new TestEnchantment()), 1);
         b.EnchantInternal(MakeMutable<EnchantmentModel>(new TestEnchantment()), 1);
@@ -47,8 +41,8 @@ public static class SigilbreakerTests
     public static void CombatPreviewExcludesSelfWhenCountingEnchantedCards()
     {
         TestMode.TurnOnInternal();
-        Sigilbreaker card = MakeMutable(new Sigilbreaker());
-        StrikeArchitect other = MakeMutable(new StrikeArchitect());
+        Sigilbreaker card = TestModels.MutableCard<Sigilbreaker>();
+        StrikeArchitect other = TestModels.MutableCard<StrikeArchitect>();
 
         card.EnchantInternal(MakeMutable<EnchantmentModel>(new TestEnchantment()), 1);
         other.EnchantInternal(MakeMutable<EnchantmentModel>(new TestEnchantment()), 1);

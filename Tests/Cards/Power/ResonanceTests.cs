@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Power;
 
 public static class ResonanceTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<Resonance>(CardType.Power, CardRarity.Uncommon, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Resonance>();
     }

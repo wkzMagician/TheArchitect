@@ -32,8 +32,8 @@ public sealed class DivineHammerfall() : TheArchitectCard(2, CardType.Attack, Ca
         ArchitectEnchantmentHelper.RemoveAll(this);
         if (play.Target != null)
         {
-            await ArchitectEnchantmentHelper.ApplyWeak(play.Target, 2m, Owner.Creature, this);
-            await ArchitectEnchantmentHelper.ApplyVulnerable(play.Target, 2m, Owner.Creature, this);
+            await ArchitectEnchantmentHelper.ApplyWeak(choiceContext, play.Target, 2m, Owner.Creature, this);
+            await ArchitectEnchantmentHelper.ApplyVulnerable(choiceContext, play.Target, 2m, Owner.Creature, this);
         }
     }
 

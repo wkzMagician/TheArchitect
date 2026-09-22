@@ -19,6 +19,6 @@ public sealed class BlightAnointingPower : TheArchitectPower
             return;
         }
 
-        ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Corruption, 1m);
+        ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Corrupted, 1m);
     }
 }

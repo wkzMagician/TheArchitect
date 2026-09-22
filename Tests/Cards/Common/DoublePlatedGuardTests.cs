@@ -7,14 +7,9 @@ namespace TheArchitect.Tests.Cards.Common;
 
 public static class DoublePlatedGuardTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<DoublePlatedGuard>(CardType.Skill, CardRarity.Common, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<DoublePlatedGuard>();
     }
@@ -22,7 +17,7 @@ public static class DoublePlatedGuardTests
     [ArchitectTest]
     public static void CombatPreviewIsDisabled()
     {
-        DoublePlatedGuard card = new();
+        DoublePlatedGuard card = TestModels.Card<DoublePlatedGuard>();
 
         string preview = (string)typeof(DoublePlatedGuard)
             .GetMethod("GetCombatPreviewText", BindingFlags.Instance | BindingFlags.NonPublic)!

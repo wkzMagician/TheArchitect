@@ -14,7 +14,7 @@ public sealed class FormOfCreation() : TheArchitectCard(3, CardType.Power, CardR
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<FormOfCreationPower>(Owner.Creature, DynamicVars["Cards"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<FormOfCreationPower>(choiceContext, Owner.Creature, DynamicVars["Cards"].BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

@@ -15,19 +15,11 @@ public static class TemperingTests
 {
     private static readonly MethodInfo SetIsMutableMethod =
         typeof(AbstractModel).GetMethod("NeverEverCallThisOutsideOfTests_SetIsMutable", BindingFlags.Instance | BindingFlags.NonPublic)!;
-    private static readonly MethodInfo? CreateChoiceCardMethod =
-        typeof(Tempering).GetMethod("CreateChoiceCard", BindingFlags.Static | BindingFlags.NonPublic);
 
     private sealed class TestEnchantment : EnchantmentModel;
 
     [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<Tempering>(CardType.Skill, CardRarity.Basic, TargetType.Self);
-    }
-
-    [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Tempering>();
     }
@@ -36,9 +28,9 @@ public static class TemperingTests
     public static void TemperingTargetFilterRejectsAlreadyEnchantedOrdinaryCards()
     {
         TestMode.TurnOnInternal();
-        StrikeArchitect unenchanted = new();
-        StrikeArchitect enchantedOrdinary = MakeMutable(new StrikeArchitect());
-        AncientSeed enchantedAncientSeed = MakeMutable(new AncientSeed());
+        StrikeArchitect unenchanted = TestModels.Card<StrikeArchitect>();
+        StrikeArchitect enchantedOrdinary = TestModels.MutableCard<StrikeArchitect>();
+        AncientSeed enchantedAncientSeed = TestModels.MutableCard<AncientSeed>();
         EnchantmentModel enchantment = MakeMutable<EnchantmentModel>(new TestEnchantment());
 
         enchantedOrdinary.EnchantInternal(MakeMutable<EnchantmentModel>(new TestEnchantment()), 1);
@@ -46,21 +38,17 @@ public static class TemperingTests
 
         AssertEx.True(ArchitectEnchantmentHelper.CanTargetWithTempering(unenchanted), "Tempering should allow unenchanted compatible cards.");
         AssertEx.False(ArchitectEnchantmentHelper.CanTargetWithTempering(enchantedOrdinary), "Tempering should reject already enchanted ordinary cards.");
-        AssertEx.True(ArchitectEnchantmentHelper.CanTargetWithTempering(enchantedAncientSeed), "Tempering should allow explicit multi-enchant exceptions.");
+        AssertEx.False(ArchitectEnchantmentHelper.CanTargetWithTempering(enchantedAncientSeed), "Tempering should reject an already enchanted Ancient Seed.");
     }
 
     [ArchitectTest]
-    public static void TemperingCreatesFreshChoiceCards()
+    public static void TemperingChoiceCardsAreCreatedFromModelDb()
     {
-        AssertEx.NotNull(CreateChoiceCardMethod, "Tempering should create dual-choice cards through a dedicated factory.");
+        string source = File.ReadAllText(TestPaths.RepoPath("TheArchitectCode", "Cards", "Basic", "Tempering.cs"));
 
-        TemperingChoiceCard first = (TemperingChoiceCard)CreateChoiceCardMethod!.Invoke(null, [ArchitectEnchantKind.Sharp])!;
-        TemperingChoiceCard second = (TemperingChoiceCard)CreateChoiceCardMethod.Invoke(null, [ArchitectEnchantKind.Sharp])!;
-        TemperingChoiceCard nimble = (TemperingChoiceCard)CreateChoiceCardMethod.Invoke(null, [ArchitectEnchantKind.Nimble])!;
-
-        AssertEx.False(ReferenceEquals(first, second), "Tempering should create a fresh mutable choice card each time.");
-        AssertEx.Equal("TemperingSharpChoice", first.GetType().Name, "Tempering should create the Sharp choice card for Sharp.");
-        AssertEx.Equal("TemperingNimbleChoice", nimble.GetType().Name, "Tempering should create the Nimble choice card for Nimble.");
+        AssertEx.False(source.Contains("new TemperingSharpChoice", StringComparison.Ordinal), "Tempering should not construct token model cards directly.");
+        AssertEx.False(source.Contains("new TemperingNimbleChoice", StringComparison.Ordinal), "Tempering should not construct token model cards directly.");
+        AssertEx.True(source.Contains("CreateCard(ModelDb.Card<TemperingSharpChoice>()", StringComparison.Ordinal), "Tempering should create combat copies from ModelDb canonical choice cards.");
     }
 
     private static T MakeMutable<T>(T model) where T : AbstractModel

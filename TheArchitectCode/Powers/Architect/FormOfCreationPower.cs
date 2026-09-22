@@ -40,7 +40,7 @@ public sealed class FormOfCreationPower : TheArchitectPower
 
     public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay cardPlay)
     {
-        if (cardPlay.Card.Owner.Creature != Owner || !ArchitectEnchantmentHelper.HasAny(cardPlay.Card))
+        if (cardPlay.Card.Owner.Creature != Owner || !ArchitectCombatState.WasEnchantedOnPlay(cardPlay.Card))
         {
             return;
         }

@@ -12,10 +12,9 @@ public sealed class Rollback() : TheArchitectCard(1, CardType.Skill, CardRarity.
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", card => card != this, this);
-        if (card is TheArchitectCard architectCard)
+        if (await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", card => card != this, this) is CardModel selected)
         {
-            architectCard.EnableShuffleIntoDrawPile();
+            ArchitectCombatState.MarkForShuffle(selected);
         }
     }
 

@@ -18,7 +18,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
 public sealed class Lullaby() : TheArchitectCard(1, CardType.Skill, CardRarity.Rare, TargetType.AllEnemies)
 {
-    protected override IEnumerable<(ArchitectEnchantKind Kind, int Amount)> StartingEnchantments => [(ArchitectEnchantKind.Chromatic, 1)];
+    protected override IEnumerable<(ArchitectEnchantKind Kind, int Amount)> StartingEnchantments => [(ArchitectEnchantKind.Glam, 1)];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Weak", 1)];
 
@@ -26,7 +26,7 @@ public sealed class Lullaby() : TheArchitectCard(1, CardType.Skill, CardRarity.R
     {
         foreach (Creature enemy in CombatState!.HittableEnemies)
         {
-            await ArchitectEnchantmentHelper.ApplyWeak(enemy, DynamicVars["Weak"].BaseValue, Owner.Creature, this);
+            await ArchitectEnchantmentHelper.ApplyWeak(choiceContext, enemy, DynamicVars["Weak"].BaseValue, Owner.Creature, this);
         }
     }
 

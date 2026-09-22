@@ -1,10 +1,10 @@
-﻿<Project Sdk="Godot.NET.Sdk/4.5.1" InitialTargets="CheckDependencyPaths">
+<Project Sdk="Godot.NET.Sdk/4.5.1" InitialTargets="CheckDependencyPaths">
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>true</ImplicitUsings>
         <Nullable>enable</Nullable> <!--Makes code analysis regarding null values stricter.-->
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <DefaultItemExcludes>packages/**</DefaultItemExcludes>
+        <DefaultItemExcludes>$(DefaultItemExcludes);packages/**;.worktrees/**</DefaultItemExcludes>
         <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
         <PathMap>$(AppOutputBase)=.\</PathMap>
     </PropertyGroup>
@@ -68,88 +68,94 @@
     <ItemGroup Condition="Exists('$(Sts2DataDir)')">
         <Reference Include="0Harmony">
             <HintPath>$(Sts2DataDir)/0Harmony.dll</HintPath>
-            <Private>false</Private>
+            <Private>true</Private>
         </Reference>
         <Reference Include="sts2">
             <HintPath>$(Sts2DataDir)/sts2.dll</HintPath>
-            <Private>false</Private>
+            <Private>true</Private>
         </Reference>
     </ItemGroup>
 
     <ItemGroup Condition="False"> <!--Allows private/protected field references but may cause errors.-->
-        <Publicize Include="sts2" IncludeVirtualMembers="false" IncludeCompilerGeneratedMembers="false"/>
+        <Publicize Include="sts2" IncludeVirtualMembers="false" IncludeCompilerGeneratedMembers="false" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="0.2.3" PrivateAssets="All"/>
-        <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="All"/>
-        <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="0.1.7"/>
-        <AdditionalFiles Include="TheArchitect/localization/**/*.json"/> <!-- Used by analyzer -->
+        <Reference Include="BaseLib" HintPath="$(MSBuildProjectDirectory)/.artifacts/BaseLib.3.4.7/BaseLib.dll" Private="true" />
+        <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="All" />
+        <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="0.1.7" />
+        <AdditionalFiles Include="TheArchitect/localization/**/*.json" /> <!-- Used by analyzer -->
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Tests/**"/>
-        <Compile Remove=".artifacts/**"/>
-        <Compile Remove=".godot/**"/>
-        <Compile Remove="TheArchitect/**"/>
-        <Compile Remove="materials/**"/>
-        <Compile Remove="shaders/**"/>
-        <Compile Remove="images/**"/>
-        <EmbeddedResource Remove="Tests/**"/>
-        <EmbeddedResource Remove=".artifacts/**"/>
-        <EmbeddedResource Remove=".godot/**"/>
-        <EmbeddedResource Remove="TheArchitect/**"/>
-        <EmbeddedResource Remove="materials/**"/>
-        <EmbeddedResource Remove="shaders/**"/>
-        <EmbeddedResource Remove="images/**"/>
-        <None Remove="Tests/**"/>
-        <None Remove=".artifacts/**"/>
-        <None Remove=".godot/**"/>
+        <Compile Remove="Tests/**" />
+        <Compile Remove=".artifacts/**" />
+        <Compile Remove=".godot/**" />
+        <Compile Remove="TheArchitect/**" />
+        <Compile Remove="materials/**" />
+        <Compile Remove="shaders/**" />
+        <Compile Remove="images/**" />
+        <EmbeddedResource Remove="Tests/**" />
+        <EmbeddedResource Remove=".artifacts/**" />
+        <EmbeddedResource Remove=".godot/**" />
+        <EmbeddedResource Remove="TheArchitect/**" />
+        <EmbeddedResource Remove="materials/**" />
+        <EmbeddedResource Remove="shaders/**" />
+        <EmbeddedResource Remove="images/**" />
+        <None Remove="Tests/**" />
+        <None Remove=".artifacts/**" />
+        <None Remove=".godot/**" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include=".gitignore"/>
-        <None Include="TheArchitect.json"/>
-        <None Include="project.godot"/>
-        <None Include="TheArchitect/**"/>
+        <None Include=".gitignore" />
+        <None Include="TheArchitect.json" />
+        <None Include="project.godot" />
+        <None Include="TheArchitect/**" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="TheArchitect\images\card_portraits\big\"/>
-        <Folder Include="TheArchitect\images\powers\big\"/>
-        <Folder Include="TheArchitect\images\relics\big\"/>
+        <Folder Include="TheArchitect\images\card_portraits\big\" />
+        <Folder Include="TheArchitect\images\powers\big\" />
+        <Folder Include="TheArchitect\images\relics\big\" />
     </ItemGroup>
 
     <Target Name="CheckDependencyPaths">
-        <Error
-                Text=" Slay the Spire 2 data not found at path '$(Sts2DataDir)'"
-                Condition="'$(Sts2DataDir)' == '' or !Exists('$(Sts2DataDir)')"/>
-        <Warning
-                Text=" Godot not found at path '$(GodotPath)'. Build can continue, but Publish will skip .pck export until this is configured."
-                Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')"/>
+        <Error Text=" Slay the Spire 2 data not found at path '$(Sts2DataDir)'" Condition="'$(Sts2DataDir)' == '' or !Exists('$(Sts2DataDir)')" />
+        <Warning Text=" Godot not found at path '$(GodotPath)'. Build can continue, but Publish will skip .pck export until this is configured." Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')" />
     </Target>
 
     <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
-        <Message Text="Copying .dll and manifest to mods folder." Importance="high"/>
-        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"/>
-        <Copy SourceFiles="TheArchitect.json" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"/>
+        <Message Text="Copying .dll and manifest to mods folder." Importance="high" />
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
+        <Copy SourceFiles="TheArchitect.json" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
     </Target>
 
-    <Target Name="GodotBuildExport" AfterTargets="PostBuildEvent" Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
-        <Message Text="Exporting Godot .pck to mods folder on build" Importance="high"/>
-        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
-              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
-              ContinueOnError="WarnAndContinue"/>
+    <ItemGroup>
+        <GodotExportDependency Include="$(Sts2DataDir)/sts2.dll" Condition="Exists('$(Sts2DataDir)/sts2.dll')" />
+        <GodotExportDependency Include="$(Sts2DataDir)/0Harmony.dll" Condition="Exists('$(Sts2DataDir)/0Harmony.dll')" />
+        <GodotExportDependency Include="$(MSBuildProjectDirectory)/.artifacts/BaseLib.3.4.7/BaseLib.dll" Condition="Exists('$(MSBuildProjectDirectory)/.artifacts/BaseLib.3.4.7/BaseLib.dll')" />
+        <GodotExportDependency Include="$(MSBuildProjectDirectory)/packages/godotsharp/4.5.1/lib/net8.0/GodotSharp.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/godotsharp/4.5.1/lib/net8.0/GodotSharp.dll')" />
+        <GodotExportDependency Include="$(MSBuildProjectDirectory)/packages/godotsharpeditor/4.5.1/lib/net8.0/GodotSharpEditor.dll" Condition="Exists('$(MSBuildProjectDirectory)/packages/godotsharpeditor/4.5.1/lib/net8.0/GodotSharpEditor.dll')" />
+    </ItemGroup>
+
+    <Target Name="CopyDependenciesForGodotExport" BeforeTargets="GodotBuildExport;GodotPublish">
+        <Message Text="Copying game assemblies for Godot C# script resolution." Importance="high" />
+        <Copy SourceFiles="@(GodotExportDependency)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
     </Target>
 
-    <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
-        <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
-        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
-              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
-              ContinueOnError="WarnAndContinue"/>
+    <Target Name="GodotBuildExport" AfterTargets="PostBuildEvent" Condition="'$(ExportMod)' == 'true' and '$(IsInnerGodotExport)' != 'true'">
+        <Error Text="GodotPath must point to a Godot 4.5.1 .NET executable." Condition="!Exists('$(GodotPath)')" />
+        <Message Text="Exporting Godot .pck to mods folder on build" Importance="high" />
+        <Exec Command="&quot;$(GodotPath)&quot; --headless --path &quot;$(MSBuildProjectDirectory)&quot; --export-pack &quot;BasicExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;" EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1" />
+    </Target>
+
+    <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(ExportMod)' == 'true' and '$(IsInnerGodotExport)' != 'true' and '$(GodotPath)' != '' and Exists('$(GodotPath)')">
+        <Message Text="Exporting Godot .pck to mods folder" Importance="high" />
+        <Exec Command="&quot;$(GodotPath)&quot; --headless --path &quot;$(MSBuildProjectDirectory)&quot; --export-pack &quot;BasicExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;" EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1" />
     </Target>
 
     <Target Name="GodotPublishSkipped" AfterTargets="Publish" Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')">
-        <Message Text="Skipping Godot .pck export because GodotPath is not configured." Importance="high"/>
+        <Message Text="Skipping Godot .pck export because GodotPath is not configured." Importance="high" />
     </Target>
 </Project>

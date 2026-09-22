@@ -10,6 +10,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
 public sealed class FinalJudgmentOfTheRadiantScepter() : TheArchitectCard(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 {
+    protected override bool ShufflesAfterPlay => true;
+    protected override CardPilePosition ShufflePosition => IsUpgraded ? CardPilePosition.Top : CardPilePosition.Random;
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(10, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
@@ -17,10 +19,6 @@ public sealed class FinalJudgmentOfTheRadiantScepter() : TheArchitectCard(1, Car
         int hits = ArchitectCombatState.TimesPlayed(this) >= 9 ? 10 : 1;
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue).WithHitCount(hits).FromCard(this).Targeting(play.Target!).Execute(choiceContext);
         ShuffleIntoDrawPileThisCombat = true;
-        if (IsUpgraded)
-        {
-            await ArchitectEnchantmentHelper.MoveToPile(this, PileType.Draw, CardPilePosition.Top);
-        }
     }
 
     protected override string GetCombatPreviewText()

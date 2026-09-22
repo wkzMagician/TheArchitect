@@ -15,14 +15,14 @@ public sealed class JacobsLadder() : TheArchitectCard(1, CardType.Skill, CardRar
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [] : [CardKeyword.Exhaust];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Serpentine, 1);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Slither, 1);
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", static _ => true, this);
         if (card != null)
         {
-            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Serpentine, 1m);
+        ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Slither, 1m);
         }
     }
 }

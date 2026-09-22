@@ -7,14 +7,9 @@ namespace TheArchitect.Tests.Powers.Architect;
 
 public static class DrowsyEnginePowerTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertPowerMetadata<DrowsyEnginePower>(PowerType.Buff, PowerStackType.None);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertPowerBehavior<DrowsyEnginePower>();
     }

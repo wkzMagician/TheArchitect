@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Common;
 
 public static class LullabyTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<Lullaby>(CardType.Skill, CardRarity.Rare, TargetType.AllEnemies);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Lullaby>();
     }

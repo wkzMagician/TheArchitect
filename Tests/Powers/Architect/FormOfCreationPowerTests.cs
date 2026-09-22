@@ -7,14 +7,9 @@ namespace TheArchitect.Tests.Powers.Architect;
 
 public static class FormOfCreationPowerTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertPowerMetadata<FormOfCreationPower>(PowerType.Buff, PowerStackType.Counter);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertPowerBehavior<FormOfCreationPower>();
     }

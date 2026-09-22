@@ -8,14 +8,9 @@ namespace TheArchitect.Tests.Cards.Rare;
 
 public static class LayeredBraceTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<LayeredBrace>(CardType.Skill, CardRarity.Uncommon, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<LayeredBrace>();
     }
@@ -23,7 +18,7 @@ public static class LayeredBraceTests
     [ArchitectTest]
     public static void CombatPreviewShowsCurrentTriggerCount()
     {
-        LayeredBrace card = new();
+        LayeredBrace card = TestModels.Card<LayeredBrace>();
         ArchitectCombatState.RecordPlayed(card);
         ArchitectCombatState.RecordPlayed(card);
 

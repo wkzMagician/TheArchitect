@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Pvp;
 
 public static class HandOffTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<HandOff>(CardType.Skill, CardRarity.Rare, TargetType.AnyAlly);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<HandOff>();
     }

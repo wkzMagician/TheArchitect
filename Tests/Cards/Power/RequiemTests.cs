@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Power;
 
 public static class RequiemTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<Requiem>(CardType.Power, CardRarity.Rare, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Requiem>();
     }

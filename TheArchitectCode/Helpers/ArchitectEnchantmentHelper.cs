@@ -14,27 +14,30 @@ using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using TheArchitect.TheArchitectCode.Cards.Tokens;
+using TheArchitect.TheArchitectCode.Enchantments;
 using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Powers.Architect;
+using TheArchitect.TheArchitectCode.Relics;
 
 namespace TheArchitect.TheArchitectCode.Helpers;
 
 public enum ArchitectEnchantKind
 {
+    Adroit,
     Sharp,
     Nimble,
     Swift,
     Instinct,
-    Vitality,
+    Vigorous,
     Momentum,
-    Seed,
-    Chromatic,
+    Sown,
+    Glam,
     PerfectFit,
-    Stable,
-    Serpentine,
-    Corruption,
-    Ember,
-    SoulPower
+    Steady,
+    Slither,
+    Corrupted,
+    TezcatarasEmber,
+    SoulsPower
 }
 
 public readonly record struct ArchitectEnchantOption(ArchitectEnchantKind Kind, int Amount);
@@ -45,7 +48,7 @@ public static class ArchitectEnchantmentHelper
     [
         new(ArchitectEnchantKind.Nimble, 2),
         new(ArchitectEnchantKind.Sharp, 2),
-        new(ArchitectEnchantKind.Seed, 1),
+        new(ArchitectEnchantKind.Sown, 1),
         new(ArchitectEnchantKind.Swift, 2),
         new(ArchitectEnchantKind.Instinct, 2)
     ];
@@ -138,11 +141,6 @@ public static class ArchitectEnchantmentHelper
             return false;
         }
 
-        if (kind == ArchitectEnchantKind.Momentum)
-        {
-            return true;
-        }
-
         return CanApplyCanonicalEnchant(card, kind);
     }
 
@@ -180,16 +178,17 @@ public static class ArchitectEnchantmentHelper
             ArchitectEnchantKind.Nimble => ModelDb.Enchantment<Nimble>().ToMutable(),
             ArchitectEnchantKind.Swift => ModelDb.Enchantment<Swift>().ToMutable(),
             ArchitectEnchantKind.Instinct => ModelDb.Enchantment<Instinct>().ToMutable(),
-            ArchitectEnchantKind.Vitality => ModelDb.Enchantment<Vigorous>().ToMutable(),
+            ArchitectEnchantKind.Adroit => ModelDb.Enchantment<Adroit>().ToMutable(),
+            ArchitectEnchantKind.Vigorous => ModelDb.Enchantment<Vigorous>().ToMutable(),
             ArchitectEnchantKind.Momentum => ModelDb.Enchantment<Momentum>().ToMutable(),
-            ArchitectEnchantKind.Seed => ModelDb.Enchantment<Sown>().ToMutable(),
-            ArchitectEnchantKind.Chromatic => ModelDb.Enchantment<Glam>().ToMutable(),
+            ArchitectEnchantKind.Sown => ModelDb.Enchantment<Sown>().ToMutable(),
+            ArchitectEnchantKind.Glam => ModelDb.Enchantment<Glam>().ToMutable(),
             ArchitectEnchantKind.PerfectFit => ModelDb.Enchantment<PerfectFit>().ToMutable(),
-            ArchitectEnchantKind.Stable => ModelDb.Enchantment<Steady>().ToMutable(),
-            ArchitectEnchantKind.Serpentine => ModelDb.Enchantment<Slither>().ToMutable(),
-            ArchitectEnchantKind.Corruption => ModelDb.Enchantment<Corrupted>().ToMutable(),
-            ArchitectEnchantKind.Ember => ModelDb.Enchantment<TezcatarasEmber>().ToMutable(),
-            ArchitectEnchantKind.SoulPower => ModelDb.Enchantment<SoulsPower>().ToMutable(),
+            ArchitectEnchantKind.Steady => ModelDb.Enchantment<Steady>().ToMutable(),
+            ArchitectEnchantKind.Slither => ModelDb.Enchantment<Slither>().ToMutable(),
+            ArchitectEnchantKind.Corrupted => ModelDb.Enchantment<Corrupted>().ToMutable(),
+            ArchitectEnchantKind.TezcatarasEmber => ModelDb.Enchantment<TezcatarasEmber>().ToMutable(),
+            ArchitectEnchantKind.SoulsPower => ModelDb.Enchantment<SoulsPower>().ToMutable(),
             _ => ModelDb.Enchantment<Sharp>().ToMutable()
         };
     }
@@ -200,7 +199,7 @@ public static class ArchitectEnchantmentHelper
         {
             ArchitectEnchantKind.Nimble => 2,
             ArchitectEnchantKind.Sharp => 2,
-            ArchitectEnchantKind.Seed => 1,
+            ArchitectEnchantKind.Sown => 1,
             ArchitectEnchantKind.Swift => 2,
             ArchitectEnchantKind.Instinct => 2,
             _ => 1
@@ -237,13 +236,18 @@ public static class ArchitectEnchantmentHelper
         return !HasAny(card) || MultiEnchantRegistry.SupportsMultiEnchant(card);
     }
 
-    public static EnchantmentModel? Add(CardModel card, ArchitectEnchantKind kind, decimal amount)
+    public static EnchantmentModel? Add(CardModel card, ArchitectEnchantKind kind, decimal amount, Player? enchanter = null)
     {
+        if ((enchanter ?? card.Owner)?.Creature.GetPower<InfiniteBlueprintPower>() != null)
+        {
+            amount *= 2;
+        }
+        bool wasUnenchanted = !HasAny(card);
         EnchantmentModel? result = MultiEnchantHelper.TryAddEnchantment(card, Create(kind), amount);
         if (result != null)
         {
             ArchitectCombatState.RecordEnchanted(card);
-            TriggerEnchantHooks(card);
+            TriggerEnchantHooks(card, wasUnenchanted);
         }
 
         return result;
@@ -251,10 +255,11 @@ public static class ArchitectEnchantmentHelper
 
     public static void AddRaw(CardModel card, EnchantmentModel enchantment, decimal amount)
     {
+        bool wasUnenchanted = !HasAny(card);
         if (MultiEnchantHelper.TryAddEnchantment(card, enchantment, amount) != null)
         {
             ArchitectCombatState.RecordEnchanted(card);
-            TriggerEnchantHooks(card);
+            TriggerEnchantHooks(card, wasUnenchanted);
         }
     }
 
@@ -263,7 +268,7 @@ public static class ArchitectEnchantmentHelper
         int removed = MultiEnchantHelper.RemoveAllEnchantments(card);
         if (removed > 0)
         {
-            TriggerRemoveHooks(card, removed);
+            TriggerRemoveHooks(card);
         }
 
         return removed;
@@ -282,11 +287,12 @@ public static class ArchitectEnchantmentHelper
             return 0;
         }
 
-        RemoveAll(card);
+        MultiEnchantHelper.RemoveAllEnchantments(card);
         foreach (EnchantmentModel enchantment in kept)
         {
-            AddRaw(card, enchantment, enchantment.Amount);
+            MultiEnchantHelper.TryAddEnchantment(card, enchantment, enchantment.Amount);
         }
+        TriggerRemoveHooks(card);
 
         return removed;
     }
@@ -321,7 +327,7 @@ public static class ArchitectEnchantmentHelper
         List<EnchantmentModel> moved = GetAll(from)
             .Select(enchantment => EnchantmentModel.FromSerializable(enchantment.ToSerializable()))
             .ToList();
-        RemoveAll(from);
+        MultiEnchantHelper.RemoveAllEnchantments(from);
         foreach (EnchantmentModel enchantment in moved)
         {
             AddRaw(to, enchantment, enchantment.Amount);
@@ -410,6 +416,29 @@ public static class ArchitectEnchantmentHelper
         return Deck(player).Concat(combatCards);
     }
 
+    public static int CountEnchantedCardsInCombatPiles(Player player)
+    {
+        return Hand(player).Concat(DrawPile(player)).Concat(DiscardPile(player))
+            .Concat(player.PlayerCombatState!.ExhaustPile.Cards).Distinct().Count(HasAny);
+    }
+
+    public static IReadOnlyList<ArchitectEnchantOption> CompatibleEnchantOptionsFor(CardModel card)
+    {
+        return Enum.GetValues<ArchitectEnchantKind>()
+            .Where(kind => CanTargetForSpecificEnchant(card, kind))
+            .Select(kind => new ArchitectEnchantOption(kind, AmountFor(kind))).ToArray();
+    }
+
+    public static bool CanTargetForRandomEnchant(CardModel card) => CompatibleEnchantOptionsFor(card).Count > 0;
+
+    public static EnchantmentModel? AddRandomCompatible(Player enchanter, CardModel card)
+    {
+        IReadOnlyList<ArchitectEnchantOption> options = CompatibleEnchantOptionsFor(card);
+        if (options.Count == 0) return null;
+        ArchitectEnchantOption option = enchanter.RunState.Rng.CombatCardSelection.NextItem(options);
+        return Add(card, option.Kind, option.Amount, enchanter);
+    }
+
     public static int CountEnchantedCardsInHand(Player player)
     {
         return Hand(player).Count(HasAny);
@@ -490,7 +519,7 @@ public static class ArchitectEnchantmentHelper
         for (int i = 0; i < count; i++)
         {
             CardModel drowsy = player.Creature.CombatState!.CreateCard(ModelDb.Card<Drowsy>(), player);
-            await CardPileCmd.AddGeneratedCardToCombat(drowsy, pileType, addedByPlayer: true, pileType == PileType.Draw ? CardPilePosition.Random : CardPilePosition.Bottom);
+            await CardPileCmd.AddGeneratedCardToCombat(drowsy, pileType, player, pileType == PileType.Draw ? CardPilePosition.Random : CardPilePosition.Bottom);
         }
     }
 
@@ -544,19 +573,19 @@ public static class ArchitectEnchantmentHelper
         await CreatureCmd.GainBlock(card.Owner.Creature, amount, ValueProp.Move, play);
     }
 
-    public static async Task ApplyWeak(Creature target, decimal amount, Creature source, CardModel card)
+    public static async Task ApplyWeak(PlayerChoiceContext choiceContext, Creature target, decimal amount, Creature source, CardModel card)
     {
-        await PowerCmd.Apply<WeakPower>(target, amount, source, card);
+        await PowerCmd.Apply<WeakPower>(choiceContext, target, amount, source, card);
     }
 
-    public static async Task ApplyVulnerable(Creature target, decimal amount, Creature source, CardModel card)
+    public static async Task ApplyVulnerable(PlayerChoiceContext choiceContext, Creature target, decimal amount, Creature source, CardModel card)
     {
-        await PowerCmd.Apply<VulnerablePower>(target, amount, source, card);
+        await PowerCmd.Apply<VulnerablePower>(choiceContext, target, amount, source, card);
     }
 
-    public static async Task GainStrength(Creature target, decimal amount, Creature source, CardModel? card)
+    public static async Task GainStrength(PlayerChoiceContext choiceContext, Creature target, decimal amount, Creature source, CardModel? card)
     {
-        await PowerCmd.Apply<StrengthPower>(target, amount, source, card);
+        await PowerCmd.Apply<StrengthPower>(choiceContext, target, amount, source, card);
     }
 
     private static bool CanApplyTemperingOption(CardModel card, ArchitectEnchantKind kind)
@@ -585,31 +614,42 @@ public static class ArchitectEnchantmentHelper
         return card.Pile?.Type != PileType.Deck || !card.Keywords.Contains(CardKeyword.Unplayable);
     }
 
-    private static void TriggerEnchantHooks(CardModel card)
+    private static void TriggerEnchantHooks(CardModel card, bool wasUnenchanted)
     {
         if (card.Owner?.Creature == null)
         {
             return;
+        }
+
+        if (card.CombatState == null || card.Pile?.Type == PileType.Deck) return;
+        if (wasUnenchanted)
+        {
+            foreach (CalibrationRuler relic in card.Owner.Relics.OfType<CalibrationRuler>())
+                ArchitectEffectQueue.Track(card.Owner, relic.OnFirstEnchantment(card));
         }
 
         SanctuaryPower? sanctuary = card.Owner.Creature.GetPower<SanctuaryPower>();
         if (sanctuary != null)
         {
-            TaskHelper.RunSafely(CreatureCmd.GainBlock(card.Owner.Creature, sanctuary.Amount, ValueProp.Move, null));
+            ArchitectEffectQueue.Track(card.Owner, CreatureCmd.GainBlock(card.Owner.Creature, sanctuary.Amount, ValueProp.Move, null));
         }
     }
 
-    private static void TriggerRemoveHooks(CardModel card, int removed)
+    private static void TriggerRemoveHooks(CardModel card)
     {
         if (card.Owner?.Creature == null)
         {
             return;
         }
 
+        if (card.CombatState == null || card.Pile?.Type == PileType.Deck) return;
+        foreach (DismantlingPliers relic in card.Owner.Relics.OfType<DismantlingPliers>())
+            ArchitectEffectQueue.Track(card.Owner, relic.OnActiveRemoval(card));
+
         DestroyerPower? destroyer = card.Owner.Creature.GetPower<DestroyerPower>();
         if (destroyer != null)
         {
-            TaskHelper.RunSafely(PowerCmd.Apply<StrengthPower>(card.Owner.Creature, destroyer.Amount * removed, card.Owner.Creature, null));
+            ArchitectEffectQueue.Track(card.Owner, PowerCmd.Apply<StrengthPower>(new ThrowingPlayerChoiceContext(), card.Owner.Creature, destroyer.Amount, card.Owner.Creature, null));
         }
     }
 
@@ -621,16 +661,17 @@ public static class ArchitectEnchantmentHelper
             ArchitectEnchantKind.Nimble => HoverTipFactory.FromEnchantment<Nimble>(amount),
             ArchitectEnchantKind.Swift => HoverTipFactory.FromEnchantment<Swift>(amount),
             ArchitectEnchantKind.Instinct => HoverTipFactory.FromEnchantment<Instinct>(amount),
-            ArchitectEnchantKind.Vitality => HoverTipFactory.FromEnchantment<Vigorous>(amount),
+            ArchitectEnchantKind.Adroit => HoverTipFactory.FromEnchantment<Adroit>(amount),
+            ArchitectEnchantKind.Vigorous => HoverTipFactory.FromEnchantment<Vigorous>(amount),
             ArchitectEnchantKind.Momentum => HoverTipFactory.FromEnchantment<Momentum>(amount),
-            ArchitectEnchantKind.Seed => HoverTipFactory.FromEnchantment<Sown>(amount),
-            ArchitectEnchantKind.Chromatic => HoverTipFactory.FromEnchantment<Glam>(amount),
+            ArchitectEnchantKind.Sown => HoverTipFactory.FromEnchantment<Sown>(amount),
+            ArchitectEnchantKind.Glam => HoverTipFactory.FromEnchantment<Glam>(amount),
             ArchitectEnchantKind.PerfectFit => HoverTipFactory.FromEnchantment<PerfectFit>(amount),
-            ArchitectEnchantKind.Stable => HoverTipFactory.FromEnchantment<Steady>(amount),
-            ArchitectEnchantKind.Serpentine => HoverTipFactory.FromEnchantment<Slither>(amount),
-            ArchitectEnchantKind.Corruption => HoverTipFactory.FromEnchantment<Corrupted>(amount),
-            ArchitectEnchantKind.Ember => HoverTipFactory.FromEnchantment<TezcatarasEmber>(amount),
-            ArchitectEnchantKind.SoulPower => HoverTipFactory.FromEnchantment<SoulsPower>(amount),
+            ArchitectEnchantKind.Steady => HoverTipFactory.FromEnchantment<Steady>(amount),
+            ArchitectEnchantKind.Slither => HoverTipFactory.FromEnchantment<Slither>(amount),
+            ArchitectEnchantKind.Corrupted => HoverTipFactory.FromEnchantment<Corrupted>(amount),
+            ArchitectEnchantKind.TezcatarasEmber => HoverTipFactory.FromEnchantment<TezcatarasEmber>(amount),
+            ArchitectEnchantKind.SoulsPower => HoverTipFactory.FromEnchantment<SoulsPower>(amount),
             _ => []
         };
     }
@@ -643,16 +684,17 @@ public static class ArchitectEnchantmentHelper
             ArchitectEnchantKind.Nimble => ModelDb.Enchantment<Nimble>(),
             ArchitectEnchantKind.Swift => ModelDb.Enchantment<Swift>(),
             ArchitectEnchantKind.Instinct => ModelDb.Enchantment<Instinct>(),
-            ArchitectEnchantKind.Vitality => ModelDb.Enchantment<Vigorous>(),
+            ArchitectEnchantKind.Adroit => ModelDb.Enchantment<Adroit>(),
+            ArchitectEnchantKind.Vigorous => ModelDb.Enchantment<Vigorous>(),
             ArchitectEnchantKind.Momentum => ModelDb.Enchantment<Momentum>(),
-            ArchitectEnchantKind.Seed => ModelDb.Enchantment<Sown>(),
-            ArchitectEnchantKind.Chromatic => ModelDb.Enchantment<Glam>(),
+            ArchitectEnchantKind.Sown => ModelDb.Enchantment<Sown>(),
+            ArchitectEnchantKind.Glam => ModelDb.Enchantment<Glam>(),
             ArchitectEnchantKind.PerfectFit => ModelDb.Enchantment<PerfectFit>(),
-            ArchitectEnchantKind.Stable => ModelDb.Enchantment<Steady>(),
-            ArchitectEnchantKind.Serpentine => ModelDb.Enchantment<Slither>(),
-            ArchitectEnchantKind.Corruption => ModelDb.Enchantment<Corrupted>(),
-            ArchitectEnchantKind.Ember => ModelDb.Enchantment<TezcatarasEmber>(),
-            ArchitectEnchantKind.SoulPower => ModelDb.Enchantment<SoulsPower>(),
+            ArchitectEnchantKind.Steady => ModelDb.Enchantment<Steady>(),
+            ArchitectEnchantKind.Slither => ModelDb.Enchantment<Slither>(),
+            ArchitectEnchantKind.Corrupted => ModelDb.Enchantment<Corrupted>(),
+            ArchitectEnchantKind.TezcatarasEmber => ModelDb.Enchantment<TezcatarasEmber>(),
+            ArchitectEnchantKind.SoulsPower => ModelDb.Enchantment<SoulsPower>(),
             _ => ModelDb.Enchantment<Sharp>()
         };
     }

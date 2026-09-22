@@ -14,9 +14,6 @@ public abstract class TemperingChoiceCard(ArchitectEnchantKind kind) : TheArchit
 {
     public ArchitectEnchantKind Kind { get; } = kind;
 
-    public override string PortraitPath => ResourceLoader.Exists("card.png".CardImagePath()) ? "card.png".CardImagePath() : string.Empty;
-
-    public override string CustomPortraitPath => ResourceLoader.Exists("card.png".BigCardImagePath()) ? "card.png".BigCardImagePath() : string.Empty;
 
     protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {

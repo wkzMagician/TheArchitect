@@ -1,7 +1,6 @@
 using BaseLib.Abstracts;
 using Godot;
 using MegaCrit.Sts2.Core.Models;
-using TheArchitect.TheArchitectCode.Cards.Ancient;
 using TheArchitect.TheArchitectCode.Extensions;
 
 namespace TheArchitect.TheArchitectCode.Character;
@@ -23,9 +22,4 @@ public class TheArchitectCardPool : CustomCardPoolModel
     public override Color DeckEntryCardColor => new("ffffff");
 
     public override bool IsColorless => false;
-
-    protected override CardModel[] GenerateAllCards()
-    {
-        return base.GenerateAllCards().Where(card => card is not AncientVerdict).ToArray();
-    }
 }

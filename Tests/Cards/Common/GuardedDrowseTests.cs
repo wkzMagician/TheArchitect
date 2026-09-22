@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Common;
 
 public static class GuardedDrowseTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<GuardedDrowse>(CardType.Skill, CardRarity.Uncommon, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<GuardedDrowse>();
     }

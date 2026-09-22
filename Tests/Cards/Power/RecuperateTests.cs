@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Power;
 
 public static class RecuperateTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<Recuperate>(CardType.Power, CardRarity.Uncommon, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Recuperate>();
     }

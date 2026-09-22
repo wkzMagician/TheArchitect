@@ -9,6 +9,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
 public sealed class StayTheBlade() : TheArchitectCard(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
+    protected override bool ShufflesAfterPlay => true;
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(15, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

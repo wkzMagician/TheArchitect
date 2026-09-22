@@ -14,7 +14,7 @@ public sealed class Recuperate() : TheArchitectCard(1, CardType.Power, CardRarit
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<RecuperatePower>(Owner.Creature, DynamicVars.Block.BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<RecuperatePower>(choiceContext, Owner.Creature, DynamicVars.Block.BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

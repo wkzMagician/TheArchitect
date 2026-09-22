@@ -14,6 +14,6 @@ public sealed class DrowsyEngine() : TheArchitectCard(0, CardType.Power, CardRar
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<DrowsyEnginePower>(Owner.Creature, 1m, Owner.Creature, this);
+        await PowerCmd.Apply<DrowsyEnginePower>(choiceContext, Owner.Creature, 1m, Owner.Creature, this);
     }
 }

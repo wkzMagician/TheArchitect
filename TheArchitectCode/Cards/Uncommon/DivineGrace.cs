@@ -16,6 +16,6 @@ public sealed class DivineGrace() : TheArchitectCard(1, CardType.Power, CardRari
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<DivineGracePower>(Owner.Creature, 1m, Owner.Creature, this);
+        await PowerCmd.Apply<DivineGracePower>(choiceContext, Owner.Creature, 1m, Owner.Creature, this);
     }
 }

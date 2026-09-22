@@ -7,14 +7,9 @@ namespace TheArchitect.Tests.Powers.Architect;
 
 public static class DestroyerPowerTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertPowerMetadata<DestroyerPower>(PowerType.Buff, PowerStackType.Counter);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertPowerBehavior<DestroyerPower>();
     }

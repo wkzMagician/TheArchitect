@@ -3,4 +3,20 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+
+# Godot/editor and IDE state
+.godot/
+.idea/
+.serena/
+*.user
+
+# Local build, export, and investigation artifacts
+.artifacts/
+bin/
+obj/
+*.dll
+*.pdb
+*.pck
+*.log
+*.bak
 .worktrees/

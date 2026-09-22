@@ -18,7 +18,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
 public sealed class SeedcoreCannon() : TheArchitectCard(3, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 {
-    protected override IEnumerable<(ArchitectEnchantKind Kind, int Amount)> StartingEnchantments => [(ArchitectEnchantKind.Seed, 3)];
+    protected override IEnumerable<(ArchitectEnchantKind Kind, int Amount)> StartingEnchantments => [(ArchitectEnchantKind.Sown, 3)];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(32, ValueProp.Move)];
 

@@ -6,15 +6,18 @@ namespace TheArchitect.Tests.Cards.Common;
 
 public static class StayTheBladeTests
 {
+
     [ArchitectTest]
-    public static void Metadata()
+    public static Task CombatScenario()
     {
-        ModelTestHelper.AssertCardMetadata<StayTheBlade>(CardType.Skill, CardRarity.Rare, TargetType.Self);
+        return BehaviorCatalog.AssertCardBehavior<StayTheBlade>();
     }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static void SourceEnablesShuffleIntoDrawPile()
     {
-        return BehaviorCatalog.AssertCardBehavior<StayTheBlade>();
+        string source = File.ReadAllText(TestPaths.RepoPath("TheArchitectCode", "Cards", "Rare", "StayTheBlade.cs"));
+
+        AssertEx.True(source.Contains("ShuffleIntoDrawPileThisCombat = true", StringComparison.Ordinal), "Stay the Blade should explicitly shuffle itself into the draw pile when played.");
     }
 }

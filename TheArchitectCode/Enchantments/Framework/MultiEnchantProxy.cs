@@ -87,17 +87,17 @@ public sealed class MultiEnchantProxy : EnchantmentModel
         return total;
     }
 
-    public override decimal EnchantBlockAdditive(decimal originalBlock, ValueProp props)
+    public override decimal EnchantBlockAdditive(decimal originalBlock)
     {
-        return GetChildren().Sum(child => child.EnchantBlockAdditive(originalBlock, props));
+        return GetChildren().Sum(child => child.EnchantBlockAdditive(originalBlock));
     }
 
-    public override decimal EnchantBlockMultiplicative(decimal originalBlock, ValueProp props)
+    public override decimal EnchantBlockMultiplicative(decimal originalBlock)
     {
         decimal total = 1m;
         foreach (EnchantmentModel child in GetChildren())
         {
-            total *= child.EnchantBlockMultiplicative(originalBlock, props);
+            total *= child.EnchantBlockMultiplicative(originalBlock);
         }
 
         return total;
@@ -147,11 +147,11 @@ public sealed class MultiEnchantProxy : EnchantmentModel
         RecalculateValues();
     }
 
-    public override async Task BeforePlayPhaseStart(PlayerChoiceContext choiceContext, Player player)
+    public override async Task AfterAutoPrePlayPhaseEntered(PlayerChoiceContext choiceContext, Player player)
     {
         foreach (EnchantmentModel child in GetChildren())
         {
-            await child.BeforePlayPhaseStart(choiceContext, player);
+            await child.AfterAutoPrePlayPhaseEntered(choiceContext, player);
             child.InvokeExecutionFinished();
         }
 

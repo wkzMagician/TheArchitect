@@ -31,7 +31,7 @@ public sealed class TeachAManToFish() : TheArchitectCard(1, CardType.Skill, Card
             return;
         }
 
-        await PowerCmd.Apply<TeachAToFishPower>(play.Target, DynamicVars["EnchantAmount"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<TeachAToFishPower>(choiceContext, play.Target, DynamicVars["EnchantAmount"].BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

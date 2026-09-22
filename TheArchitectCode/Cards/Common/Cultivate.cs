@@ -19,7 +19,7 @@ public sealed class Cultivate() : TheArchitectCard(1, CardType.Attack, CardRarit
         new DynamicVar("Seed", 1)
     ];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Seed, DynamicVars["Seed"].IntValue);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Sown, DynamicVars["Seed"].IntValue);
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
@@ -27,7 +27,7 @@ public sealed class Cultivate() : TheArchitectCard(1, CardType.Attack, CardRarit
         CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", static _ => true, this);
         if (card != null)
         {
-            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Seed, DynamicVars["Seed"].IntValue);
+            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sown, DynamicVars["Seed"].IntValue);
         }
     }
 

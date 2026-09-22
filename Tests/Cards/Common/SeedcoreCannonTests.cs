@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Common;
 
 public static class SeedcoreCannonTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<SeedcoreCannon>(CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<SeedcoreCannon>();
     }

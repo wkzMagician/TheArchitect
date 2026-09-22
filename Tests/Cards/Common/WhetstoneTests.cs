@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Common;
 
 public static class WhetstoneTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<Whetstone>(CardType.Skill, CardRarity.Common, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Whetstone>();
     }

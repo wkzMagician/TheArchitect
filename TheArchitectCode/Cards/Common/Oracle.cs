@@ -18,6 +18,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class Oracle() : TheArchitectCard(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 {
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain];
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         CardModel? top = ArchitectEnchantmentHelper.DrawPile(Owner).FirstOrDefault();

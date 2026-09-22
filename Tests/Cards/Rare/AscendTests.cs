@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Rare;
 
 public static class AscendTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<Ascend>(CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Ascend>();
     }

@@ -31,13 +31,13 @@ public sealed class HandOff() : TheArchitectCard(1, CardType.Skill, CardRarity.R
             return;
         }
 
-        CardModel copy = play.Target.Player.Creature.CombatState!.CreateCard(card, play.Target.Player);
+        CardModel copy = play.Target.Player.Creature.CombatState!.CreateCard(card.CanonicalInstance, play.Target.Player);
         foreach (EnchantmentModel enchantment in ArchitectEnchantmentHelper.GetAll(card))
         {
             ArchitectEnchantmentHelper.AddRaw(copy, EnchantmentModel.FromSerializable(enchantment.ToSerializable()), enchantment.Amount);
         }
 
-        await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Hand, addedByPlayer: true);
+        await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Hand, play.Target.Player);
         await CardCmd.Exhaust(choiceContext, card);
     }
 

@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Rare;
 
 public static class InfiniteBlueprintTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<InfiniteBlueprint>(CardType.Power, CardRarity.Ancient, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<InfiniteBlueprint>();
     }

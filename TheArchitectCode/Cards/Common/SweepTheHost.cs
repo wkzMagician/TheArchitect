@@ -8,23 +8,15 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class SweepTheHost() : TheArchitectCard(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
-    public override TargetType TargetType => IsUpgraded ? TargetType.AllEnemies : TargetType.AnyEnemy;
-
+    public override TargetType TargetType => ArchitectEnchantmentHelper.HasAny(this) ? TargetType.AllEnemies : TargetType.AnyEnemy;
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(10, ValueProp.Move)];
 
-    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
+    protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        if (IsUpgraded)
-        {
-            await ArchitectEnchantmentHelper.AttackAll(this, choiceContext, DynamicVars.Damage.BaseValue);
-            return;
-        }
-
-        await ArchitectEnchantmentHelper.Attack(this, choiceContext, play.Target, DynamicVars.Damage.BaseValue);
+        return ArchitectEnchantmentHelper.HasAny(this)
+            ? ArchitectEnchantmentHelper.AttackAll(this, choiceContext, DynamicVars.Damage.BaseValue)
+            : ArchitectEnchantmentHelper.Attack(this, choiceContext, play.Target, DynamicVars.Damage.BaseValue);
     }
 
-    protected override void OnUpgrade()
-    {
-        DynamicVars.Damage.UpgradeValueBy(3m);
-    }
+    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
 }

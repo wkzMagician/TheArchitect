@@ -31,7 +31,7 @@ public sealed class Chant() : TheArchitectCard(1, CardType.Skill, CardRarity.Com
                 weak += DynamicVars["EnchantWeakBonus"].BaseValue;
             }
 
-            await ArchitectEnchantmentHelper.ApplyWeak(play.Target, weak, Owner.Creature, this);
+            await ArchitectEnchantmentHelper.ApplyWeak(choiceContext, play.Target, weak, Owner.Creature, this);
         }
     }
 

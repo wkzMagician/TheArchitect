@@ -18,7 +18,15 @@ public sealed class ImmovableAsTheMountainPower : TheArchitectPower
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    public override async Task BeforeTurnEnd(PlayerChoiceContext choiceContext, MegaCrit.Sts2.Core.Combat.CombatSide side)
+    public override Task BeforeSideTurnEnd(
+        PlayerChoiceContext choiceContext,
+        MegaCrit.Sts2.Core.Combat.CombatSide side,
+        IEnumerable<MegaCrit.Sts2.Core.Entities.Creatures.Creature> participants)
+    {
+        return BeforeTurnEnd(choiceContext, side);
+    }
+
+    public async Task BeforeTurnEnd(PlayerChoiceContext choiceContext, MegaCrit.Sts2.Core.Combat.CombatSide side)
     {
         if (Owner.Player == null || side != Owner.Player.Creature.CombatState!.CurrentSide)
         {
@@ -34,7 +42,7 @@ public sealed class ImmovableAsTheMountainPower : TheArchitectPower
 
         foreach (CardModel card in selected)
         {
-            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Stable, 1m);
+            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Steady, 1m);
         }
     }
 }

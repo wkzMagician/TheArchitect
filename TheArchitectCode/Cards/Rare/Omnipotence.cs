@@ -12,7 +12,7 @@ public sealed class Omnipotence() : TheArchitectCard(2, CardType.Power, CardRari
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<OmnipotencePower>(Owner.Creature, DynamicVars["Cards"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<OmnipotencePower>(choiceContext, Owner.Creature, DynamicVars["Cards"].BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

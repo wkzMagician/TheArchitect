@@ -14,7 +14,7 @@ public sealed class Resonance() : TheArchitectCard(1, CardType.Power, CardRarity
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<ResonancePower>(Owner.Creature, DynamicVars["Damage"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<ResonancePower>(choiceContext, Owner.Creature, DynamicVars["Damage"].BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

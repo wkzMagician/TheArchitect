@@ -19,7 +19,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class LayeredBrace() : TheArchitectCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(4, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
@@ -31,7 +31,7 @@ public sealed class LayeredBrace() : TheArchitectCard(1, CardType.Skill, CardRar
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Block.UpgradeValueBy(1m);
+        DynamicVars.Block.UpgradeValueBy(2m);
     }
 
     protected override string GetCombatPreviewText()

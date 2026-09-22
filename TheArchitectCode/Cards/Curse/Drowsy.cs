@@ -15,22 +15,28 @@ public sealed class Drowsy : CustomCardModel
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
-    public override string PortraitPath => ResourceLoader.Exists("strike_architect.png".CardImagePath()) ? "strike_architect.png".CardImagePath() : string.Empty;
+    public override string PortraitPath => "drowsy.png".CardImagePath();
 
-    public override string CustomPortraitPath => ResourceLoader.Exists("strike_architect.png".BigCardImagePath()) ? "strike_architect.png".BigCardImagePath() : string.Empty;
+    public override string CustomPortraitPath => "drowsy.png".BigCardImagePath();
 
-    public Drowsy() : base(-1, CardType.Status, CardRarity.Token, TargetType.None)
+    public Drowsy() : base(1, CardType.Curse, CardRarity.Token, TargetType.Self)
     {
     }
 
     protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        return Task.CompletedTask;
+        _playedThisCombat = true;
+        return DeckVersion != null && Owner.Deck.Cards.Contains(DeckVersion)
+            ? CardPileCmd.RemoveFromDeck(DeckVersion)
+            : Task.CompletedTask;
     }
+
+    private bool _playedThisCombat;
+    public void PreventPersistence() => _playedThisCombat = true;
 
     public override Task AfterCombatEnd(CombatRoom room)
     {
-        if (Owner == null || Pile?.Type == PileType.Exhaust || Owner.Deck.Cards.Contains(this))
+        if (Owner == null || _playedThisCombat || Pile?.Type == PileType.Exhaust || Owner.Deck.Cards.Contains(this) || (DeckVersion != null && Owner.Deck.Cards.Contains(DeckVersion)))
         {
             return Task.CompletedTask;
         }

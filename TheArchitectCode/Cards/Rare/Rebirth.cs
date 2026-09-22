@@ -12,7 +12,7 @@ public sealed class Rebirth() : TheArchitectCard(2, CardType.Power, CardRarity.R
 {
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<RebirthPower>(Owner.Creature, 1m, Owner.Creature, this);
+        await PowerCmd.Apply<RebirthPower>(choiceContext, Owner.Creature, 1m, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

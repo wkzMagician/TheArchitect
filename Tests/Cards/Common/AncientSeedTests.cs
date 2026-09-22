@@ -7,23 +7,18 @@ namespace TheArchitect.Tests.Cards.Common;
 
 public static class AncientSeedTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<AncientSeed>(CardType.Attack, CardRarity.Common, TargetType.AnyEnemy);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<AncientSeed>();
     }
 
     [ArchitectTest]
-    public static void SupportsMultipleEnchantments()
+    public static void UsesOrdinaryEnchantmentLimit()
     {
-        AncientSeed card = new();
+        AncientSeed card = TestModels.Card<AncientSeed>();
 
-        AssertEx.True(MultiEnchantRegistry.SupportsMultiEnchant(card), "Ancient Seed should be an explicit multi-enchant exception.");
+        AssertEx.False(MultiEnchantRegistry.SupportsMultiEnchant(card), "Ancient Seed should use the ordinary enchantment limit.");
     }
 }

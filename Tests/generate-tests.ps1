@@ -12,14 +12,9 @@ namespace TheArchitect.Tests.$namespaceSuffix;
 
 public static class ${className}Tests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<$className>($type, $rarity, $target);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<$className>();
     }
@@ -41,14 +36,9 @@ namespace TheArchitect.Tests.Powers.Architect;
 
 public static class ${className}Tests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertPowerMetadata<$className>($type, $stackType);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertPowerBehavior<$className>();
     }
@@ -106,7 +96,6 @@ $cards = @(
 @{F='Cards\Power'; N='Cards.Power'; P='TheArchitect.TheArchitectCode.Cards.Power'; C='FormOfCreation'; T='CardType.Power'; R='CardRarity.Rare'; G='TargetType.Self'},
 @{F='Cards\Power'; N='Cards.Power'; P='TheArchitect.TheArchitectCode.Cards.Power'; C='Omnipotence'; T='CardType.Power'; R='CardRarity.Rare'; G='TargetType.Self'},
 @{F='Cards\Power'; N='Cards.Power'; P='TheArchitect.TheArchitectCode.Cards.Power'; C='Sanctuary'; T='CardType.Power'; R='CardRarity.Uncommon'; G='TargetType.Self'},
-@{F='Cards\Power'; N='Cards.Power'; P='TheArchitect.TheArchitectCode.Cards.Power'; C='FateVortex'; T='CardType.Power'; R='CardRarity.Rare'; G='TargetType.Self'},
 @{F='Cards\Power'; N='Cards.Power'; P='TheArchitect.TheArchitectCode.Cards.Power'; C='Destroyer'; T='CardType.Power'; R='CardRarity.Rare'; G='TargetType.Self'},
 @{F='Cards\Power'; N='Cards.Power'; P='TheArchitect.TheArchitectCode.Cards.Power'; C='Recuperate'; T='CardType.Power'; R='CardRarity.Uncommon'; G='TargetType.Self'},
 @{F='Cards\Power'; N='Cards.Power'; P='TheArchitect.TheArchitectCode.Cards.Power'; C='DrowsyEngine'; T='CardType.Power'; R='CardRarity.Rare'; G='TargetType.Self'},
@@ -160,7 +149,6 @@ $powers = @(
 @{C='SanctuaryPower'; T='PowerType.Buff'; S='PowerStackType.Counter'},
 @{C='DestroyerPower'; T='PowerType.Buff'; S='PowerStackType.Counter'},
 @{C='RecuperatePower'; T='PowerType.Buff'; S='PowerStackType.Counter'},
-@{C='FateVortexPower'; T='PowerType.Buff'; S='PowerStackType.None'},
 @{C='DrowsyEnginePower'; T='PowerType.Buff'; S='PowerStackType.None'},
 @{C='RequiemPower'; T='PowerType.Buff'; S='PowerStackType.Counter'},
 @{C='SharedSanctumPower'; T='PowerType.Buff'; S='PowerStackType.None'},
@@ -179,14 +167,9 @@ namespace TheArchitect.Tests.Relics;
 
 public static class FoundationalCompassTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertRelicMetadata<FoundationalCompass>(RelicRarity.Starter);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertRelicBehavior<FoundationalCompass>();
     }

@@ -31,7 +31,7 @@ public sealed class CrashingBlow() : TheArchitectCard(1, CardType.Attack, CardRa
 
         if (play.Target != null)
         {
-            await ArchitectEnchantmentHelper.ApplyVulnerable(play.Target, vulnerable, Owner.Creature, this);
+            await ArchitectEnchantmentHelper.ApplyVulnerable(choiceContext, play.Target, vulnerable, Owner.Creature, this);
         }
     }
 
@@ -41,9 +41,5 @@ public sealed class CrashingBlow() : TheArchitectCard(1, CardType.Attack, CardRa
         DynamicVars["EnchantVulnerableBonus"].UpgradeValueBy(1m);
     }
 
-    protected override string GetCombatPreviewText()
-    {
-        int vulnerable = DynamicVars["Vulnerable"].IntValue + (ArchitectEnchantmentHelper.HasAny(this) ? DynamicVars["EnchantVulnerableBonus"].IntValue : 0);
-        return $"applies {vulnerable} Vulnerable";
-    }
+    protected override string GetCombatPreviewText() => string.Empty;
 }

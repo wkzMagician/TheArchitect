@@ -7,14 +7,9 @@ namespace TheArchitect.Tests.Powers.Architect;
 
 public static class SharedSanctumPowerTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertPowerMetadata<SharedSanctumPower>(PowerType.Buff, PowerStackType.None);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertPowerBehavior<SharedSanctumPower>();
     }

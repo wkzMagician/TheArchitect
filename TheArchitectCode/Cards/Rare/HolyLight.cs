@@ -17,14 +17,16 @@ public sealed class HolyLight() : TheArchitectCard(1, CardType.Skill, CardRarity
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Cards", 1)];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Chromatic, 1);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Glam, 1);
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        List<CardModel> cards = PileType.Draw.GetPile(Owner).Cards.ToList();
+        List<CardModel> cards = PileType.Draw.GetPile(Owner).Cards
+            .Where(card => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(card, ArchitectEnchantKind.Glam))
+            .ToList();
         foreach (CardModel card in await CardSelectCmd.FromSimpleGrid(choiceContext, cards, Owner, new CardSelectorPrefs(SelectionScreenPrompt, 1, DynamicVars["Cards"].IntValue)))
         {
-            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Chromatic, 1m);
+            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Glam, 1m);
         }
     }
 

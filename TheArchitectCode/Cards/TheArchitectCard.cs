@@ -28,7 +28,7 @@ public abstract class TheArchitectCard(int cost, CardType type, CardRarity rarit
         get
         {
             string path = $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".BigCardImagePath();
-            return ResourceLoader.Exists(path) ? path : "strike_architect.png".BigCardImagePath();
+            return path;
         }
     }
 
@@ -37,7 +37,7 @@ public abstract class TheArchitectCard(int cost, CardType type, CardRarity rarit
         get
         {
             string path = $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".CardImagePath();
-            return ResourceLoader.Exists(path) ? path : "strike_architect.png".CardImagePath();
+            return path;
         }
     }
 
@@ -57,6 +57,8 @@ public abstract class TheArchitectCard(int cost, CardType type, CardRarity rarit
     protected bool WasEnchantedAtCombatStart { get; private set; }
 
     protected bool ShuffleIntoDrawPileThisCombat { get; set; }
+    protected virtual bool ShufflesAfterPlay => ShuffleIntoDrawPileThisCombat;
+    protected virtual CardPilePosition ShufflePosition => CardPilePosition.Random;
 
     protected virtual string GetCombatPreviewText()
     {
@@ -103,21 +105,27 @@ public abstract class TheArchitectCard(int cost, CardType type, CardRarity rarit
         }
 
         TimesPlayedThisCombat++;
-        ArchitectCombatState.RecordPlayed(this);
         return Task.CompletedTask;
     }
 
-    protected override PileType GetResultPileType()
+    protected override PileType GetResultPileTypeForCardPlay()
     {
-        if (ShuffleIntoDrawPileThisCombat)
+        if (ShufflesAfterPlay || ArchitectCombatState.ShouldShuffle(this))
         {
             return PileType.Draw;
         }
 
-        return base.GetResultPileType();
+        return base.GetResultPileTypeForCardPlay();
+    }
+
+    public override (PileType, CardPilePosition) ModifyCardPlayResultPileTypeAndPosition(CardModel card, bool isAutoPlay, ResourceInfo resources, PileType pileType, CardPilePosition position)
+    {
+        return card == this && (ShufflesAfterPlay || ArchitectCombatState.ShouldShuffle(this))
+            ? (PileType.Draw, ShufflePosition) : (pileType, position);
     }
 
     protected override void AddExtraArgsToDescription(LocString description)
+
     {
         base.AddExtraArgsToDescription(description);
         bool inCombat = CombatState != null || Owner?.PlayerCombatState != null;
@@ -182,20 +190,21 @@ public abstract class TheArchitectCard(int cost, CardType type, CardRarity rarit
     {
         EnchantmentModel enchantment = kind switch
         {
+            ArchitectEnchantKind.Adroit => new Adroit(),
             ArchitectEnchantKind.Sharp => new Sharp(),
             ArchitectEnchantKind.Nimble => new Nimble(),
             ArchitectEnchantKind.Swift => new Swift(),
             ArchitectEnchantKind.Instinct => new Instinct(),
-            ArchitectEnchantKind.Vitality => new Vigorous(),
+            ArchitectEnchantKind.Vigorous => new Vigorous(),
             ArchitectEnchantKind.Momentum => new Momentum(),
-            ArchitectEnchantKind.Seed => new Sown(),
-            ArchitectEnchantKind.Chromatic => new Glam(),
+            ArchitectEnchantKind.Sown => new Sown(),
+            ArchitectEnchantKind.Glam => new Glam(),
             ArchitectEnchantKind.PerfectFit => new PerfectFit(),
-            ArchitectEnchantKind.Stable => new Steady(),
-            ArchitectEnchantKind.Serpentine => new Slither(),
-            ArchitectEnchantKind.Corruption => new Corrupted(),
-            ArchitectEnchantKind.Ember => new TezcatarasEmber(),
-            ArchitectEnchantKind.SoulPower => new SoulsPower(),
+            ArchitectEnchantKind.Steady => new Steady(),
+            ArchitectEnchantKind.Slither => new Slither(),
+            ArchitectEnchantKind.Corrupted => new Corrupted(),
+            ArchitectEnchantKind.TezcatarasEmber => new TezcatarasEmber(),
+            ArchitectEnchantKind.SoulsPower => new SoulsPower(),
             _ => new Sharp()
         };
 

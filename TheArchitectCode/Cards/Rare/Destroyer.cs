@@ -14,7 +14,7 @@ public sealed class Destroyer() : TheArchitectCard(1, CardType.Power, CardRarity
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<DestroyerPower>(Owner.Creature, DynamicVars["Strength"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<DestroyerPower>(choiceContext, Owner.Creature, DynamicVars["Strength"].BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

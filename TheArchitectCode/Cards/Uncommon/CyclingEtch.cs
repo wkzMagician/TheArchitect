@@ -9,6 +9,12 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class CyclingEtch() : TheArchitectCard(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
+    protected override bool ShufflesAfterPlay => true;
+    public override Task AfterCardPlayedLate(PlayerChoiceContext context, CardPlay play)
+    {
+        if (play.Card == this) ArchitectEnchantmentHelper.Refresh(this);
+        return Task.CompletedTask;
+    }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

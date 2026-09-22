@@ -32,13 +32,16 @@ public sealed class CursePurge() : TheArchitectCard(1, CardType.Skill, CardRarit
             return;
         }
 
-        foreach (CardModel curse in curses.Where(card => card.Pile?.Type != PileType.Deck))
+        int removedCount = curses.Select(card => card.DeckVersion ?? card).Distinct().Count();
+        foreach (CardModel curse in curses)
         {
-            await CardPileCmd.Add(curse, PileType.Deck);
+            if (curse is Drowsy drowsy) drowsy.PreventPersistence();
+            if (curse.Pile?.Type != PileType.Deck)
+                await CardPileCmd.RemoveFromCombat(curse);
         }
 
-        await CardPileCmd.RemoveFromDeck(curses);
-        await PowerCmd.Apply<PlatingPower>(Owner.Creature, curses.Count * DynamicVars["Plating"].BaseValue, Owner.Creature, this);
+        await CardPileCmd.RemoveFromDeck(curses.Where(card => Owner.Deck.Cards.Contains(card)).ToList());
+        await PowerCmd.Apply<PlatingPower>(choiceContext, Owner.Creature, removedCount * DynamicVars["Plating"].BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

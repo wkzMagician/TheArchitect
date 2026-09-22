@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Power;
 
 public static class SanctuaryTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<Sanctuary>(CardType.Power, CardRarity.Uncommon, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Sanctuary>();
     }

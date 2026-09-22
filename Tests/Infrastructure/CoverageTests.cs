@@ -2,6 +2,7 @@ using System.Reflection;
 using TheArchitect.TheArchitectCode.Cards;
 using TheArchitect.TheArchitectCode.Powers;
 using TheArchitect.TheArchitectCode.Relics;
+using TheArchitect.TheArchitectCode.Potions;
 
 namespace TheArchitect.Tests.Infrastructure;
 
@@ -18,7 +19,8 @@ public static class CoverageTests
                 typeof(TheArchitectCard).IsAssignableFrom(type) ||
             type.FullName == "TheArchitect.TheArchitectCode.Cards.Tokens.Drowsy" ||
                 typeof(TheArchitectPower).IsAssignableFrom(type) ||
-                typeof(TheArchitectRelic).IsAssignableFrom(type))
+                typeof(TheArchitectRelic).IsAssignableFrom(type) ||
+                typeof(TheArchitectPotion).IsAssignableFrom(type))
             .Select(type => $"{type.Name}Tests")
             .ToHashSet(StringComparer.Ordinal);
 

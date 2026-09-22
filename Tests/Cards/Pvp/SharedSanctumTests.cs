@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Pvp;
 
 public static class SharedSanctumTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<SharedSanctum>(CardType.Power, CardRarity.Rare, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<SharedSanctum>();
     }

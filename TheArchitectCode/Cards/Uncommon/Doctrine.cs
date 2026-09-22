@@ -20,12 +20,12 @@ public sealed class Doctrine() : TheArchitectCard(2, CardType.Skill, CardRarity.
 
         if (sharp > 0)
         {
-            await PowerCmd.Apply<StrengthPower>(Owner.Creature, sharp, Owner.Creature, this);
+            await PowerCmd.Apply<StrengthPower>(choiceContext, Owner.Creature, sharp, Owner.Creature, this);
         }
 
         if (nimble > 0)
         {
-            await PowerCmd.Apply<DexterityPower>(Owner.Creature, nimble, Owner.Creature, this);
+            await PowerCmd.Apply<DexterityPower>(choiceContext, Owner.Creature, nimble, Owner.Creature, this);
         }
 
         foreach (CardModel card in hand)

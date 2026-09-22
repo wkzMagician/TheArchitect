@@ -9,6 +9,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class Proliferation() : TheArchitectCard(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
+    protected override bool ShufflesAfterPlay => IsUpgraded || base.ShufflesAfterPlay;
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(1, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

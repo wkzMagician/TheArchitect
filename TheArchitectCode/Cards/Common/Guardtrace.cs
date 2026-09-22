@@ -19,7 +19,7 @@ public sealed class Guardtrace() : TheArchitectCard(2, CardType.Skill, CardRarit
         new DynamicVar("Clever", 4)
     ];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Stable, 1);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Adroit, DynamicVars["Clever"].IntValue);
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
@@ -27,7 +27,7 @@ public sealed class Guardtrace() : TheArchitectCard(2, CardType.Skill, CardRarit
         CardModel? card = await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", static _ => true, this);
         if (card != null)
         {
-            ArchitectEnchantmentHelper.AddRaw(card, ModelDb.Enchantment<Adroit>().ToMutable(), DynamicVars["Clever"].BaseValue);
+            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Adroit, DynamicVars["Clever"].BaseValue);
         }
     }
 

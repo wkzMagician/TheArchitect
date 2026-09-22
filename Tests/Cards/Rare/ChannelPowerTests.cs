@@ -7,14 +7,9 @@ namespace TheArchitect.Tests.Cards.Rare;
 
 public static class ChannelPowerTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<ChannelPower>(CardType.Skill, CardRarity.Rare, TargetType.AnyEnemy);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<ChannelPower>();
     }

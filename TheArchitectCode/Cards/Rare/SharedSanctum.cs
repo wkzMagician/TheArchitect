@@ -18,7 +18,7 @@ public sealed class SharedSanctum() : TheArchitectCard(2, CardType.Power, CardRa
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<SharedSanctumPower>(Owner.Creature, 1m, Owner.Creature, this);
+        await PowerCmd.Apply<SharedSanctumPower>(choiceContext, Owner.Creature, 1m, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

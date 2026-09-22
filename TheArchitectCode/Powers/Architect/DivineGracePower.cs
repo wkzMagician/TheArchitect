@@ -13,7 +13,15 @@ public sealed class DivineGracePower : TheArchitectPower
 
     public override PowerStackType StackType => PowerStackType.None;
 
-    public override async Task BeforeTurnEnd(PlayerChoiceContext choiceContext, MegaCrit.Sts2.Core.Combat.CombatSide side)
+    public override Task BeforeSideTurnEnd(
+        PlayerChoiceContext choiceContext,
+        MegaCrit.Sts2.Core.Combat.CombatSide side,
+        IEnumerable<MegaCrit.Sts2.Core.Entities.Creatures.Creature> participants)
+    {
+        return BeforeTurnEnd(choiceContext, side);
+    }
+
+    public async Task BeforeTurnEnd(PlayerChoiceContext choiceContext, MegaCrit.Sts2.Core.Combat.CombatSide side)
     {
         if (Owner.Player == null || side != Owner.Player.Creature.CombatState!.CurrentSide)
         {

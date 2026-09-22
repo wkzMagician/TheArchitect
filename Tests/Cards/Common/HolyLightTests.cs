@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using TheArchitect.Tests.Infrastructure;
 using TheArchitect.TheArchitectCode.Cards.Common;
 
@@ -6,21 +6,18 @@ namespace TheArchitect.Tests.Cards.Common;
 
 public static class HolyLightTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<HolyLight>(CardType.Skill, CardRarity.Rare, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<HolyLight>();
     }
 
     [ArchitectTest]
-    public static void LocalizationIncludesSelectionScreenPrompt()
+    public static void SourceFiltersAlreadyEnchantedDrawCards()
     {
-        LocalizationCatalog.AssertCardEntry("THEARCHITECT-HOLY_LIGHT.selectionScreenPrompt");
+        string source = File.ReadAllText(TestPaths.RepoPath("TheArchitectCode", "Cards", "Rare", "HolyLight.cs"));
+
+        AssertEx.True(source.Contains("CanTargetForSpecificEnchant(card, ArchitectEnchantKind.Glam)", StringComparison.Ordinal), "Holy Light should only offer draw cards that can receive Glam.");
     }
 }

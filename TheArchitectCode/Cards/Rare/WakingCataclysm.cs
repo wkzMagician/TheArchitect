@@ -10,7 +10,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
 public sealed class WakingCataclysm() : TheArchitectCard(3, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(24, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(32, ValueProp.Move)];
 
     public override async Task BeforeCombatStart()
     {
@@ -21,6 +21,7 @@ public sealed class WakingCataclysm() : TheArchitectCard(3, CardType.Attack, Car
         }
 
         ArchitectEnchantmentHelper.RemoveAll(this);
+        await CardCmd.AutoPlay(new BlockingPlayerChoiceContext(), this, null);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

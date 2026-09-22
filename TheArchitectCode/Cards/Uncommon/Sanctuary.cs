@@ -14,7 +14,7 @@ public sealed class Sanctuary() : TheArchitectCard(1, CardType.Power, CardRarity
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<SanctuaryPower>(Owner.Creature, DynamicVars["Block"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<SanctuaryPower>(choiceContext, Owner.Creature, DynamicVars["Block"].BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

@@ -1,5 +1,27 @@
 {
   "THEARCHITECT-FOUNDATIONAL_COMPASS.title": "Foundational Compass",
   "THEARCHITECT-FOUNDATIONAL_COMPASS.description": "At the start of each combat, randomly choose 1 card in your starting hand that can be Enchanted. Give it a random basic Enchantment ([gold]Nimble[/gold] 2, [gold]Sharp[/gold] 2, [gold]Sown[/gold] 1, [gold]Swift[/gold] 2, or [gold]Instinct[/gold] 2).",
-  "THEARCHITECT-FOUNDATIONAL_COMPASS.flavor": "Every structure begins with a marked line."
+  "THEARCHITECT-FOUNDATIONAL_COMPASS.flavor": "Every structure begins with a marked line.",
+  "THEARCHITECT-CALIBRATION_RULER.title": "Calibration Ruler",
+  "THEARCHITECT-CALIBRATION_RULER.description": "The first time each turn you successfully Enchant an unenchanted card, gain {Block} Block.",
+  "THEARCHITECT-CALIBRATION_RULER.flavor": "Measure twice, cast once.",
+  "THEARCHITECT-COPYISTS_QUILL.title": "Copyist’s Quill",
+  "THEARCHITECT-COPYISTS_QUILL.description": "The first time each turn you play a card you have already played this combat, draw 1 card.",
+  "THEARCHITECT-COPYISTS_QUILL.flavor": "A familiar line invites the next.",
+  "THEARCHITECT-DISMANTLING_PLIERS.title": "Dismantling Pliers",
+  "THEARCHITECT-DISMANTLING_PLIERS.description": "The first time each turn you actively remove Enchantments from a card, gain 1 Energy. Transferring Enchantments does not count.",
+  "THEARCHITECT-DISMANTLING_PLIERS.flavor": "Nothing well made is ever truly wasted.",
+  "THEARCHITECT-REFLOW_INKWELL.title": "Reflow Inkwell",
+  "THEARCHITECT-REFLOW_INKWELL.description": "At the end of your turn, if you played at least 3 different Enchanted cards, put a random Enchanted card from your discard pile on top of your draw pile.",
+  "THEARCHITECT-REFLOW_INKWELL.flavor": "The last stroke becomes the first.",
+  "THEARCHITECT-PALIMPSEST.title": "Palimpsest",
+  "THEARCHITECT-PALIMPSEST.description": "Once per combat, after you play the same card for the third time, gain 2 Energy and draw 2 cards.",
+  "THEARCHITECT-PALIMPSEST.flavor": "The page remembers every revision.",
+  "THEARCHITECT-BLANK_CODEX.title": "Blank Codex",
+  "THEARCHITECT-BLANK_CODEX.description": "At the end of your turn, if you played at least 1 card and no Enchanted cards this turn, gain {Block} Block.",
+  "THEARCHITECT-BLANK_CODEX.flavor": "Possibility needs no inscription.",
+  "THEARCHITECT-FINALIZING_SEAL.title": "Finalizing Seal",
+  "THEARCHITECT-FINALIZING_SEAL.description": "Upon pickup, choose a card in your deck. Whenever you play that card in combat, refresh its remaining Enchantments afterward. Does not restore removed Enchantments.",
+  "THEARCHITECT-FINALIZING_SEAL.flavor": "Final does not mean finished.",
+  "THEARCHITECT-FINALIZING_SEAL.selectionScreenPrompt": "Choose a card to seal."
 }

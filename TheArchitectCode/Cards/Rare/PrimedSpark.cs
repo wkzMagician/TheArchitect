@@ -30,7 +30,7 @@ public sealed class PrimedSpark() : TheArchitectCard(0, CardType.Skill, CardRari
         }
 
         ArchitectEnchantKind kind = Owner?.RunState.Rng.CombatCardSelection.NextInt(2) == 0
-            ? ArchitectEnchantKind.Seed
+            ? ArchitectEnchantKind.Sown
             : ArchitectEnchantKind.Swift;
         ApplyStartingEnchantment(kind, IsUpgraded ? 2 : 1);
     }

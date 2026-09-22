@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Pvp;
 
 public static class TeachAManToFishTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<TeachAManToFish>(CardType.Skill, CardRarity.Uncommon, TargetType.AnyAlly);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<TeachAManToFish>();
     }

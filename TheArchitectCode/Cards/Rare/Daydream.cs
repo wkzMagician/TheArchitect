@@ -25,7 +25,7 @@ public sealed class Daydream() : TheArchitectCard(2, CardType.Skill, CardRarity.
     {
         foreach (CardModel card in ArchitectEnchantmentHelper.Hand(Owner))
         {
-            ArchitectEnchantmentHelper.AddRandomBasic(Owner, card);
+            ArchitectEnchantmentHelper.AddRandomCompatible(Owner, card);
         }
         return Task.CompletedTask;
     }

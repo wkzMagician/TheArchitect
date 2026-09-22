@@ -10,16 +10,16 @@ namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
 public sealed class BlightAnointing() : TheArchitectCard(3, CardType.Power, CardRarity.Rare, TargetType.Self)
 {
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Corruption, 1);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Corrupted, 1);
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         foreach (CardModel card in ArchitectEnchantmentHelper.Hand(Owner).Where(card => card.Type == CardType.Attack))
         {
-            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Corruption, 1m);
+        ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Corrupted, 1m);
         }
 
-        await PowerCmd.Apply<BlightAnointingPower>(Owner.Creature, 1, Owner.Creature, this);
+        await PowerCmd.Apply<BlightAnointingPower>(choiceContext, Owner.Creature, 1, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

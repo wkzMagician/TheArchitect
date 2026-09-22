@@ -14,7 +14,7 @@ public sealed class Requiem() : TheArchitectCard(1, CardType.Power, CardRarity.R
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<RequiemPower>(Owner.Creature, DynamicVars["StrengthLoss"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<RequiemPower>(choiceContext, Owner.Creature, DynamicVars["StrengthLoss"].BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

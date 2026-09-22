@@ -11,11 +11,42 @@ namespace TheArchitect.Tests.Helpers;
 public static class ArchitectEnchantmentHelperTests
 {
     [ArchitectTest]
+    public static void ArchitectEnchantKindUsesCanonicalEnchantmentNames()
+    {
+        string[] expected =
+        [
+            "Adroit",
+            "Corrupted",
+            "Glam",
+            "Instinct",
+            "Momentum",
+            "Nimble",
+            "PerfectFit",
+            "Sharp",
+            "Slither",
+            "SoulsPower",
+            "Sown",
+            "Steady",
+            "Swift",
+            "TezcatarasEmber",
+            "Vigorous"
+        ];
+
+        string[] actual = Enum.GetNames<ArchitectEnchantKind>().OrderBy(name => name).ToArray();
+
+        AssertEx.Equal(expected.Length, actual.Length, "ArchitectEnchantKind should cover each supported canonical enchantment exactly once.");
+        for (int i = 0; i < expected.Length; i++)
+        {
+            AssertEx.Equal(expected[i], actual[i], "ArchitectEnchantKind should use the game's canonical enchantment names.");
+        }
+    }
+
+    [ArchitectTest]
     public static void BasicEnchantAmountsMatchConfiguredValues()
     {
         AssertEx.Equal(2, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Nimble), "Nimble should be a 2-stack basic enchant.");
         AssertEx.Equal(2, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Sharp), "Sharp should be a 2-stack basic enchant.");
-        AssertEx.Equal(1, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Seed), "Sown should be a 1-stack basic enchant.");
+        AssertEx.Equal(1, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Sown), "Sown should be a 1-stack basic enchant.");
         AssertEx.Equal(2, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Swift), "Swift should be a 2-stack basic enchant.");
         AssertEx.Equal(2, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Instinct), "Instinct should be a 2-stack basic enchant.");
     }
@@ -23,9 +54,9 @@ public static class ArchitectEnchantmentHelperTests
     [ArchitectTest]
     public static void TemperingOptionsForUsesCompatibleEnchantments()
     {
-        IReadOnlyList<ArchitectEnchantKind> strikeOptions = ArchitectEnchantmentHelper.TemperingOptionsFor(new StrikeArchitect());
-        IReadOnlyList<ArchitectEnchantKind> defendOptions = ArchitectEnchantmentHelper.TemperingOptionsFor(new DefendArchitect());
-        IReadOnlyList<ArchitectEnchantKind> blockAttackOptions = ArchitectEnchantmentHelper.TemperingOptionsFor(new WardedCut());
+        IReadOnlyList<ArchitectEnchantKind> strikeOptions = ArchitectEnchantmentHelper.TemperingOptionsFor(TestModels.Card<StrikeArchitect>());
+        IReadOnlyList<ArchitectEnchantKind> defendOptions = ArchitectEnchantmentHelper.TemperingOptionsFor(TestModels.Card<DefendArchitect>());
+        IReadOnlyList<ArchitectEnchantKind> blockAttackOptions = ArchitectEnchantmentHelper.TemperingOptionsFor(TestModels.Card<WardedCut>());
 
         AssertEx.Equal(1, strikeOptions.Count, "Tempering should offer one enchantment for non-blocking attacks");
         AssertEx.Equal(ArchitectEnchantKind.Sharp, strikeOptions[0], "Tempering should offer Sharp for non-blocking attacks");
@@ -47,7 +78,7 @@ public static class ArchitectEnchantmentHelperTests
     [ArchitectTest]
     public static void OrdinaryCardsDoNotSupportMultipleEnchantments()
     {
-        WardedCut card = new();
+        WardedCut card = TestModels.Card<WardedCut>();
 
         AssertEx.False(MultiEnchantRegistry.SupportsMultiEnchant(card), "Ordinary cards should reject multiple enchantments by default.");
     }

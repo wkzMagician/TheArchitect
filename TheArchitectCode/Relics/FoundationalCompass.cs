@@ -13,6 +13,10 @@ public sealed class FoundationalCompass : TheArchitectRelic
 
     public override RelicRarity Rarity => RelicRarity.Starter;
 
+    public override string PackedIconPath => "res://TheArchitect/images/atlases/relic_atlas.sprites/foundational_compass_v2.tres";
+    protected override string PackedIconOutlinePath => "res://TheArchitect/images/atlases/relic_outline_atlas.sprites/foundational_compass_v2.tres";
+    protected override string BigIconPath => "res://TheArchitect/images/relics/big/foundational_compass_v2.png";
+
     public override Task BeforeCombatStart()
     {
         _triggeredThisCombat = false;

@@ -23,7 +23,7 @@ public sealed class OpeningDraft() : TheArchitectCard(0, CardType.Skill, CardRar
             choiceContext,
             Owner,
             $"{Id.Entry}.selectionScreenPrompt",
-            target => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(target, ArchitectEnchantKind.Momentum),
+            target => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(target, ArchitectEnchantKind.Swift),
             this);
         if (card != null)
         {

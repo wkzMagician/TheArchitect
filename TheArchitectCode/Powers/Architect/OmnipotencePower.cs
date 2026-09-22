@@ -25,7 +25,7 @@ public sealed class OmnipotencePower : TheArchitectPower
             return Task.CompletedTask;
         }
 
-        List<CardModel> choices = PileType.Hand.GetPile(player).Cards.Where(ArchitectEnchantmentHelper.CanTargetForRandomBasic).ToList();
+        List<CardModel> choices = PileType.Hand.GetPile(player).Cards.Where(ArchitectEnchantmentHelper.CanTargetForRandomEnchant).ToList();
         if (choices.Count == 0)
         {
             return Task.CompletedTask;
@@ -35,7 +35,7 @@ public sealed class OmnipotencePower : TheArchitectPower
         {
             CardModel card = player.RunState.Rng.CombatCardSelection.NextItem(choices)!;
             choices.Remove(card);
-            ArchitectEnchantmentHelper.AddRandomBasic(player, card);
+            ArchitectEnchantmentHelper.AddRandomCompatible(player, card);
         }
 
         return Task.CompletedTask;

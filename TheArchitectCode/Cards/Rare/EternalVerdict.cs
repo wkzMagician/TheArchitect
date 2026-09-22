@@ -18,11 +18,11 @@ public sealed class EternalVerdict() : TheArchitectCard(2, CardType.Attack, Card
 
         List<CardModel> commons = ArchitectEnchantmentHelper.Hand(Owner)
             .Where(card => card.Rarity == CardRarity.Common)
-            .Where(card => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(card, ArchitectEnchantKind.Ember))
+            .Where(card => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(card, ArchitectEnchantKind.TezcatarasEmber))
             .ToList();
         if (commons.Count > 0)
         {
-            ArchitectEnchantmentHelper.Add(Owner.RunState.Rng.CombatCardSelection.NextItem(commons)!, ArchitectEnchantKind.Ember, 1m);
+        ArchitectEnchantmentHelper.Add(Owner.RunState.Rng.CombatCardSelection.NextItem(commons)!, ArchitectEnchantKind.TezcatarasEmber, 1m);
         }
     }
 

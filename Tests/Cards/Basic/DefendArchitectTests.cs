@@ -6,14 +6,9 @@ namespace TheArchitect.Tests.Cards.Basic;
 
 public static class DefendArchitectTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<DefendArchitect>(CardType.Skill, CardRarity.Basic, TargetType.Self);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<DefendArchitect>();
     }

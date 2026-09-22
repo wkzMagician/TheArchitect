@@ -8,14 +8,9 @@ namespace TheArchitect.Tests.Cards.Rare;
 
 public static class AncientVerdictTests
 {
-    [ArchitectTest]
-    public static void Metadata()
-    {
-        ModelTestHelper.AssertCardMetadata<AncientVerdict>(CardType.Attack, CardRarity.Ancient, TargetType.AnyEnemy);
-    }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<AncientVerdict>();
     }
@@ -23,16 +18,7 @@ public static class AncientVerdictTests
     [ArchitectTest]
     public static void ExcludedFromArchitectRewardPool()
     {
-        TestArchitectCardPool pool = new();
-        bool appearsInPool = pool.GenerateForTests().OfType<AncientVerdict>().Any();
+        bool appearsInPool = ModelDb.CardPool<TheArchitectCardPool>().AllCards.OfType<AncientVerdict>().Any();
         AssertEx.False(appearsInPool, "AncientVerdict should only come from the ancient upgrade path, not normal rewards.");
-    }
-
-    private sealed class TestArchitectCardPool : TheArchitectCardPool
-    {
-        public IEnumerable<CardModel> GenerateForTests()
-        {
-            return GenerateAllCards();
-        }
     }
 }

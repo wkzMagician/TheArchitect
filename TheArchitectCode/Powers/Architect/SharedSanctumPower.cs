@@ -18,7 +18,15 @@ public sealed class SharedSanctumPower : TheArchitectPower
 
     public override PowerStackType StackType => PowerStackType.None;
 
-    public override Task BeforeTurnEnd(PlayerChoiceContext choiceContext, MegaCrit.Sts2.Core.Combat.CombatSide side)
+    public override Task BeforeSideTurnEnd(
+        PlayerChoiceContext choiceContext,
+        MegaCrit.Sts2.Core.Combat.CombatSide side,
+        IEnumerable<MegaCrit.Sts2.Core.Entities.Creatures.Creature> participants)
+    {
+        return BeforeTurnEnd(choiceContext, side);
+    }
+
+    public Task BeforeTurnEnd(PlayerChoiceContext choiceContext, MegaCrit.Sts2.Core.Combat.CombatSide side)
     {
         if (side != Owner.Side || CombatState == null)
         {
@@ -27,14 +35,14 @@ public sealed class SharedSanctumPower : TheArchitectPower
 
         foreach (Player player in CombatState.PlayerCreatures.Where(creature => creature.IsAlive).Select(creature => creature.Player!).Where(player => player != null))
         {
-            List<CardModel> hand = ArchitectEnchantmentHelper.Hand(player).Where(ArchitectEnchantmentHelper.CanTargetForRandomBasic).ToList();
+            List<CardModel> hand = ArchitectEnchantmentHelper.Hand(player).Where(ArchitectEnchantmentHelper.CanTargetForRandomEnchant).ToList();
             if (hand.Count == 0)
             {
                 continue;
             }
 
             CardModel chosen = player.RunState.Rng.CombatCardSelection.NextItem(hand)!;
-            ArchitectEnchantmentHelper.AddRandomBasic(player, chosen);
+            ArchitectEnchantmentHelper.AddRandomCompatible(Owner.Player!, chosen);
         }
 
         return Task.CompletedTask;

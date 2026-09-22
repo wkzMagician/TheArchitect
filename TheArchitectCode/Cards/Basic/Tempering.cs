@@ -17,14 +17,14 @@ public sealed class Tempering() : TheArchitectCard(1, CardType.Skill, CardRarity
         ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Sharp, DynamicVars["EnchantAmount"].IntValue)
             .Concat(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Nimble, DynamicVars["EnchantAmount"].IntValue));
 
-    private static TemperingChoiceCard CreateChoiceCard(ArchitectEnchantKind kind)
+    private TemperingChoiceCard CreateChoiceCard(ArchitectEnchantKind kind)
     {
-        return kind switch
+        return (TemperingChoiceCard)(kind switch
         {
-            ArchitectEnchantKind.Sharp => (TemperingChoiceCard)ModelDb.Card<TemperingSharpChoice>().ToMutable(),
-            ArchitectEnchantKind.Nimble => (TemperingChoiceCard)ModelDb.Card<TemperingNimbleChoice>().ToMutable(),
+            ArchitectEnchantKind.Sharp => Owner.Creature.CombatState!.CreateCard(ModelDb.Card<TemperingSharpChoice>(), Owner),
+            ArchitectEnchantKind.Nimble => Owner.Creature.CombatState!.CreateCard(ModelDb.Card<TemperingNimbleChoice>(), Owner),
             _ => throw new InvalidOperationException($"Unsupported Tempering option {kind}")
-        };
+        });
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
@@ -50,9 +50,7 @@ public sealed class Tempering() : TheArchitectCard(1, CardType.Skill, CardRarity
 
         List<CardModel> choiceCards = options.Select(kind =>
         {
-            CardModel choice = CreateChoiceCard(kind);
-            choice.Owner = Owner;
-            return choice;
+            return (CardModel)CreateChoiceCard(kind);
         }).ToList();
         TemperingChoiceCard? selected = await CardSelectCmd.FromChooseACardScreen(choiceContext, choiceCards, Owner) as TemperingChoiceCard;
         if (selected == null)

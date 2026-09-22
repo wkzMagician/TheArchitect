@@ -1,20 +1,7 @@
-using System.Linq;
-using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Helpers;
-using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Enchantments;
-using MegaCrit.Sts2.Core.Models.Powers;
-using MegaCrit.Sts2.Core.ValueProps;
-using TheArchitect.TheArchitectCode.Cards.Tokens;
-using TheArchitect.TheArchitectCode.Enchantments.Framework;
-using TheArchitect.TheArchitectCode.Helpers;
+using TheArchitect.TheArchitectCode.Powers.Architect;
 
 namespace TheArchitect.TheArchitectCode.Cards.Ancient;
 
@@ -22,18 +9,8 @@ public sealed class InfiniteBlueprint() : TheArchitectCard(2, CardType.Power, Ca
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Innate];
 
-    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-    {
-        foreach (CardModel card in Owner.PlayerCombatState!.AllCards)
-        {
-            MultiEnchantRegistry.Register(card);
-        }
+    protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play) =>
+        PowerCmd.Apply<InfiniteBlueprintPower>(choiceContext, Owner.Creature, 1m, Owner.Creature, this);
 
-        await Task.CompletedTask;
-    }
-
-    protected override void OnUpgrade()
-    {
-        EnergyCost.UpgradeBy(-1);
-    }
+    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 }

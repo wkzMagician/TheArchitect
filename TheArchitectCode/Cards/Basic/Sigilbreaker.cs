@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using TheArchitect.TheArchitectCode.Helpers;
@@ -29,5 +30,13 @@ public sealed class Sigilbreaker() : TheArchitectCard(1, CardType.Attack, CardRa
     protected override string GetCombatPreviewText()
     {
         return Owner == null ? string.Empty : ArchitectEnchantmentHelper.DescribeSigilbreakerDamage(this, PileType.Hand.GetPile(Owner).Cards);
+    }
+
+    protected override void AddExtraArgsToDescription(LocString description)
+    {
+        base.AddExtraArgsToDescription(description);
+        int enchantedInHand = Owner == null ? 0 : ArchitectEnchantmentHelper.CountOtherEnchantedCards(this, PileType.Hand.GetPile(Owner).Cards);
+        int damage = DynamicVars.Damage.IntValue + enchantedInHand * DynamicVars["BonusDamage"].IntValue;
+        description.Add("DynamicDamage", damage);
     }
 }

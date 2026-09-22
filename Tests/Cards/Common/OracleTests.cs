@@ -6,14 +6,17 @@ namespace TheArchitect.Tests.Cards.Common;
 
 public static class OracleTests
 {
+
     [ArchitectTest]
-    public static void Metadata()
+    public static void HasRetain()
     {
-        ModelTestHelper.AssertCardMetadata<Oracle>(CardType.Skill, CardRarity.Common, TargetType.Self);
+        Oracle card = TestModels.Card<Oracle>();
+
+        AssertEx.True(card.Keywords.Contains(CardKeyword.Retain), "Oracle should Retain.");
     }
 
     [ArchitectTest]
-    public static Task SpecificEffect()
+    public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Oracle>();
     }

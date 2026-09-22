@@ -18,14 +18,22 @@ public sealed class RecuperatePower : TheArchitectPower
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    public override async Task BeforeTurnEnd(PlayerChoiceContext choiceContext, MegaCrit.Sts2.Core.Combat.CombatSide side)
+    public override Task BeforeSideTurnEnd(
+        PlayerChoiceContext choiceContext,
+        MegaCrit.Sts2.Core.Combat.CombatSide side,
+        IEnumerable<MegaCrit.Sts2.Core.Entities.Creatures.Creature> participants)
     {
-        if (Owner.Player == null || side != Owner.Player.Creature.CombatState!.CurrentSide)
+        return BeforeTurnEnd(choiceContext, side);
+    }
+
+    public async Task BeforeTurnEnd(PlayerChoiceContext choiceContext, MegaCrit.Sts2.Core.Combat.CombatSide side)
+    {
+        if (Owner.Player == null || side != MegaCrit.Sts2.Core.Combat.CombatSide.Player)
         {
             return;
         }
 
-        if (ArchitectCombatState.EnchantedCardsPlayedThisTurn(Owner.Player.Creature.CombatState) == 0)
+        if (ArchitectCombatState.EnchantedCardsPlayedThisTurn(Owner.Player) == 0)
         {
             await CreatureCmd.GainBlock(Owner, Amount, MegaCrit.Sts2.Core.ValueProps.ValueProp.Move, null);
         }

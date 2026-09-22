@@ -14,6 +14,6 @@ public sealed class TestSubject() : TheArchitectCard(0, CardType.Power, CardRari
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await PowerCmd.Apply<TestSubjectPower>(Owner.Creature, 1m, Owner.Creature, this);
+        await PowerCmd.Apply<TestSubjectPower>(choiceContext, Owner.Creature, 1m, Owner.Creature, this);
     }
 }
