@@ -20,6 +20,12 @@ public sealed class CrashingBlow() : TheArchitectCard(1, CardType.Attack, CardRa
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DynamicVar("Vulnerable", 1), new DynamicVar("EnchantVulnerableBonus", 1)];
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        HoverTipFactory.FromPower<VulnerablePower>(),
+        ArchitectKeywordHoverTips.Enchant
+    ];
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         await ArchitectEnchantmentHelper.Attack(this, choiceContext, play.Target, DynamicVars.Damage.BaseValue);

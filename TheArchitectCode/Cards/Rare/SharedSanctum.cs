@@ -14,6 +14,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
 public sealed class SharedSanctum() : TheArchitectCard(2, CardType.Power, CardRarity.Rare, TargetType.Self)
 {
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
     public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

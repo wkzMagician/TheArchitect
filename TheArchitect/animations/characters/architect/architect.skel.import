@@ -1,0 +1,14 @@
+[remap]
+
+importer="spine.skel"
+type="SpineSkeletonFileResource"
+uid="uid://b407xoulao1t"
+path="res://.godot/imported/architect.skel-5ecd4a50f8675aa9814759ff9f71b03d.spskel"
+
+[deps]
+
+source_file="res://TheArchitect/animations/characters/architect/architect.skel"
+dest_files=["res://.godot/imported/architect.skel-5ecd4a50f8675aa9814759ff9f71b03d.spskel"]
+
+[params]
+

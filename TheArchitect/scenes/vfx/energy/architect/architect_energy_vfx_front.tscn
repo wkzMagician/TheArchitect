@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://TheArchitectCode/Visuals/ArchitectParticlesContainer.cs" id="1"]
+[ext_resource type="Texture2D" path="res://TheArchitect/images/vfx/vfx_constant_fire/fire_texture_2.png" id="2"]
+[ext_resource type="Texture2D" path="res://TheArchitect/images/vfx/light.png" id="3"]
+
+[node name="ArchitectEnergyVfxFront" type="Node2D" node_paths=PackedStringArray("_architectParticles")]
+script = ExtResource("1")
+_architectParticles = [NodePath("Fire"), NodePath("Glow")]
+
+[node name="Fire" type="GPUParticles2D" parent="."]
+amount = 16
+lifetime = 0.8
+one_shot = false
+texture = ExtResource("2")
+position = Vector2(0, -8)
+
+[node name="Glow" type="GPUParticles2D" parent="."]
+amount = 8
+lifetime = 1.2
+one_shot = false
+texture = ExtResource("3")
+position = Vector2(0, -12)

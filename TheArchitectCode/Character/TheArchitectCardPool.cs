@@ -7,6 +7,9 @@ namespace TheArchitect.TheArchitectCode.Character;
 
 public class TheArchitectCardPool : CustomCardPoolModel
 {
+    // Custom content should be inspectable in the compendium immediately.
+    public override bool SeenByDefault => true;
+
     public override string Title => TheArchitect.CharacterId;
 
     public override string BigEnergyIconPath => "charui/big_energy.png".ImagePath();

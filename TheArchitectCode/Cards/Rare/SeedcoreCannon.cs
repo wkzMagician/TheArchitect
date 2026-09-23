@@ -22,6 +22,9 @@ public sealed class SeedcoreCannon() : TheArchitectCard(3, CardType.Attack, Card
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(32, ValueProp.Move)];
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Sown, 3);
+
     protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         return ArchitectEnchantmentHelper.Attack(this, choiceContext, play.Target, DynamicVars.Damage.BaseValue);

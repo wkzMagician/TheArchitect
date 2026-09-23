@@ -1,0 +1,63 @@
+using BaseLib.Abstracts;
+using MegaCrit.Sts2.Core.Models;
+using System.IO;
+using TheArchitect.Tests.Infrastructure;
+using TheArchitect.TheArchitectCode.Character;
+
+namespace TheArchitect.Tests.Character;
+
+public static class TheArchitectVisualTests
+{
+    [ArchitectTest]
+    public static void UsesCustomCharacterModelAndArchitectVisualScene()
+    {
+        var character = ModelDb.Character<TheArchitect.TheArchitectCode.Character.TheArchitect>();
+
+        AssertEx.True(character is CustomCharacterModel, "TheArchitect should derive from CustomCharacterModel so it can provide a custom battle visual.");
+        AssertEx.Equal("res://TheArchitect/scenes/creature_visuals/architect_player.tscn", character.CustomVisualPath, "TheArchitect should point to the localized Architect player visual scene.");
+    }
+
+    [ArchitectTest]
+    public static void BattleVisualIsMirroredForPlayerFacing()
+    {
+        string scenePath = TestPaths.RepoPath("TheArchitect", "scenes", "creature_visuals", "architect_player.tscn");
+        string scene = File.ReadAllText(scenePath);
+
+        AssertEx.True(scene.Contains("scale = Vector2(-0.35, 0.35)", StringComparison.Ordinal), "Architect battle visual should mirror the enemy-facing skeleton so the playable character faces right.");
+    }
+
+    [ArchitectTest]
+    public static void ReusesStableNonCombatCharacterResources()
+    {
+        var character = ModelDb.Character<TheArchitect.TheArchitectCode.Character.TheArchitect>();
+
+        AssertEx.Equal("res://TheArchitect/scenes/ui/character_icons/architect_icon.tscn", character.CustomIconPath, "TheArchitect should provide a local in-run icon scene.");
+        AssertEx.Equal("res://scenes/combat/energy_counters/ironclad_energy_counter.tscn", character.CustomEnergyCounterPath, "TheArchitect should reuse a base-game energy counter scene while custom Godot C# scripts are unavailable.");
+        AssertEx.Equal("res://TheArchitect/scenes/merchant/characters/architect_merchant.tscn", character.CustomMerchantAnimPath, "TheArchitect should provide a local merchant scene.");
+        AssertEx.Equal("res://TheArchitect/scenes/rest_site/characters/architect_rest_site.tscn", character.CustomRestSiteAnimPath, "TheArchitect should provide a local rest-site scene.");
+        AssertEx.Equal("res://scenes/vfx/card_trail_ironclad.tscn", character.CustomTrailPath, "TheArchitect should reuse a base-game card trail scene while custom Godot C# scripts are unavailable.");
+        AssertEx.Equal("res://TheArchitect/scenes/screens/char_select/char_select_bg_architect.tscn", character.CustomCharacterSelectBg, "TheArchitect should provide a local character-select background.");
+        AssertEx.Equal("res://TheArchitect/materials/transitions/architect_transition_mat.tres", character.CustomCharacterSelectTransitionPath, "TheArchitect should provide a local character-select transition material.");
+        AssertEx.Equal("event:/sfx/characters/ironclad/ironclad_select", character.CharacterSelectSfx, "TheArchitect should provide a stable character-select sound.");
+        AssertEx.Equal("event:/sfx/ui/wipe_ironclad", character.CharacterTransitionSfx, "TheArchitect should provide a stable transition sound.");
+    }
+
+    [ArchitectTest]
+    public static void ReusesStableBaseGameArchitectAttackVfx()
+    {
+        var character = ModelDb.Character<TheArchitect.TheArchitectCode.Character.TheArchitect>();
+
+        string[] expected =
+        [
+            "vfx/vfx_attack_blunt",
+            "vfx/vfx_heavy_blunt",
+            "vfx/vfx_attack_slash",
+            "vfx/vfx_bloody_impact",
+            "vfx/vfx_rock_shatter"
+        ];
+
+        AssertEx.True(
+            expected.SequenceEqual(character.GetArchitectAttackVfx()),
+            "TheArchitect should reuse known base-game attack VFX instead of a missing character-specific VFX.");
+    }
+}

@@ -1,0 +1,16 @@
+[remap]
+
+importer="spine.atlas"
+type="SpineAtlasResource"
+uid="uid://5in6wwdqtnu5"
+path="res://.godot/imported/architect_merchant.atlas-bea3304965d5f407a40a5480f627108e.spatlas"
+
+[deps]
+
+source_file="res://TheArchitect/animations/merchant/architect/architect_merchant.atlas"
+dest_files=["res://.godot/imported/architect_merchant.atlas-bea3304965d5f407a40a5480f627108e.spatlas"]
+
+[params]
+
+normal_map_prefix="n"
+specular_map_prefix="s"

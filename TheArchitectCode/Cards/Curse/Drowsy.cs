@@ -13,6 +13,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Tokens;
 [Pool(typeof(TheArchitectTokenPool))]
 public sealed class Drowsy : CustomCardModel
 {
+    public override MegaCrit.Sts2.Core.Models.CardPoolModel Pool => MegaCrit.Sts2.Core.Models.ModelDb.CardPool<TheArchitectTokenPool>();
+
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     public override string PortraitPath => "drowsy.png".CardImagePath();

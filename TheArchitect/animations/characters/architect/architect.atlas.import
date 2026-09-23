@@ -1,0 +1,16 @@
+[remap]
+
+importer="spine.atlas"
+type="SpineAtlasResource"
+uid="uid://d0t1ggyc5peti"
+path="res://.godot/imported/architect.atlas-d809d1e77a32f39e65e83e9bde9cbee7.spatlas"
+
+[deps]
+
+source_file="res://TheArchitect/animations/characters/architect/architect.atlas"
+dest_files=["res://.godot/imported/architect.atlas-d809d1e77a32f39e65e83e9bde9cbee7.spatlas"]
+
+[params]
+
+normal_map_prefix="n"
+specular_map_prefix="s"

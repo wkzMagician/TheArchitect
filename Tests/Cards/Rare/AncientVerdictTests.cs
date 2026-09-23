@@ -16,9 +16,9 @@ public static class AncientVerdictTests
     }
 
     [ArchitectTest]
-    public static void ExcludedFromArchitectRewardPool()
+    public static void IncludedInArchitectCardPool()
     {
         bool appearsInPool = ModelDb.CardPool<TheArchitectCardPool>().AllCards.OfType<AncientVerdict>().Any();
-        AssertEx.False(appearsInPool, "AncientVerdict should only come from the ancient upgrade path, not normal rewards.");
+        AssertEx.True(appearsInPool, "AncientVerdict should be visible in the Architect card pool.");
     }
 }

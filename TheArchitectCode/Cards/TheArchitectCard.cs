@@ -128,7 +128,9 @@ public abstract class TheArchitectCard(int cost, CardType type, CardRarity rarit
 
     {
         base.AddExtraArgsToDescription(description);
-        bool inCombat = CombatState != null || Owner?.PlayerCombatState != null;
+        // The compendium renders canonical models; their Owner getter asserts
+        // mutability even when no combat is active.
+        bool inCombat = IsMutable && (CombatState != null || Owner?.PlayerCombatState != null);
         description.Add("CombatPreview", inCombat ? FormatCombatPreview(GetCombatPreviewText()) : string.Empty);
     }
 

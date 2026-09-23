@@ -1,0 +1,16 @@
+[remap]
+
+importer="spine.atlas"
+type="SpineAtlasResource"
+uid="uid://cjqgyu6b67sce"
+path="res://.godot/imported/architect_battle.atlas-9f173ab93cda6e2bc80e245e354d9579.spatlas"
+
+[deps]
+
+source_file="res://TheArchitect/animations/characters/architect/battle/architect_battle.atlas"
+dest_files=["res://.godot/imported/architect_battle.atlas-9f173ab93cda6e2bc80e245e354d9579.spatlas"]
+
+[params]
+
+normal_map_prefix="n"
+specular_map_prefix="s"

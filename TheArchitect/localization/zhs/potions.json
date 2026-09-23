@@ -1,0 +1,11 @@
+{
+  "THEARCHITECT-INSCRIPTION_POTION.title": "铭刻药水",
+  "THEARCHITECT-INSCRIPTION_POTION.description": "为1张手牌附魔锋利{EnchantAmount}或灵巧{EnchantAmount}，仅本场战斗有效。",
+  "THEARCHITECT-INSCRIPTION_POTION.selectionScreenPrompt": "选择一张手牌附魔。",
+  "THEARCHITECT-REVISION_SOLVENT.title": "洗稿溶剂",
+  "THEARCHITECT-REVISION_SOLVENT.description": "选择至多3张已附魔的手牌，褪去其全部附魔。每成功处理1张，抽{Cards}张牌并获得{Block}点格挡。",
+  "THEARCHITECT-REVISION_SOLVENT.selectionScreenPrompt": "选择至多3张已附魔的手牌。",
+  "THEARCHITECT-REPRISE_ELIXIR.title": "重奏灵药",
+  "THEARCHITECT-REPRISE_ELIXIR.description": "选择1张手牌。本回合下次手动打出它时，额外重放{Replays}次。",
+  "THEARCHITECT-REPRISE_ELIXIR.selectionScreenPrompt": "选择本回合要重放的手牌。"
+}

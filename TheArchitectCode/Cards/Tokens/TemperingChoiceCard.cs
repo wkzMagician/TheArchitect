@@ -12,6 +12,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Tokens;
 // Token-only UI choice cards used by Tempering.
 public abstract class TemperingChoiceCard(ArchitectEnchantKind kind) : TheArchitectCard(-1, CardType.Skill, CardRarity.Token, TargetType.None)
 {
+    public override MegaCrit.Sts2.Core.Models.CardPoolModel Pool => MegaCrit.Sts2.Core.Models.ModelDb.CardPool<TheArchitectTokenPool>();
+
     public ArchitectEnchantKind Kind { get; } = kind;
 
 

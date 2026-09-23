@@ -30,4 +30,5 @@ public sealed class Erasure() : TheArchitectCard(0, CardType.Skill, CardRarity.R
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.SoulsPower, 1m);
         }
     }
+    protected override void OnUpgrade() => AddKeyword(CardKeyword.Retain);
 }

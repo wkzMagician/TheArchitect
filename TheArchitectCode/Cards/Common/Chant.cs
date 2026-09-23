@@ -20,6 +20,12 @@ public sealed class Chant() : TheArchitectCard(1, CardType.Skill, CardRarity.Com
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move), new DynamicVar("Weak", 1), new DynamicVar("EnchantWeakBonus", 1)];
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        HoverTipFactory.FromPower<WeakPower>(),
+        ArchitectKeywordHoverTips.Enchant
+    ];
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         await ArchitectEnchantmentHelper.GainBlock(this, play, DynamicVars.Block.BaseValue);

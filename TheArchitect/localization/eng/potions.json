@@ -1,0 +1,11 @@
+{
+  "THEARCHITECT-INSCRIPTION_POTION.title": "Inscription Potion",
+  "THEARCHITECT-INSCRIPTION_POTION.description": "Enchant a card in your hand with Sharp {EnchantAmount} or Nimble {EnchantAmount} for this combat.",
+  "THEARCHITECT-INSCRIPTION_POTION.selectionScreenPrompt": "Choose a card to Enchant.",
+  "THEARCHITECT-REVISION_SOLVENT.title": "Revision Solvent",
+  "THEARCHITECT-REVISION_SOLVENT.description": "Remove all Enchantments from up to 3 cards in your hand. For each affected card, draw {Cards} card(s) and gain {Block} Block.",
+  "THEARCHITECT-REVISION_SOLVENT.selectionScreenPrompt": "Choose up to 3 Enchanted cards.",
+  "THEARCHITECT-REPRISE_ELIXIR.title": "Reprise Elixir",
+  "THEARCHITECT-REPRISE_ELIXIR.description": "Choose a card in your hand. The next time you manually play it this turn, replay it {Replays} additional time(s).",
+  "THEARCHITECT-REPRISE_ELIXIR.selectionScreenPrompt": "Choose a card to replay this turn."
+}

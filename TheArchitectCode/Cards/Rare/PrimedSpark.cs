@@ -20,6 +20,10 @@ public sealed class PrimedSpark() : TheArchitectCard(0, CardType.Skill, CardRari
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Sown, IsUpgraded ? 2 : 1)
+            .Concat(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Swift, IsUpgraded ? 2 : 1));
+
     protected override IEnumerable<(ArchitectEnchantKind Kind, int Amount)> StartingEnchantments => [];
 
     protected override void ApplyStartingEnchantments()

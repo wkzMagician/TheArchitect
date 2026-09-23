@@ -19,6 +19,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class StripLife() : TheArchitectCard(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.RemoveEnchantments];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Energy", 2)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

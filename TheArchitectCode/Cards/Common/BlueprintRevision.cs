@@ -43,5 +43,6 @@ public sealed class BlueprintRevision() : TheArchitectCard(1, CardType.Skill, Ca
     protected override void OnUpgrade()
     {
         DynamicVars.Block.UpgradeValueBy(2m);
+        RemoveKeyword(CardKeyword.Exhaust);
     }
 }

@@ -46,7 +46,7 @@ public sealed class Ascend() : TheArchitectCard(1, CardType.Attack, CardRarity.U
         int priorPlays = ArchitectCombatState.TimesPlayed(this);
         if (priorPlays >= 2)
         {
-            return "also draws 1 card and gains 1 Energy";
+            return $"also draws 1 card and gains {EnergyIconHelper.GetPrefix(this)}1 Energy";
         }
 
         if (priorPlays >= 1)

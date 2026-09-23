@@ -25,4 +25,5 @@ public sealed class JacobsLadder() : TheArchitectCard(1, CardType.Skill, CardRar
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Slither, 1m);
         }
     }
+    protected override void OnUpgrade() => RemoveKeyword(CardKeyword.Exhaust);
 }

@@ -29,13 +29,13 @@ public sealed class Sigilbreaker() : TheArchitectCard(1, CardType.Attack, CardRa
 
     protected override string GetCombatPreviewText()
     {
-        return Owner == null ? string.Empty : ArchitectEnchantmentHelper.DescribeSigilbreakerDamage(this, PileType.Hand.GetPile(Owner).Cards);
+        return Owner?.PlayerCombatState == null ? string.Empty : ArchitectEnchantmentHelper.DescribeSigilbreakerDamage(this, Owner.PlayerCombatState.Hand.Cards);
     }
 
     protected override void AddExtraArgsToDescription(LocString description)
     {
         base.AddExtraArgsToDescription(description);
-        int enchantedInHand = Owner == null ? 0 : ArchitectEnchantmentHelper.CountOtherEnchantedCards(this, PileType.Hand.GetPile(Owner).Cards);
+        int enchantedInHand = !IsMutable || Owner?.PlayerCombatState == null ? 0 : ArchitectEnchantmentHelper.CountOtherEnchantedCards(this, Owner.PlayerCombatState.Hand.Cards);
         int damage = DynamicVars.Damage.IntValue + enchantedInHand * DynamicVars["BonusDamage"].IntValue;
         description.Add("DynamicDamage", damage);
     }

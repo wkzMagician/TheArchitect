@@ -18,4 +18,5 @@ public sealed class DivineGrace() : TheArchitectCard(1, CardType.Power, CardRari
     {
         await PowerCmd.Apply<DivineGracePower>(choiceContext, Owner.Creature, 1m, Owner.Creature, this);
     }
+    protected override void OnUpgrade() => AddKeyword(CardKeyword.Innate);
 }

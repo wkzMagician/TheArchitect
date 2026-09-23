@@ -1,3 +1,8 @@
 {
-  
+  "THEARCHITECT-ENCHANT.title": "Enchant",
+  "THEARCHITECT-ENCHANT.description": "Apply an Enchantment to a card.",
+  "THEARCHITECT-REMOVE_ENCHANTMENTS.title": "Remove Enchantments",
+  "THEARCHITECT-REMOVE_ENCHANTMENTS.description": "Remove all Enchantments from a card. This does not refresh or restore them.",
+  "THEARCHITECT-REFRESH_ENCHANTMENTS.title": "Refresh Enchantments",
+  "THEARCHITECT-REFRESH_ENCHANTMENTS.description": "Refresh a card's Enchantments, restoring them to their normal active state."
 }

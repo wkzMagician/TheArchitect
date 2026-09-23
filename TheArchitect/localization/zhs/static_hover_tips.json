@@ -1,0 +1,8 @@
+{
+  "THEARCHITECT-ENCHANT.title": "附魔",
+  "THEARCHITECT-ENCHANT.description": "使一张牌获得附魔。",
+  "THEARCHITECT-REMOVE_ENCHANTMENTS.title": "褪去附魔",
+  "THEARCHITECT-REMOVE_ENCHANTMENTS.description": "移除一张牌的所有附魔。不会刷新或恢复这些附魔。",
+  "THEARCHITECT-REFRESH_ENCHANTMENTS.title": "刷新附魔",
+  "THEARCHITECT-REFRESH_ENCHANTMENTS.description": "刷新一张牌的附魔，使其恢复为正常的激活状态。"
+}

@@ -22,6 +22,10 @@ public sealed class Lullaby() : TheArchitectCard(1, CardType.Skill, CardRarity.R
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Weak", 1)];
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Glam, 1)
+            .Concat([HoverTipFactory.FromPower<WeakPower>()]);
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         foreach (Creature enemy in CombatState!.HittableEnemies)

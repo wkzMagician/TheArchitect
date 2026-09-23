@@ -10,6 +10,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class Sanctuary() : TheArchitectCard(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Block", 2)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

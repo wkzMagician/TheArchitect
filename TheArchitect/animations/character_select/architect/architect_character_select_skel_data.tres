@@ -1,0 +1,8 @@
+[gd_resource type="SpineSkeletonDataResource" load_steps=3 format=3]
+
+[ext_resource type="SpineAtlasResource" path="res://TheArchitect/animations/character_select/architect/architect_character_select.atlas" id="1_ksmnb"]
+[ext_resource type="SpineSkeletonFileResource" path="res://TheArchitect/animations/character_select/architect/architect_character_select.skel" id="2_8v7lw"]
+
+[resource]
+atlas_res = ExtResource("1_ksmnb")
+skeleton_file_res = ExtResource("2_8v7lw")

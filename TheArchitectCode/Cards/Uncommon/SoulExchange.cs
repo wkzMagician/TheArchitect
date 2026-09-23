@@ -35,4 +35,5 @@ public sealed class SoulExchange() : TheArchitectCard(0, CardType.Skill, CardRar
 
         ArchitectEnchantmentHelper.Transfer(source, target);
     }
+    protected override void OnUpgrade() => AddKeyword(CardKeyword.Retain);
 }

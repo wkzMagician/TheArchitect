@@ -10,7 +10,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
 public sealed class FormOfCreation() : TheArchitectCard(3, CardType.Power, CardRarity.Rare, TargetType.Self)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Cards", 2)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Cards", 2), new EnergyVar("Energy", 1)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {

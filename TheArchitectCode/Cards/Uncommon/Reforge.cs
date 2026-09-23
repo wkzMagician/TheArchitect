@@ -18,6 +18,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class Reforge() : TheArchitectCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.RefreshEnchantments];
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [CardKeyword.Retain] : [CardKeyword.Retain, CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
@@ -25,4 +26,5 @@ public sealed class Reforge() : TheArchitectCard(1, CardType.Skill, CardRarity.U
         ArchitectEnchantmentHelper.RefreshAll(ArchitectEnchantmentHelper.Hand(Owner));
         await Task.CompletedTask;
     }
+    protected override void OnUpgrade() => RemoveKeyword(CardKeyword.Exhaust);
 }

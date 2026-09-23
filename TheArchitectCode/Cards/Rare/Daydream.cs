@@ -19,6 +19,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
 public sealed class Daydream() : TheArchitectCard(2, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

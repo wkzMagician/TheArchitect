@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://TheArchitectCode/Visuals/ArchitectParticlesContainer.cs" id="1"]
+[ext_resource type="Texture2D" path="res://TheArchitect/images/vfx/light.png" id="2"]
+
+[node name="ArchitectEnergyVfxBack" type="Node2D" node_paths=PackedStringArray("_architectParticles")]
+script = ExtResource("1")
+_architectParticles = [NodePath("Glow")]
+
+[node name="Glow" type="GPUParticles2D" parent="."]
+amount = 12
+lifetime = 1.4
+one_shot = false
+explosiveness = 0.0
+texture = ExtResource("2")
+position = Vector2(0, 0)

@@ -1,0 +1,14 @@
+[remap]
+
+importer="spine.skel"
+type="SpineSkeletonFileResource"
+uid="uid://cdx6bnb7eejbh"
+path="res://.godot/imported/architect_battle.skel-98ce01a2cd84ec1b3b1f3c65028f985c.spskel"
+
+[deps]
+
+source_file="res://TheArchitect/animations/characters/architect/battle/architect_battle.skel"
+dest_files=["res://.godot/imported/architect_battle.skel-98ce01a2cd84ec1b3b1f3c65028f985c.spskel"]
+
+[params]
+
