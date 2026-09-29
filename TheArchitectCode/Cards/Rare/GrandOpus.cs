@@ -7,7 +7,7 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
-public sealed class GrandOpus() : TheArchitectCard(0, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
+public sealed class GrandOpus() : TheArchitectCard(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override bool HasEnergyCostX => true;
 

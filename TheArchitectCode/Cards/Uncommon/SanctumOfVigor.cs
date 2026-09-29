@@ -12,7 +12,7 @@ public sealed class SanctumOfVigor() : TheArchitectCard(1, CardType.Power, CardR
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Vitality", 4)];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Vigorous, DynamicVars["Vitality"].IntValue);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Vigorous, DynamicVars["Vitality"].IntValue));
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {

@@ -10,6 +10,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class Resonance() : TheArchitectCard(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
+
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Damage", 3)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

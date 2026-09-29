@@ -15,7 +15,7 @@ public sealed class Erasure() : TheArchitectCard(0, CardType.Skill, CardRarity.R
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [CardKeyword.Exhaust, CardKeyword.Retain] : [CardKeyword.Exhaust];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.SoulsPower, 1);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.SoulsPower, 1));
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {

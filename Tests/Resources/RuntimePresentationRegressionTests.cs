@@ -57,21 +57,34 @@ public static class RuntimePresentationRegressionTests
         Callable.From(() =>
         {
             Node? scene = null;
+            string stage = "loading Spine atlas pages";
             try
             {
                 EverySpineAtlasPageExistsAndLoadsFromThePack();
+                stage = "loading the battle scene";
                 var character = ModelDb.Character<TheArchitect.TheArchitectCode.Character.TheArchitect>();
-                scene = ResourceLoader.Load<PackedScene>(character.CustomVisualPath).Instantiate();
+                PackedScene? packedScene = ResourceLoader.Load<PackedScene>(character.CustomVisualPath);
+                AssertEx.NotNull(packedScene, $"Battle scene loads: {character.CustomVisualPath}");
+                stage = "instantiating the battle scene";
+                scene = packedScene!.Instantiate();
+                stage = "adding the battle scene to the tree";
                 ((SceneTree)Engine.GetMainLoop()).Root.AddChild(scene);
-                var sprite = new MegaCrit.Sts2.Core.Bindings.MegaSpine.MegaSprite(scene.GetNode("Visuals"));
+                stage = "finding the SpineSprite node";
+                Node visuals = scene.GetNode("Visuals");
+                AssertEx.Equal("SpineSprite", visuals.GetClass(), "Battle visual must instantiate as a SpineSprite");
+                stage = "binding the SpineSprite node";
+                var sprite = new MegaCrit.Sts2.Core.Bindings.MegaSpine.MegaSprite(visuals);
+                stage = "initializing the Spine skeleton";
                 AssertEx.NotNull(sprite.GetSkeleton(), "Battle skeleton initializes with its packaged atlas");
+                stage = "initializing the Spine animation state";
                 AssertEx.True(sprite.IsAnimationStateReady(), "Battle animation state is ready");
+                stage = "configuring combat animations";
                 var animator = character.SetupCustomAnimationStates(sprite);
                 foreach (string trigger in new[] { "Idle", "Attack", "Hit", "Cast", "Dead" })
                     animator.SetTrigger(trigger);
                 finished.SetResult();
             }
-            catch (Exception error) { finished.SetException(error); }
+            catch (Exception error) { finished.SetException(new InvalidOperationException($"Battle scene failed while {stage}: {error.Message}", error)); }
             finally { scene?.QueueFree(); }
         }).CallDeferred();
         await finished.Task.WaitAsync(TimeSpan.FromSeconds(20));

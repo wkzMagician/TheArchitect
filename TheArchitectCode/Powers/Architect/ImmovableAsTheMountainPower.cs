@@ -28,7 +28,7 @@ public sealed class ImmovableAsTheMountainPower : TheArchitectPower
 
     public async Task BeforeTurnEnd(PlayerChoiceContext choiceContext, MegaCrit.Sts2.Core.Combat.CombatSide side)
     {
-        if (Owner.Player == null || side != Owner.Player.Creature.CombatState!.CurrentSide)
+        if (Owner.Player == null || side != MegaCrit.Sts2.Core.Combat.CombatSide.Player)
         {
             return;
         }
@@ -37,7 +37,7 @@ public sealed class ImmovableAsTheMountainPower : TheArchitectPower
             choiceContext,
             Owner.Player,
             new CardSelectorPrefs(SelectionScreenPrompt, 0, Amount),
-            static _ => true,
+            static card => !ArchitectEnchantmentHelper.HasAny(card),
             this)).ToList();
 
         foreach (CardModel card in selected)

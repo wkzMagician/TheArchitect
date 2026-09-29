@@ -12,7 +12,14 @@ public abstract class TheArchitectPower : CustomPowerModel
     {
         get
         {
-            var path = $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".PowerImagePath();
+            var iconName = $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png";
+            var illustratedPath = iconName.Replace(".png", "_illustrated.png").PowerImagePath();
+            if (ResourceLoader.Exists(illustratedPath))
+            {
+                return illustratedPath;
+            }
+
+            var path = iconName.PowerImagePath();
             return ResourceLoader.Exists(path) ? path : "power.png".PowerImagePath();
         }
     }
@@ -21,7 +28,14 @@ public abstract class TheArchitectPower : CustomPowerModel
     {
         get
         {
-            var path = $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".BigPowerImagePath();
+            var iconName = $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png";
+            var illustratedPath = iconName.Replace(".png", "_illustrated.png").PowerImagePath();
+            if (ResourceLoader.Exists(illustratedPath))
+            {
+                return illustratedPath;
+            }
+
+            var path = iconName.BigPowerImagePath();
             return ResourceLoader.Exists(path) ? path : "power.png".BigPowerImagePath();
         }
     }

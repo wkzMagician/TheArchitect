@@ -10,7 +10,6 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Cards.Tokens;
 using TheArchitect.TheArchitectCode.Helpers;
 
@@ -18,7 +17,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class Reforge() : TheArchitectCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.RefreshEnchantments];
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant([ArchitectKeywordHoverTips.RefreshEnchantments]);
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [CardKeyword.Retain] : [CardKeyword.Retain, CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

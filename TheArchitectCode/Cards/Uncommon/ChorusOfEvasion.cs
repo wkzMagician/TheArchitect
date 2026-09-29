@@ -11,7 +11,7 @@ public sealed class ChorusOfEvasion() : TheArchitectCard(1, CardType.Skill, Card
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(8, ValueProp.Move), new DynamicVar("Nimble", 1)];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Nimble, DynamicVars["Nimble"].IntValue);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Nimble, DynamicVars["Nimble"].IntValue));
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {

@@ -8,6 +8,12 @@ public static class DoctrineTests
 {
 
     [ArchitectTest]
+    public static void IsRare()
+    {
+        AssertEx.Equal(CardRarity.Rare, TestModels.Card<Doctrine>().Rarity, "Doctrine rarity");
+    }
+
+    [ArchitectTest]
     public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<Doctrine>();

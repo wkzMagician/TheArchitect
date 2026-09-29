@@ -10,7 +10,6 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Cards.Tokens;
 using TheArchitect.TheArchitectCode.Helpers;
 
@@ -43,7 +42,7 @@ public sealed class CrashingBlow() : TheArchitectCard(1, CardType.Attack, CardRa
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(3m);
+        DynamicVars.Damage.UpgradeValueBy(2m);
         DynamicVars["EnchantVulnerableBonus"].UpgradeValueBy(1m);
     }
 

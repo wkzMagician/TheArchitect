@@ -22,7 +22,12 @@ public sealed class CursePurge() : TheArchitectCard(1, CardType.Skill, CardRarit
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        List<CardModel> curses = ArchitectEnchantmentHelper.AllPlayerCards(Owner)
+        List<CardModel> combatPiles = ArchitectEnchantmentHelper.Hand(Owner)
+            .Concat(ArchitectEnchantmentHelper.DrawPile(Owner))
+            .Concat(ArchitectEnchantmentHelper.DiscardPile(Owner))
+            .Concat(Owner.PlayerCombatState!.PlayPile.Cards)
+            .ToList();
+        List<CardModel> curses = combatPiles
             .Where(card => card.Type == CardType.Curse)
             .Distinct()
             .ToList();
@@ -31,16 +36,17 @@ public sealed class CursePurge() : TheArchitectCard(1, CardType.Skill, CardRarit
             return;
         }
 
-        int removedCount = curses.Select(card => card.DeckVersion ?? card).Distinct().Count();
         foreach (CardModel curse in curses)
         {
-            if (curse is Drowsy drowsy) drowsy.PreventPersistence();
-            if (curse.Pile?.Type != PileType.Deck)
-                await CardPileCmd.RemoveFromCombat(curse);
+            await CardCmd.Exhaust(choiceContext, curse);
         }
 
-        await CardPileCmd.RemoveFromDeck(curses.Where(card => Owner.Deck.Cards.Contains(card)).ToList());
-        await PowerCmd.Apply<PlatingPower>(choiceContext, Owner.Creature, removedCount * DynamicVars["Plating"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<PlatingPower>(
+            choiceContext,
+            Owner.Creature,
+            curses.Count * DynamicVars["Plating"].BaseValue,
+            Owner.Creature,
+            this);
     }
 
     protected override void OnUpgrade()

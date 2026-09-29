@@ -12,7 +12,7 @@ using TheArchitect.TheArchitectCode.Powers.Architect;
 
 namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
-public sealed class HandOff() : TheArchitectCard(1, CardType.Skill, CardRarity.Rare, TargetType.AnyAlly)
+public sealed class HandOff() : TheArchitectCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyAlly)
 {
     public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
 
@@ -32,7 +32,7 @@ public sealed class HandOff() : TheArchitectCard(1, CardType.Skill, CardRarity.R
         }
 
         CardModel copy = play.Target.Player.Creature.CombatState!.CreateCard(card.CanonicalInstance, play.Target.Player);
-        foreach (EnchantmentModel enchantment in ArchitectEnchantmentHelper.GetAll(card))
+        if (ArchitectEnchantmentHelper.Get(card) is { } enchantment)
         {
             ArchitectEnchantmentHelper.AddRaw(copy, EnchantmentModel.FromSerializable(enchantment.ToSerializable()), enchantment.Amount);
         }

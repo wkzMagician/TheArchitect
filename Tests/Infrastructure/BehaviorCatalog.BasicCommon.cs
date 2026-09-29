@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Enchantments;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards.Mocks;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -150,8 +151,8 @@ public static partial class BehaviorCatalog
         AncientSeed card = ctx.CardInHand<AncientSeed>();
         int before = ctx.Enemy.CurrentHp;
         await ctx.Play(card, ctx.Enemy);
-        AssertEx.Equal(2, ctx.HpLost(ctx.Enemy, before), "AncientSeed should deal 2 damage");
-        AssertEx.Equal(2, ctx.Player.Creature.Block, "AncientSeed should give 2 block");
+        AssertEx.Equal(1, ctx.HpLost(ctx.Enemy, before), "AncientSeed should deal its current base damage");
+        AssertEx.Equal(1, ctx.Player.Creature.Block, "AncientSeed should give its current base block");
     }
 
     private static async Task BlueprintRevision()
@@ -188,7 +189,7 @@ public static partial class BehaviorCatalog
         MockSkillCard drawn = ctx.CardInDraw<MockSkillCard>();
         int before = ctx.Enemy.CurrentHp;
         await ctx.Play(card, ctx.Enemy);
-        AssertEx.Equal(4, ctx.HpLost(ctx.Enemy, before), "StrokeOfRuin should deal damage");
+        AssertEx.Equal(3, ctx.HpLost(ctx.Enemy, before), "StrokeOfRuin should deal damage");
         AssertEx.True(ctx.Player.PlayerCombatState!.Hand.Cards.Contains(drawn), "StrokeOfRuin should draw one card");
     }
 
@@ -196,10 +197,16 @@ public static partial class BehaviorCatalog
     {
         using CombatTestContext ctx = new();
         Oracle card = ctx.CardInHand<Oracle>();
-        MockSkillCard top = ctx.CardInDraw<MockSkillCard>().MockBlock(7);
+        ctx.CardInDraw<MockSkillCard>().MockBlock(3);
+        ctx.CardInDraw<MockSkillCard>().MockBlock(7);
+        CardModel unenchanted = ctx.Player.PlayerCombatState!.DrawPile.Cards.First();
+        CardModel target = ctx.Player.PlayerCombatState.DrawPile.Cards.Skip(1).First();
+        ArchitectEnchantmentHelper.Add(target, ArchitectEnchantKind.Nimble, 1m);
         await ctx.Play(card);
-        AssertEx.Equal(7, ctx.Player.Creature.Block, "Oracle should autoplay the top card");
-        AssertEx.False(ctx.Player.PlayerCombatState!.DrawPile.Cards.Contains(top), "Oracle should consume the top card");
+        AssertEx.True(ctx.Player.Creature.Block >= 3, "Oracle should autoplay the enchanted card");
+        AssertEx.True(ctx.Player.PlayerCombatState.DrawPile.Cards.Contains(unenchanted), "Oracle should skip unenchanted cards");
+        AssertEx.False(ctx.Player.PlayerCombatState.DrawPile.Cards.Contains(target), "Oracle should consume the enchanted card");
+        AssertEx.False(ArchitectEnchantmentHelper.HasAny(target), "Oracle should remove the played card's enchantment");
     }
 
     private static async Task StayTheBlade()
@@ -242,7 +249,7 @@ public static partial class BehaviorCatalog
         ArchitectEnchantmentHelper.Add(ctx.MockSkillInHand(block: 5), ArchitectEnchantKind.Nimble, 1m);
         int before = ctx.Enemy.CurrentHp;
         await ctx.Play(card, ctx.Enemy);
-        AssertEx.Equal(16, ctx.HpLost(ctx.Enemy, before), "MonumentHammer should scale with enchant count");
+        AssertEx.Equal(20, ctx.HpLost(ctx.Enemy, before), "MonumentHammer should scale with enchant count");
     }
 
     private static async Task CrashingBlow()
@@ -260,7 +267,7 @@ public static partial class BehaviorCatalog
         Chant card = ctx.CardInHand<Chant>();
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Nimble, 1m);
         await ctx.Play(card, ctx.Enemy);
-        AssertEx.Equal(6, ctx.Player.Creature.Block, "Chant should grant block");
+        AssertEx.Equal(7, ctx.Player.Creature.Block, "Chant should grant 6 block plus 1 from Nimble");
         AssertEx.Equal(2, CombatTestContext.PowerAmount<WeakPower>(ctx.Enemy), "Chant should add extra Weak if enchanted");
     }
 
@@ -279,9 +286,9 @@ public static partial class BehaviorCatalog
         Reforge card = ctx.CardInHand<Reforge>();
         MockAttackCard target = ctx.MockAttackInHand();
         ArchitectEnchantmentHelper.Add(target, ArchitectEnchantKind.Sharp, 1m);
-        ArchitectEnchantmentHelper.GetAll(target)[0].Status = EnchantmentStatus.Disabled;
+        ArchitectEnchantmentHelper.Get(target)!.Status = EnchantmentStatus.Disabled;
         await ctx.Play(card);
-        AssertEx.Equal(EnchantmentStatus.Normal, ArchitectEnchantmentHelper.GetAll(target)[0].Status, "Reforge should refresh enchantments");
+        AssertEx.Equal(EnchantmentStatus.Normal, ArchitectEnchantmentHelper.Get(target)!.Status, "Reforge should refresh enchantments");
     }
 
     private static async Task RetrieveTheFragments()

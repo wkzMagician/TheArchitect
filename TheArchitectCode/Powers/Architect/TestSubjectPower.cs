@@ -32,7 +32,7 @@ public sealed class TestSubjectPower : TheArchitectPower
             this);
         if (card != null)
         {
-            ArchitectEnchantmentHelper.RemoveAll(card);
+            ArchitectEnchantmentHelper.Remove(card);
         }
     }
 }

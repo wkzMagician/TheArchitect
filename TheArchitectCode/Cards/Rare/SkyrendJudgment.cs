@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -8,9 +9,11 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
-public sealed class SkyrendJudgment() : TheArchitectCard(9, CardType.Skill, CardRarity.Rare, TargetType.AllEnemies)
+public sealed class SkyrendJudgment() : TheArchitectCard(9, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(50, ValueProp.Move)];
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
+
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(40, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
@@ -30,6 +33,6 @@ public sealed class SkyrendJudgment() : TheArchitectCard(9, CardType.Skill, Card
 
     protected override void OnUpgrade()
     {
-        EnergyCost.UpgradeBy(-3);
+        EnergyCost.UpgradeBy(-2);
     }
 }

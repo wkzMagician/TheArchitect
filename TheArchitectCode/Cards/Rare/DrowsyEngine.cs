@@ -9,8 +9,10 @@ using TheArchitect.TheArchitectCode.Powers.Architect;
 
 namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
-public sealed class DrowsyEngine() : TheArchitectCard(0, CardType.Power, CardRarity.Rare, TargetType.Self)
+public sealed class DrowsyEngine() : TheArchitectCard(1, CardType.Power, CardRarity.Rare, TargetType.Self)
 {
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar("Energy", 2)];
+
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromCard<Drowsy>()];
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [CardKeyword.Innate] : [];
 

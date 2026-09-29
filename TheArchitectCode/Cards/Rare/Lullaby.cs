@@ -10,13 +10,12 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Cards.Tokens;
 using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
-public sealed class Lullaby() : TheArchitectCard(1, CardType.Skill, CardRarity.Rare, TargetType.AllEnemies)
+public sealed class Lullaby() : TheArchitectCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.AllEnemies)
 {
     protected override IEnumerable<(ArchitectEnchantKind Kind, int Amount)> StartingEnchantments => [(ArchitectEnchantKind.Glam, 1)];
 

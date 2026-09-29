@@ -125,7 +125,7 @@
         <Warning Text=" Godot not found at path '$(GodotPath)'. Build can continue, but Publish will skip .pck export until this is configured." Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')" />
     </Target>
 
-    <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
+    <Target Name="CopyToModsFolderOnBuild" AfterTargets="Build">
         <Message Text="Copying .dll and manifest to mods folder." Importance="high" />
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
         <Copy SourceFiles="TheArchitect.json" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />

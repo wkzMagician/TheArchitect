@@ -59,6 +59,9 @@ public class TheArchitect : CustomCharacterModel
     public override string CustomIconPath =>
         "res://TheArchitect/scenes/ui/character_icons/architect_icon.tscn";
 
+    public override Control CustomIcon =>
+        GD.Load<PackedScene>(CustomIconPath).Instantiate<Control>();
+
     public override string CustomEnergyCounterPath =>
         "res://scenes/combat/energy_counters/ironclad_energy_counter.tscn";
 

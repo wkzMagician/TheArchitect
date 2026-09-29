@@ -32,7 +32,8 @@ public static class TheArchitectVisualTests
         var character = ModelDb.Character<TheArchitect.TheArchitectCode.Character.TheArchitect>();
 
         AssertEx.Equal("res://TheArchitect/scenes/ui/character_icons/architect_icon.tscn", character.CustomIconPath, "TheArchitect should provide a local in-run icon scene.");
-        AssertEx.Equal("res://scenes/combat/energy_counters/ironclad_energy_counter.tscn", character.CustomEnergyCounterPath, "TheArchitect should reuse a base-game energy counter scene while custom Godot C# scripts are unavailable.");
+        AssertEx.True(character.CustomIcon?.Name == "ArchitectIcon", "TheArchitect should explicitly instantiate its own in-run icon instead of inheriting another character's icon.");
+        AssertEx.Equal("res://scenes/combat/energy_counters/ironclad_energy_counter.tscn", character.CustomEnergyCounterPath, "TheArchitect should use the game energy counter with its own orb artwork.");
         AssertEx.Equal("res://TheArchitect/scenes/merchant/characters/architect_merchant.tscn", character.CustomMerchantAnimPath, "TheArchitect should provide a local merchant scene.");
         AssertEx.Equal("res://TheArchitect/scenes/rest_site/characters/architect_rest_site.tscn", character.CustomRestSiteAnimPath, "TheArchitect should provide a local rest-site scene.");
         AssertEx.Equal("res://scenes/vfx/card_trail_ironclad.tscn", character.CustomTrailPath, "TheArchitect should reuse a base-game card trail scene while custom Godot C# scripts are unavailable.");

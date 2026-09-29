@@ -4,6 +4,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
 using TheArchitect.TheArchitectCode.Character;
 using TheArchitect.TheArchitectCode.Extensions;
@@ -34,15 +35,21 @@ public sealed class Drowsy : CustomCardModel
     }
 
     private bool _playedThisCombat;
+    private bool _persistedAfterCombatEnd;
     public void PreventPersistence() => _playedThisCombat = true;
 
     public override Task AfterCombatEnd(CombatRoom room)
     {
-        if (Owner == null || _playedThisCombat || Pile?.Type == PileType.Exhaust || Owner.Deck.Cards.Contains(this) || (DeckVersion != null && Owner.Deck.Cards.Contains(DeckVersion)))
+        if (_persistedAfterCombatEnd || Owner == null || _playedThisCombat || Pile?.Type == PileType.Exhaust || Owner.Deck.Cards.Contains(this) || (DeckVersion != null && Owner.Deck.Cards.Contains(DeckVersion)))
         {
             return Task.CompletedTask;
         }
 
-        return CardPileCmd.Add(this, PileType.Deck);
+        _persistedAfterCombatEnd = true;
+
+        // Combat cards belong to the combat card scope. Create a distinct
+        // card in the run scope before moving a persistent copy into the deck.
+        CardModel persistentCopy = Owner.RunState.CreateCard(ModelDb.Card<Drowsy>(), Owner);
+        return CardPileCmd.Add(persistentCopy, PileType.Deck);
     }
 }

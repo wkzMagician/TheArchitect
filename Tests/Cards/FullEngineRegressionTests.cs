@@ -4,8 +4,11 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Enchantments;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models.Cards.Mocks;
+using MegaCrit.Sts2.Core.Models.Powers;
 using TheArchitect.Tests.Infrastructure;
 using TheArchitect.TheArchitectCode.Cards.Basic;
+using TheArchitect.TheArchitectCode.Cards.Ancient;
+using TheArchitect.TheArchitectCode.Cards.Common;
 using TheArchitect.TheArchitectCode.Cards.Rare;
 using TheArchitect.TheArchitectCode.Cards.Tokens;
 using TheArchitect.TheArchitectCode.Cards.Uncommon;
@@ -16,6 +19,38 @@ namespace TheArchitect.Tests.Cards;
 
 public static class FullEngineRegressionTests
 {
+    [ArchitectTest]
+    public static async Task ScalingDamagePreviewsUseHoveredTargetsVulnerability()
+    {
+        using CombatTestContext ctx = new();
+        await ctx.ApplyPower<VulnerablePower>(ctx.Enemy);
+
+        var verdict = ctx.CardInHand<AncientVerdict>();
+        var hammer = ctx.CardInHand<MonumentHammer>();
+        var trinity = ctx.CardInHand<Trinity>();
+
+        AssertEx.True(verdict.GetDescriptionForPile(PileType.Hand, ctx.Enemy).Contains("18"),
+            "Ancient Verdict previews damage against the Vulnerable target");
+        AssertEx.True(hammer.GetDescriptionForPile(PileType.Hand, ctx.Enemy).Contains("15"),
+            "Monument Hammer previews damage against the Vulnerable target");
+        AssertEx.True(trinity.GetDescriptionForPile(PileType.Hand, ctx.Enemy).Contains("15"),
+            "Trinity previews damage against the Vulnerable target");
+    }
+
+    [ArchitectTest]
+    public static async Task AncientSeedRefreshesSwiftAfterThePlayCompletes()
+    {
+        using CombatTestContext ctx = new();
+        AncientSeed card = ctx.CardInHand<AncientSeed>();
+        ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Swift, 1);
+        for (int i = 0; i < 4; i++) ctx.CardInDraw<MockSkillCard>();
+
+        await ctx.PlayFull(card, ctx.Enemy);
+
+        AssertEx.Equal(EnchantmentStatus.Normal, ArchitectEnchantmentHelper.Get(card)!.Status,
+            "Ancient Seed should leave Swift active after the complete card play");
+    }
+
     [ArchitectTest]
     public static async Task EnchantedPlayRewardsUseOwnerAndStartOfPlaySnapshot()
     {
@@ -34,28 +69,37 @@ public static class FullEngineRegressionTests
         int hp = ctx.Enemy.CurrentHp;
         await ctx.PlayFull(hammer, ctx.Enemy);
         AssertEx.Equal(8, judgment.EnergyCost.GetWithModifiers(CostModifiers.All), "Own enchanted play still discounts after stripping itself");
-        AssertEx.Equal(20, ctx.HpLost(ctx.Enemy, hp), "Hammer deals 16; its Vulnerable increases Resonance's 3 to 4");
+        AssertEx.Equal(19, ctx.HpLost(ctx.Enemy, hp), "Hammer deals 16; Resonance deals 3 unpowered damage unaffected by Vulnerable");
         AssertEx.Equal(energy + 1, ctx.Player.PlayerCombatState.Energy, "Creation rewards the enchanted play snapshot");
     }
 
     [ArchitectTest]
-    public static async Task CursePurgeCountsDeckAndCombatCopiesOnceAndPreventsDrowsyReturning()
+    public static async Task CursePurgeExhaustsOnlyActiveCombatCursesAndPreservesTheDeck()
     {
         foreach (bool upgraded in new[] { false, true })
         {
             using CombatTestContext ctx = new();
-            var original = ctx.CardInDeck<Drowsy>();
-            var combat = ctx.CardInHand<Drowsy>(); combat.DeckVersion = original;
-            var generated = ctx.CardInDraw<Drowsy>();
-            var purge = ctx.CardInHand<CursePurge>();
-            if (upgraded) purge.UpgradeInternal();
+            Drowsy original = ctx.CardInDeck<Drowsy>();
+            Drowsy combat = ctx.CardInHand<Drowsy>();
+            combat.DeckVersion = original;
+            Drowsy generated = ctx.CardInDraw<Drowsy>();
+            CursePurge purge = ctx.CardInHand<CursePurge>();
+            if (upgraded)
+            {
+                purge.UpgradeInternal();
+            }
+
             await ctx.PlayFull(purge);
-            AssertEx.Equal(upgraded ? 8 : 6, CombatTestContext.PowerAmount<MegaCrit.Sts2.Core.Models.Powers.PlatingPower>(ctx.Player.Creature), "One original plus one generated curse, not three copies");
-            AssertEx.False(ctx.Player.Deck.Cards.Contains(original), "Deck curse is removed");
-            AssertEx.False(ctx.Player.PlayerCombatState!.Hand.Cards.Contains(combat), "Combat counterpart is removed");
+            AssertEx.Equal(upgraded ? 8 : 6,
+                CombatTestContext.PowerAmount<MegaCrit.Sts2.Core.Models.Powers.PlatingPower>(ctx.Player.Creature),
+                "CursePurge counts only the two curses in active combat piles");
+            AssertEx.True(ctx.Player.Deck.Cards.Contains(original), "The master-deck curse remains untouched");
+            AssertEx.Equal(PileType.Exhaust, combat.Pile!.Type, "The combat copy is exhausted");
+            AssertEx.Equal(PileType.Exhaust, generated.Pile!.Type, "The generated combat curse is exhausted");
+
             await combat.AfterCombatEnd(null!);
             await generated.AfterCombatEnd(null!);
-            AssertEx.Equal(0, ctx.Player.Deck.Cards.Count, "Purged Drowsy cards cannot return at combat end");
+            AssertEx.Equal(1, ctx.Player.Deck.Cards.Count, "Exhausted Drowsy cards do not persist after combat");
         }
     }
 
@@ -104,7 +148,7 @@ public static class FullEngineRegressionTests
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Swift, 1);
         for (int i = 0; i < 4; i++) ctx.CardInDraw<MockSkillCard>();
         await ctx.PlayFull(card, ctx.Enemy);
-        AssertEx.Equal(EnchantmentStatus.Normal, ArchitectEnchantmentHelper.GetAll(card)[0].Status, "Swift is refreshed after OnPlay disables it");
+        AssertEx.Equal(EnchantmentStatus.Normal, ArchitectEnchantmentHelper.Get(card)!.Status, "Swift is refreshed after OnPlay disables it");
         int inHand = ctx.Player.PlayerCombatState!.Hand.Cards.Count;
         await ctx.PlayFull(card, ctx.Enemy);
         AssertEx.Equal(inHand + 1, ctx.Player.PlayerCombatState.Hand.Cards.Count, "Next play triggers Swift again");

@@ -74,6 +74,8 @@ public static partial class BehaviorCatalog
         using CombatTestContext ctx = new();
         ImmovableAsTheMountainPower power = await ctx.ApplyPower<ImmovableAsTheMountainPower>();
         MockAttackCard target = ctx.MockAttackInHand();
+        await power.BeforeTurnEnd(ctx.ChoiceContext, MegaCrit.Sts2.Core.Combat.CombatSide.Enemy);
+        AssertEx.False(CombatTestContext.HasEnchant<Steady>(target), "ImmovableAsTheMountainPower should not trigger at enemy turn end");
         ctx.Select(target);
         await power.BeforeTurnEnd(ctx.ChoiceContext, MegaCrit.Sts2.Core.Combat.CombatSide.Player);
         AssertEx.True(CombatTestContext.HasEnchant<Steady>(target), "ImmovableAsTheMountainPower should add Steady");
@@ -89,8 +91,8 @@ public static partial class BehaviorCatalog
         int before1 = ctx.Enemy.CurrentHp;
         int before2 = ctx.SecondEnemy!.CurrentHp;
         await power.AfterCardPlayed(ctx.ChoiceContext, play);
-        AssertEx.Equal(4, ctx.HpLost(ctx.Enemy, before1), "ResonancePower should damage first enemy");
-        AssertEx.Equal(4, ctx.HpLost(ctx.SecondEnemy, before2), "ResonancePower should damage second enemy");
+        AssertEx.Equal(3, ctx.HpLost(ctx.Enemy, before1), "ResonancePower should deal unpowered damage to first enemy");
+        AssertEx.Equal(3, ctx.HpLost(ctx.SecondEnemy, before2), "ResonancePower should deal unpowered damage to second enemy");
     }
 
     private static async Task TestSubjectPowerBehavior()
@@ -110,10 +112,10 @@ public static partial class BehaviorCatalog
         RebirthPower power = await ctx.ApplyPower<RebirthPower>();
         MockAttackCard card = ctx.MockAttackInHand();
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1m);
-        ArchitectEnchantmentHelper.GetAll(card)[0].Status = EnchantmentStatus.Disabled;
+        ArchitectEnchantmentHelper.Get(card)!.Status = EnchantmentStatus.Disabled;
         CardPlay play = new() { Card = card, Target = ctx.Enemy, ResultPile = PileType.Discard, Resources = new ResourceInfo { EnergySpent = 0, EnergyValue = 0, StarsSpent = 0, StarValue = 0 }, IsAutoPlay = false, PlayIndex = 0, PlayCount = 1 };
-        await power.AfterCardPlayed(ctx.ChoiceContext, play);
-        AssertEx.Equal(EnchantmentStatus.Normal, ArchitectEnchantmentHelper.GetAll(card)[0].Status, "RebirthPower should refresh played enchantments");
+        await power.AfterCardPlayedLate(ctx.ChoiceContext, play);
+        AssertEx.Equal(EnchantmentStatus.Normal, ArchitectEnchantmentHelper.Get(card)!.Status, "RebirthPower should refresh played enchantments");
     }
 
     private static async Task FormOfCreationPowerBehavior()
@@ -157,7 +159,7 @@ public static partial class BehaviorCatalog
         MockAttackCard target = ctx.MockAttackInHand();
         ArchitectEnchantmentHelper.Add(target, ArchitectEnchantKind.Sharp, 1m);
         ArchitectEnchantmentHelper.Add(target, ArchitectEnchantKind.Nimble, 1m);
-        ArchitectEnchantmentHelper.RemoveAll(target);
+        ArchitectEnchantmentHelper.Remove(target);
         await Task.Delay(10);
         AssertEx.Equal(1, CombatTestContext.PowerAmount<StrengthPower>(ctx.Player.Creature), "DestroyerPower should gain Strength per affected card");
     }
@@ -176,7 +178,7 @@ public static partial class BehaviorCatalog
         DrowsyEnginePower power = await ctx.ApplyPower<DrowsyEnginePower>();
         int before = ctx.Player.PlayerCombatState!.Energy;
         await power.AfterPlayerTurnStart(ctx.ChoiceContext, ctx.Player);
-        AssertEx.Equal(before + 1, ctx.Player.PlayerCombatState.Energy, "DrowsyEnginePower should gain energy");
-        AssertEx.Equal(1, ctx.CountInHand<TheArchitect.TheArchitectCode.Cards.Tokens.Drowsy>(), "DrowsyEnginePower should add Drowsy");
+        AssertEx.Equal(before + 2, ctx.Player.PlayerCombatState.Energy, "DrowsyEnginePower should gain 2 energy");
+        AssertEx.Equal(1, ctx.CountInDiscard<TheArchitect.TheArchitectCode.Cards.Tokens.Drowsy>(), "DrowsyEnginePower should add Drowsy to the discard pile");
     }
 }

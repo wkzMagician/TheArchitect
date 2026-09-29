@@ -19,7 +19,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class ShieldOfSacrifice() : TheArchitectCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.RemoveEnchantments];
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant([ArchitectKeywordHoverTips.RemoveEnchantments]);
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
@@ -39,6 +39,6 @@ public sealed class ShieldOfSacrifice() : TheArchitectCard(1, CardType.Skill, Ca
     protected override string GetCombatPreviewText()
     {
         int removed = ArchitectEnchantmentHelper.Hand(Owner).Count(ArchitectEnchantmentHelper.HasAny);
-        return $"gains {DynamicVars.Block.IntValue * removed} Block";
+        return GetLocalizedCombatPreview("THEARCHITECT-SHIELD_OF_SACRIFICE.combatPreview", ("Block", DynamicVars.Block.IntValue * removed));
     }
 }

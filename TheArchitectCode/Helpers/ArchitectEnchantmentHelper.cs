@@ -9,13 +9,12 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using TheArchitect.TheArchitectCode.Cards.Tokens;
-using TheArchitect.TheArchitectCode.Enchantments;
-using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Powers.Architect;
 using TheArchitect.TheArchitectCode.Relics;
 
@@ -46,11 +45,11 @@ public static class ArchitectEnchantmentHelper
 {
     private static readonly ArchitectEnchantOption[] BasicEnchantPool =
     [
-        new(ArchitectEnchantKind.Nimble, 2),
-        new(ArchitectEnchantKind.Sharp, 2),
+        new(ArchitectEnchantKind.Nimble, 3),
+        new(ArchitectEnchantKind.Sharp, 3),
         new(ArchitectEnchantKind.Sown, 1),
         new(ArchitectEnchantKind.Swift, 2),
-        new(ArchitectEnchantKind.Instinct, 2)
+        new(ArchitectEnchantKind.Instinct, 1)
     ];
 
     public static IReadOnlyList<ArchitectEnchantOption> BasicEnchantOptionsFor(CardModel card)
@@ -60,7 +59,7 @@ public static class ArchitectEnchantmentHelper
 
     public static bool CanTargetForRandomBasic(CardModel card)
     {
-        return CanReceiveAnotherEnchant(card) && BasicEnchantOptionsFor(card).Count > 0;
+        return CanReceiveEnchantment(card) && BasicEnchantOptionsFor(card).Count > 0;
     }
 
     public static ArchitectEnchantOption? RandomBasicForCard(Player player, CardModel card)
@@ -131,12 +130,12 @@ public static class ArchitectEnchantmentHelper
             return false;
         }
 
-        return CanReceiveAnotherEnchant(card);
+        return CanReceiveEnchantment(card);
     }
 
     public static bool CanTargetForSpecificEnchant(CardModel card, ArchitectEnchantKind kind)
     {
-        if (!CanReceiveAnotherEnchant(card))
+        if (!CanReceiveEnchantment(card))
         {
             return false;
         }
@@ -144,30 +143,31 @@ public static class ArchitectEnchantmentHelper
         return CanApplyCanonicalEnchant(card, kind);
     }
 
-    public static bool CanReceiveTransferredEnchantments(CardModel target, CardModel source)
+    public static bool CanReceiveTransferredEnchantment(CardModel target, CardModel source)
     {
-        IReadOnlyList<EnchantmentModel> sourceEnchantments = GetAll(source);
-        if (sourceEnchantments.Count == 0)
-        {
-            return false;
-        }
-
-        foreach (EnchantmentModel enchantment in sourceEnchantments)
-        {
-            if (!CanReceiveEnchantmentModel(target, enchantment))
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return source.Enchantment is { } enchantment && CanReceiveEnchantmentModel(target, enchantment);
     }
 
     public static string DescribeSigilbreakerDamage(CardModel card, IEnumerable<CardModel> handCards)
     {
         int enchantedInHand = CountOtherEnchantedCards(card, handCards);
-        int damage = card.DynamicVars.Damage.IntValue + enchantedInHand * card.DynamicVars["BonusDamage"].IntValue;
-        return $"deals {damage} damage";
+        DamageVar damage = PreviewAttackDamageVar(card,
+            card.DynamicVars.Damage.BaseValue + enchantedInHand * card.DynamicVars["BonusDamage"].BaseValue);
+        LocString preview = new("cards", "THEARCHITECT-SIGILBREAKER.combatPreview");
+        preview.Add(damage);
+        return preview.GetFormattedText();
+    }
+
+    public static DamageVar PreviewAttackDamageVar(CardModel card, decimal baseDamage, string name = "Damage")
+    {
+        DamageVar preview = new(name, baseDamage, card.DynamicVars.Damage.Props);
+        preview.EnchantedValue = card.DynamicVars.Damage.EnchantedValue +
+            (baseDamage - card.DynamicVars.Damage.BaseValue);
+        bool runGlobalHooks = card.IsMutable && card.CombatState != null &&
+            card.Pile?.Type is PileType.Hand or PileType.Play;
+        preview.UpdateCardPreview(card, CardPreviewMode.Normal,
+            ArchitectDamagePreviewTarget.Target ?? card.CurrentTarget, runGlobalHooks);
+        return preview;
     }
 
     public static EnchantmentModel Create(ArchitectEnchantKind kind)
@@ -193,164 +193,120 @@ public static class ArchitectEnchantmentHelper
         };
     }
 
+    public static bool IsStackless(ArchitectEnchantKind kind) => kind is
+        ArchitectEnchantKind.Instinct or ArchitectEnchantKind.PerfectFit or ArchitectEnchantKind.Steady or
+        ArchitectEnchantKind.Slither or ArchitectEnchantKind.Corrupted or
+        ArchitectEnchantKind.TezcatarasEmber or ArchitectEnchantKind.SoulsPower;
+
     public static int AmountFor(ArchitectEnchantKind kind)
     {
         return kind switch
         {
-            ArchitectEnchantKind.Nimble => 2,
-            ArchitectEnchantKind.Sharp => 2,
+            ArchitectEnchantKind.Nimble => 3,
+            ArchitectEnchantKind.Sharp => 3,
+            ArchitectEnchantKind.Adroit => 2,
+            ArchitectEnchantKind.Vigorous => 4,
+            ArchitectEnchantKind.Momentum => 3,
             ArchitectEnchantKind.Sown => 1,
             ArchitectEnchantKind.Swift => 2,
-            ArchitectEnchantKind.Instinct => 2,
+            ArchitectEnchantKind.Instinct => 1,
+            // Stackless enchantments still require a positive application amount.
             _ => 1
         };
     }
 
-    public static bool HasAny(CardModel card)
-    {
-        return MultiEnchantHelper.HasAnyEnchantments(card);
-    }
+    public static bool HasAny(CardModel card) => card.Enchantment != null;
 
-    public static bool Has<T>(CardModel card) where T : EnchantmentModel
-    {
-        return MultiEnchantHelper.GetEnchantments(card).Any(enchant => enchant is T);
-    }
+    public static bool Has<T>(CardModel card) where T : EnchantmentModel => card.Enchantment is T;
 
-    public static IReadOnlyList<EnchantmentModel> GetAll(CardModel card)
-    {
-        return MultiEnchantHelper.GetEnchantments(card);
-    }
+    public static EnchantmentModel? Get(CardModel card) => card.Enchantment;
 
-    public static int Count(CardModel card)
-    {
-        return GetAll(card).Count;
-    }
+    public static int Count(CardModel card) => HasAny(card) ? 1 : 0;
 
-    public static bool IsUnenchanted(CardModel card)
-    {
-        return !HasAny(card);
-    }
+    public static bool IsUnenchanted(CardModel card) => !HasAny(card);
 
-    public static bool CanReceiveAnotherEnchant(CardModel card)
+    public static bool CanReceiveEnchantment(CardModel card)
     {
-        return !HasAny(card) || MultiEnchantRegistry.SupportsMultiEnchant(card);
+        // Drowsy cards persist in the deck and cannot receive enchantments.
+        return card is not Drowsy && !HasAny(card);
     }
 
     public static EnchantmentModel? Add(CardModel card, ArchitectEnchantKind kind, decimal amount, Player? enchanter = null)
     {
+        if (!CanReceiveEnchantment(card)) return null;
         if ((enchanter ?? card.Owner)?.Creature.GetPower<InfiniteBlueprintPower>() != null)
-        {
             amount *= 2;
-        }
-        bool wasUnenchanted = !HasAny(card);
-        EnchantmentModel? result = MultiEnchantHelper.TryAddEnchantment(card, Create(kind), amount);
+
+        EnchantmentModel? result = CardCmd.Enchant(Create(kind), card, amount);
         if (result != null)
         {
             ArchitectCombatState.RecordEnchanted(card);
-            TriggerEnchantHooks(card, wasUnenchanted);
+            ArchitectEnchantmentReactions.AfterAdded(card);
         }
-
         return result;
     }
 
-    public static void AddRaw(CardModel card, EnchantmentModel enchantment, decimal amount)
+    // Copies an existing enchantment at its current amount, without applying combat multipliers again.
+    public static EnchantmentModel? AddRaw(CardModel card, EnchantmentModel enchantment, decimal amount)
     {
-        bool wasUnenchanted = !HasAny(card);
-        if (MultiEnchantHelper.TryAddEnchantment(card, enchantment, amount) != null)
+        if (!CanReceiveEnchantment(card)) return null;
+        EnchantmentModel? result = CardCmd.Enchant(enchantment, card, amount);
+        if (result != null)
         {
             ArchitectCombatState.RecordEnchanted(card);
-            TriggerEnchantHooks(card, wasUnenchanted);
+            ArchitectEnchantmentReactions.AfterAdded(card);
         }
+        return result;
     }
 
-    public static int RemoveAll(CardModel card)
+    public static bool Remove(CardModel card)
     {
-        int removed = MultiEnchantHelper.RemoveAllEnchantments(card);
-        if (removed > 0)
-        {
-            TriggerRemoveHooks(card);
-        }
-
-        return removed;
-    }
-
-    public static int RemoveWhere(CardModel card, Func<EnchantmentModel, bool> predicate)
-    {
-        List<EnchantmentModel> kept = GetAll(card)
-            .Where(enchantment => !predicate(enchantment))
-            .Select(enchantment => EnchantmentModel.FromSerializable(enchantment.ToSerializable()))
-            .ToList();
-
-        int removed = GetAll(card).Count - kept.Count;
-        if (removed <= 0)
-        {
-            return 0;
-        }
-
-        MultiEnchantHelper.RemoveAllEnchantments(card);
-        foreach (EnchantmentModel enchantment in kept)
-        {
-            MultiEnchantHelper.TryAddEnchantment(card, enchantment, enchantment.Amount);
-        }
-        TriggerRemoveHooks(card);
-
-        return removed;
-    }
-
-    public static void Refresh(CardModel card)
-    {
-        foreach (EnchantmentModel enchantment in GetAll(card))
-        {
-            enchantment.Status = EnchantmentStatus.Normal;
-        }
-    }
-
-    public static int RefreshAll(IEnumerable<CardModel> cards)
-    {
-        int refreshed = 0;
-        foreach (CardModel card in cards.Where(HasAny))
-        {
-            Refresh(card);
-            refreshed++;
-        }
-
-        return refreshed;
-    }
-
-    public static void Transfer(CardModel from, CardModel to)
-    {
-        if (!CanReceiveTransferredEnchantments(to, from))
-        {
-            return;
-        }
-
-        List<EnchantmentModel> moved = GetAll(from)
-            .Select(enchantment => EnchantmentModel.FromSerializable(enchantment.ToSerializable()))
-            .ToList();
-        MultiEnchantHelper.RemoveAllEnchantments(from);
-        foreach (EnchantmentModel enchantment in moved)
-        {
-            AddRaw(to, enchantment, enchantment.Amount);
-        }
+        if (!HasAny(card)) return false;
+        CardCmd.ClearEnchantment(card);
+        ArchitectEnchantmentReactions.AfterRemoved(card);
+        return true;
     }
 
     public static int RemoveAll(IEnumerable<CardModel> cards)
     {
         int removed = 0;
         foreach (CardModel card in cards)
-        {
-            if (RemoveAll(card) > 0)
-            {
-                removed++;
-            }
-        }
-
+            if (Remove(card)) removed++;
         return removed;
     }
 
-    public static async Task<CardModel?> ChooseFromHand(PlayerChoiceContext choiceContext, Player player, string promptKey, Func<CardModel, bool>? filter, AbstractModel source)
+    public static void Refresh(CardModel card, bool triggerAutomaton = true)
     {
-        return await ArchitectCardSelectionHelper.ChooseFromHand(choiceContext, player, promptKey, filter, source);
+        if (card.Enchantment is not { } enchantment) return;
+        enchantment.Status = EnchantmentStatus.Normal;
+        ArchitectEnchantmentReactions.AfterRefreshed(card, triggerAutomaton);
+    }
+
+    public static int RefreshAll(IEnumerable<CardModel> cards)
+    {
+        int refreshed = 0;
+        foreach (CardModel card in cards)
+        {
+            if (!HasAny(card)) continue;
+            Refresh(card);
+            refreshed++;
+        }
+        return refreshed;
+    }
+
+    public static void Transfer(CardModel from, CardModel to)
+    {
+        if (!CanReceiveTransferredEnchantment(to, from)) return;
+        EnchantmentModel original = from.Enchantment!;
+        EnchantmentModel copy = EnchantmentModel.FromSerializable(original.ToSerializable());
+        decimal amount = original.Amount;
+        Remove(from);
+        AddRaw(to, copy, amount);
+    }
+
+    public static async Task<CardModel?> ChooseFromHand(PlayerChoiceContext choiceContext, Player player, string promptKey, Func<CardModel, bool>? filter, AbstractModel source, int min = 1)
+    {
+        return await ArchitectCardSelectionHelper.ChooseFromHand(choiceContext, player, promptKey, filter, source, min);
     }
 
     public static async Task<CardModel?> ChooseFromDrawPile(PlayerChoiceContext choiceContext, Player player, string promptKey, Func<CardModel, bool>? filter)
@@ -548,13 +504,27 @@ public static class ArchitectEnchantmentHelper
 
     public static async Task AttackAll(CardModel card, PlayerChoiceContext choiceContext, decimal damage, int hits = 1, ValueProp props = ValueProp.Move)
     {
-        for (int i = 0; i < hits; i++)
+        await DamageCmd.Attack(damage)
+            .WithHitCount(hits)
+            .FromCard(card)
+            .TargetingAllOpponents(card.CombatState!)
+            .Execute(choiceContext);
+    }
+
+    public static async Task DamageAll(CardModel card, PlayerChoiceContext choiceContext, decimal damage, ValueProp props = ValueProp.Unpowered)
+    {
+        if (card.CombatState == null)
         {
-            foreach (Creature enemy in card.CombatState!.HittableEnemies)
-            {
-                await DamageCmd.Attack(damage).FromCard(card).Targeting(enemy).Execute(choiceContext);
-            }
+            return;
         }
+
+        await CreatureCmd.Damage(
+            choiceContext,
+            card.CombatState.HittableEnemies,
+            damage,
+            props,
+            card.Owner.Creature,
+            null);
     }
 
     public static async Task AttackAll(CardModel card, PlayerChoiceContext choiceContext, decimal damage, int hits, IEnumerable<Creature> targets, ValueProp props = ValueProp.Move)
@@ -612,45 +582,6 @@ public static class ArchitectEnchantmentHelper
         }
 
         return card.Pile?.Type != PileType.Deck || !card.Keywords.Contains(CardKeyword.Unplayable);
-    }
-
-    private static void TriggerEnchantHooks(CardModel card, bool wasUnenchanted)
-    {
-        if (card.Owner?.Creature == null)
-        {
-            return;
-        }
-
-        if (card.CombatState == null || card.Pile?.Type == PileType.Deck) return;
-        if (wasUnenchanted)
-        {
-            foreach (CalibrationRuler relic in card.Owner.Relics.OfType<CalibrationRuler>())
-                ArchitectEffectQueue.Track(card.Owner, relic.OnFirstEnchantment(card));
-        }
-
-        SanctuaryPower? sanctuary = card.Owner.Creature.GetPower<SanctuaryPower>();
-        if (sanctuary != null)
-        {
-            ArchitectEffectQueue.Track(card.Owner, CreatureCmd.GainBlock(card.Owner.Creature, sanctuary.Amount, ValueProp.Move, null));
-        }
-    }
-
-    private static void TriggerRemoveHooks(CardModel card)
-    {
-        if (card.Owner?.Creature == null)
-        {
-            return;
-        }
-
-        if (card.CombatState == null || card.Pile?.Type == PileType.Deck) return;
-        foreach (DismantlingPliers relic in card.Owner.Relics.OfType<DismantlingPliers>())
-            ArchitectEffectQueue.Track(card.Owner, relic.OnActiveRemoval(card));
-
-        DestroyerPower? destroyer = card.Owner.Creature.GetPower<DestroyerPower>();
-        if (destroyer != null)
-        {
-            ArchitectEffectQueue.Track(card.Owner, PowerCmd.Apply<StrengthPower>(new ThrowingPlayerChoiceContext(), card.Owner.Creature, destroyer.Amount, card.Owner.Creature, null));
-        }
     }
 
     public static IEnumerable<IHoverTip> HoverFor(ArchitectEnchantKind kind, int amount)
@@ -713,7 +644,7 @@ public static class ArchitectEnchantmentHelper
 
     private static bool CanReceiveEnchantmentModel(CardModel card, EnchantmentModel enchantment)
     {
-        if (!CanReceiveAnotherEnchant(card))
+        if (!CanReceiveEnchantment(card))
         {
             return false;
         }

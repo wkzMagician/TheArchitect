@@ -8,6 +8,13 @@ public static class WakingCataclysmTests
 {
 
     [ArchitectTest]
+    public static void IsUncommon()
+    {
+        AssertEx.Equal(CardRarity.Uncommon, TestModels.Card<WakingCataclysm>().Rarity,
+            "Waking Cataclysm rarity");
+    }
+
+    [ArchitectTest]
     public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<WakingCataclysm>();

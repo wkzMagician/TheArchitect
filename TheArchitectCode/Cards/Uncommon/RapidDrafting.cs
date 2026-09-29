@@ -10,7 +10,6 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Cards.Tokens;
 using TheArchitect.TheArchitectCode.Helpers;
 
@@ -20,7 +19,7 @@ public sealed class RapidDrafting() : TheArchitectCard(1, CardType.Skill, CardRa
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(2), new DynamicVar("Swift", 1)];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Swift, DynamicVars["Swift"].IntValue);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Swift, DynamicVars["Swift"].IntValue));
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {

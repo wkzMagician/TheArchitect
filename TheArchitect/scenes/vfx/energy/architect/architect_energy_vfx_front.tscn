@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://TheArchitectCode/Visuals/ArchitectParticlesContainer.cs" id="1"]
+[ext_resource type="Script" uid="uid://cbw0xw37vcdaj" path="res://TheArchitectCode/Visuals/ArchitectParticlesContainer.cs" id="1"]
 [ext_resource type="Texture2D" path="res://TheArchitect/images/vfx/vfx_constant_fire/fire_texture_2.png" id="2"]
 [ext_resource type="Texture2D" path="res://TheArchitect/images/vfx/light.png" id="3"]
 

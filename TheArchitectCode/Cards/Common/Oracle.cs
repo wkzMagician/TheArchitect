@@ -10,7 +10,6 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Cards.Tokens;
 using TheArchitect.TheArchitectCode.Helpers;
 
@@ -18,18 +17,18 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class Oracle() : TheArchitectCard(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 {
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain];
-
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        CardModel? top = ArchitectEnchantmentHelper.DrawPile(Owner).FirstOrDefault();
-        if (top == null)
+        CardModel? target = ArchitectEnchantmentHelper.DrawPile(Owner)
+            .FirstOrDefault(ArchitectEnchantmentHelper.HasAny);
+        if (target == null)
         {
             return;
         }
 
-        top.SetToFreeThisTurn();
-        await CardCmd.AutoPlay(choiceContext, top, null);
+        target.SetToFreeThisTurn();
+        await CardCmd.AutoPlay(choiceContext, target, null);
+        ArchitectEnchantmentHelper.Remove(target);
     }
 
     protected override void OnUpgrade()

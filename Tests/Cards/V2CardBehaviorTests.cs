@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Models.Cards.Mocks;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using TheArchitect.Tests.Infrastructure;
 using TheArchitect.TheArchitectCode.Cards.Tokens;
-using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.Tests.Cards;
@@ -22,11 +21,11 @@ public static class V2CardBehaviorTests
             AncientSeed card = ctx.CardInHand<AncientSeed>();
             if (upgraded) card.UpgradeInternal();
             if (enchanted) ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1);
-            int expected = (upgraded ? 3 : 2) * (enchanted ? 2 : 1);
+            int expected = 1 + (enchanted ? 1 : 0);
             int hp = ctx.Enemy.CurrentHp;
             await ctx.Play(card, ctx.Enemy);
-            AssertEx.Equal(expected + (enchanted ? 1 : 0), ctx.HpLost(ctx.Enemy, hp), "Seed damage includes its conditional bonus and Sharp");
-            AssertEx.Equal(expected, ctx.Player.Creature.Block, "Seed block matches v2");
+            AssertEx.Equal(expected, ctx.HpLost(ctx.Enemy, hp), "Seed damage includes Sharp");
+            AssertEx.Equal(1, ctx.Player.Creature.Block, "Seed grants its current base block");
             AssertEx.False(card.Keywords.Contains(CardKeyword.Retain), "Upgrading Seed no longer adds Retain");
         }
     }
@@ -47,7 +46,7 @@ public static class V2CardBehaviorTests
             int expected = (upgraded ? 13 : 10) + (enchanted ? 1 : 0);
             AssertEx.Equal(expected, ctx.HpLost(ctx.Enemy, hp1), "Primary enemy takes exactly one hit");
             AssertEx.Equal(enchanted ? expected : 0, ctx.HpLost(ctx.SecondEnemy, hp2), "Other enemy only hit by enchanted Sweep");
-            if (enchanted) ArchitectEnchantmentHelper.RemoveAll(card);
+            if (enchanted) ArchitectEnchantmentHelper.Remove(card);
             AssertEx.Equal(TargetType.AnyEnemy, card.TargetType, "Removing enchantment restores single targeting");
         }
     }
@@ -73,7 +72,7 @@ public static class V2CardBehaviorTests
             ctx.CardInDraw<DefendArchitect>();
             int hp = ctx.Enemy.CurrentHp;
             await ctx.Play(card, ctx.Enemy);
-            AssertEx.Equal(upgraded ? 28 : 24, ctx.HpLost(ctx.Enemy, hp), "Only four specified combat piles count");
+            AssertEx.Equal(upgraded ? 36 : 28, ctx.HpLost(ctx.Enemy, hp), "Only four specified combat piles count");
         }
     }
 
@@ -119,7 +118,7 @@ public static class V2CardBehaviorTests
         await ctx.Play(card);
         foreach (var entry in options)
         {
-            var enchantment = ArchitectEnchantmentHelper.GetAll(entry.Key).Single();
+            var enchantment = ArchitectEnchantmentHelper.Get(entry.Key)!;
             AssertEx.True(entry.Value.Any(option => ArchitectEnchantmentHelper.Create(option.Kind).GetType() == enchantment.GetType() && option.Amount == enchantment.Amount), "Chosen enchantment was compatible and used its standard amount");
         }
         AssertEx.False(ArchitectEnchantmentHelper.HasAny(curse), "Invalid targets remain unenchanted");
@@ -127,15 +126,13 @@ public static class V2CardBehaviorTests
     }
 
     [ArchitectTest]
-    public static async Task EternalVerdictSkipsIncompatibleCommonCards()
+    public static async Task EternalVerdictAppliesNextCardRefreshPower()
     {
         using CombatTestContext ctx = new();
         EternalVerdict card = ctx.CardInHand<EternalVerdict>();
-        WardedCut valid = ctx.CardInHand<WardedCut>();
-        MagicCircle invalid = ctx.CardInHand<MagicCircle>();
         await ctx.Play(card, ctx.Enemy);
-        AssertEx.True(CombatTestContext.HasEnchant<TezcatarasEmber>(valid), "Compatible common receives Ember");
-        AssertEx.False(CombatTestContext.HasEnchant<TezcatarasEmber>(invalid), "Incompatible card is excluded");
+        AssertEx.True(ctx.Player.Creature.GetPower<RefreshNextCardEnchantmentPower>() is not null,
+            "Eternal Verdict grants the next-card refresh effect");
     }
 
     [ArchitectTest]
@@ -161,26 +158,25 @@ public static class V2CardBehaviorTests
     }
 
     [ArchitectTest]
-    public static async Task WriteDestinyAllowsChoosingOneOfMultipleEnchantments()
+    public static async Task WriteDestinyCopiesTheSelectedCardsSingleEnchantment()
     {
         using CombatTestContext ctx = new();
         WriteDestiny card = ctx.CardInHand<WriteDestiny>();
         WardedCut deck = ctx.CardInDeck<WardedCut>();
         WardedCut combat = ctx.CardInHand<WardedCut>();
         combat.DeckVersion = deck;
-        MultiEnchantRegistry.Register(combat);
         ArchitectEnchantmentHelper.Add(combat, ArchitectEnchantKind.Sharp, 2);
-        ArchitectEnchantmentHelper.Add(combat, ArchitectEnchantKind.Nimble, 4);
-        // Two valid targets force the hand-selection step instead of its single-option shortcut.
         WardedCut other = ctx.CardInHand<WardedCut>();
         other.DeckVersion = ctx.CardInDeck<WardedCut>();
-        ArchitectEnchantmentHelper.Add(other, ArchitectEnchantKind.Sharp, 1);
+        ArchitectEnchantmentHelper.Add(other, ArchitectEnchantKind.Nimble, 4);
+
         ctx.Select(combat);
-        ctx.SelectIndexes(1);
         await ctx.Play(card);
-        AssertEx.True(CombatTestContext.HasEnchant<Nimble>(deck), "Second selected enchantment is inscribed");
-        AssertEx.Equal(4, CombatTestContext.EnchantAmount(deck), "Selected stack amount is persisted");
-        AssertEx.Equal(2, CombatTestContext.EnchantCount(combat), "Both combat enchantments remain");
+
+        AssertEx.True(CombatTestContext.HasEnchant<Sharp>(deck), "Selected card's enchantment is inscribed");
+        AssertEx.Equal(2, CombatTestContext.EnchantAmount(deck), "The enchantment amount is preserved");
+        AssertEx.Equal(1, CombatTestContext.EnchantCount(combat), "The combat card keeps its enchantment");
+        AssertEx.False(CombatTestContext.HasEnchant<Nimble>(deck), "Other card's enchantment is not inscribed");
     }
 
     [ArchitectTest]

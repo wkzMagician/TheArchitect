@@ -14,9 +14,9 @@ namespace TheArchitect.TheArchitectCode.Cards.Ancient;
 public sealed class AncientVerdict() : TheArchitectCard(1, CardType.Attack, CardRarity.Ancient, TargetType.AnyEnemy)
 {
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [];
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(12, ValueProp.Move), new DynamicVar("BonusDamage", 3)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(12, ValueProp.Move), new DynamicVar("BonusDamage", 4)];
 
     protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
@@ -26,12 +26,12 @@ public sealed class AncientVerdict() : TheArchitectCard(1, CardType.Attack, Card
 
     protected override void OnUpgrade()
     {
-        DynamicVars["BonusDamage"].UpgradeValueBy(1m);
+        DynamicVars["BonusDamage"].UpgradeValueBy(2m);
     }
 
     protected override string GetCombatPreviewText()
     {
-        int damage = DynamicVars.Damage.IntValue + DynamicVars["BonusDamage"].IntValue * ArchitectEnchantmentHelper.CountEnchantedCardsInCombatPiles(Owner);
-        return $"deals {damage} damage";
+        return GetLocalizedCombatDamagePreview("THEARCHITECT-ANCIENT_VERDICT.combatPreview",
+            DynamicVars.Damage.BaseValue + DynamicVars["BonusDamage"].BaseValue * ArchitectEnchantmentHelper.CountEnchantedCardsInCombatPiles(Owner));
     }
 }

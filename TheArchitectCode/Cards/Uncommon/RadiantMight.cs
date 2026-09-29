@@ -11,7 +11,7 @@ public sealed class RadiantMight() : TheArchitectCard(1, CardType.Attack, CardRa
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(10, ValueProp.Move), new DynamicVar("Sharp", 1)];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Sharp, DynamicVars["Sharp"].IntValue);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Sharp, DynamicVars["Sharp"].IntValue));
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {

@@ -9,6 +9,15 @@ public static class MonumentHammerTests
 {
 
     [ArchitectTest]
+    public static void ScalingUpgradesFromFiveToEight()
+    {
+        var card = TestModels.Card<MonumentHammer>().ToMutable();
+        AssertEx.Equal(5m, card.DynamicVars["Scaling"].BaseValue, "Monument Hammer base scaling");
+        card.UpgradeInternal();
+        AssertEx.Equal(8m, card.DynamicVars["Scaling"].BaseValue, "Monument Hammer upgraded scaling");
+    }
+
+    [ArchitectTest]
     public static Task CombatScenario()
     {
         return BehaviorCatalog.AssertCardBehavior<MonumentHammer>();
@@ -23,6 +32,8 @@ public static class MonumentHammerTests
             .GetMethod("GetCombatPreviewText", BindingFlags.Instance | BindingFlags.NonPublic)!
             .Invoke(card, null)!;
 
-        AssertEx.Equal("deals 10 damage", preview, "Monument Hammer reward preview should use the base damage before the card has a combat state.");
+        AssertEx.True(
+            preview is "deals 10 damage" or "造成10点伤害",
+            $"Monument Hammer reward preview should use the base damage in the active language before the card has combat state. Actual: {preview}");
     }
 }

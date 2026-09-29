@@ -14,11 +14,11 @@ public sealed class TeaOfDrowsiness() : TheArchitectCard(0, CardType.Skill, Card
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromCard<Drowsy>()];
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Energy", 2), new CardsVar(3)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar("Energy", 2), new CardsVar(3)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await ArchitectEnchantmentHelper.AddDrowsy(Owner, 3, PileType.Draw);
+        await ArchitectEnchantmentHelper.AddDrowsy(Owner, 1, PileType.Draw);
         await PlayerCmd.GainEnergy(DynamicVars["Energy"].IntValue, Owner);
         await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.IntValue, Owner);
     }

@@ -37,6 +37,6 @@ public sealed class LayeredBrace() : TheArchitectCard(1, CardType.Skill, CardRar
     protected override string GetCombatPreviewText()
     {
         int triggers = ArchitectCombatState.TimesPlayed(this) + 1;
-        return $"triggers {CountNoun(triggers, "time")}";
+        return GetLocalizedCombatPreview("THEARCHITECT-LAYERED_BRACE.combatPreview", ("Triggers", triggers));
     }
 }

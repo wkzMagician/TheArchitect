@@ -23,7 +23,7 @@ public sealed class DivineGracePower : TheArchitectPower
 
     public async Task BeforeTurnEnd(PlayerChoiceContext choiceContext, MegaCrit.Sts2.Core.Combat.CombatSide side)
     {
-        if (Owner.Player == null || side != Owner.Player.Creature.CombatState!.CurrentSide)
+        if (Owner.Player == null || side != Owner.Side)
         {
             return;
         }
@@ -33,7 +33,8 @@ public sealed class DivineGracePower : TheArchitectPower
             Owner.Player,
             $"{Id.Entry}.selectionScreenPrompt",
             static card => ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(card, ArchitectEnchantKind.PerfectFit),
-            this);
+            this,
+            min: 0);
         if (card != null)
         {
             ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.PerfectFit, 1m);

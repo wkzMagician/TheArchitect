@@ -1,8 +1,12 @@
 using MegaCrit.Sts2.Core.Models;
+using Godot;
 using System.Text.RegularExpressions;
 using TheArchitect.Tests.Infrastructure;
 using TheArchitect.TheArchitectCode.Character;
 using TheArchitect.TheArchitectCode.Extensions;
+using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
+using MegaCrit.Sts2.Core.Nodes.Combat;
+using TheArchitect.TheArchitectCode.Patches;
 
 namespace TheArchitect.Tests.Resources;
 
@@ -16,6 +20,34 @@ public static class ArchitectResourcePathTests
         "regent",
         "necrobinder"
     ];
+
+    [ArchitectTest]
+    public static void ArchitectEnergyCounterUsesGameSceneWithCustomOrbArt()
+    {
+        const string path = "res://scenes/combat/energy_counters/ironclad_energy_counter.tscn";
+        AssertEx.True(ResourceLoader.Exists(path), $"Energy counter scene should be available: {path}");
+        PackedScene? packedScene = ResourceLoader.Load<PackedScene>(path);
+        AssertEx.NotNull(packedScene, $"Energy counter scene should load: {path}");
+        NEnergyCounter instance = packedScene!.Instantiate<NEnergyCounter>();
+        try
+        {
+            ArchitectEnergyCounterVisualPatch.ApplyArchitectVisuals(instance);
+            AssertEx.True(instance.HasNode("Layers/Layer1"), "Energy counter scene should instantiate its orb layers.");
+            AssertEx.True(instance.HasNode("Label"), "Energy counter scene should instantiate its energy label.");
+            AssertEx.True(instance.GetNode("EnergyVfxBack") is NParticlesContainer,
+                "Back energy VFX should resolve the game's particle script.");
+            AssertEx.True(instance.GetNode("EnergyVfxFront") is NParticlesContainer,
+                "Front energy VFX should resolve the game's particle script.");
+            const string orbImage = "res://TheArchitect/images/ui/combat/energy_counters/architect/architect_orb_layer_1.png";
+            if (ResourceLoader.Exists(orbImage))
+                AssertEx.Equal(orbImage, instance.GetNode<TextureRect>("Layers/Layer1").Texture.ResourcePath,
+                    "Architect artwork should be applied when it is available in the pack.");
+        }
+        finally
+        {
+            instance.Free();
+        }
+    }
 
     private static readonly string[] ForbiddenBaseGameRuntimePaths =
     [
@@ -125,7 +157,7 @@ public static class ArchitectResourcePathTests
         AssertEx.Equal(
             "res://scenes/combat/energy_counters/ironclad_energy_counter.tscn",
             character.CustomEnergyCounterPath,
-            "Architect should temporarily reuse a base-game energy counter while custom Godot C# scene scripts are unavailable.");
+            "Architect should use the game energy counter with its own artwork.");
         AssertEx.Equal(
             "res://scenes/vfx/card_trail_ironclad.tscn",
             character.CustomTrailPath,

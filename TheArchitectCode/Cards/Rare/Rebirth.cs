@@ -10,7 +10,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Rare;
 
 public sealed class Rebirth() : TheArchitectCard(2, CardType.Power, CardRarity.Rare, TargetType.Self)
 {
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.RefreshEnchantments];
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant([ArchitectKeywordHoverTips.RefreshEnchantments]);
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         await PowerCmd.Apply<RebirthPower>(choiceContext, Owner.Creature, 1m, Owner.Creature, this);

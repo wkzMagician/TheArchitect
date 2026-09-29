@@ -26,6 +26,8 @@ public static class LayeredBraceTests
             .GetMethod("GetCombatPreviewText", BindingFlags.Instance | BindingFlags.NonPublic)!
             .Invoke(card, null)!;
 
-        AssertEx.True(preview.Contains("triggers 3 times"), "Layered Brace should show its current trigger count.");
+        AssertEx.True(
+            preview.Contains("3") && (preview.Contains("triggers", StringComparison.OrdinalIgnoreCase) || preview.Contains("触发")),
+            $"Layered Brace should show its current trigger count in the active language. Actual: {preview}");
     }
 }

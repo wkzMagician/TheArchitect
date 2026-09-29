@@ -17,14 +17,22 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
-public sealed class SpearOfSacrifice() : TheArchitectCard(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+public sealed class SpearOfSacrifice() : TheArchitectCard(1, CardType.Attack, CardRarity.Uncommon, TargetType.Self)
 {
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.RemoveEnchantments];
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant([ArchitectKeywordHoverTips.RemoveEnchantments]);
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        int removed = ArchitectEnchantmentHelper.RemoveAll(ArchitectEnchantmentHelper.Hand(Owner));
+        List<CardModel> affectedCards = ArchitectEnchantmentHelper.Hand(Owner)
+            .Where(card => card != this && ArchitectEnchantmentHelper.HasAny(card))
+            .ToList();
+        int removed = 0;
+        foreach (CardModel card in affectedCards)
+        {
+            if (ArchitectEnchantmentHelper.Remove(card)) removed++;
+        }
+
         List<Creature> enemies = CombatState!.HittableEnemies.ToList();
         for (int i = 0; i < removed && enemies.Count > 0; i++)
         {
@@ -39,7 +47,8 @@ public sealed class SpearOfSacrifice() : TheArchitectCard(1, CardType.Attack, Ca
 
     protected override string GetCombatPreviewText()
     {
-        int removed = ArchitectEnchantmentHelper.Hand(Owner).Count(ArchitectEnchantmentHelper.HasAny);
-        return $"hits {CountNoun(removed, "time")} for {DynamicVars.Damage.IntValue} damage each";
+        int removed = ArchitectEnchantmentHelper.Hand(Owner)
+            .Count(card => card != this && ArchitectEnchantmentHelper.HasAny(card));
+        return GetLocalizedCombatPreview("THEARCHITECT-SPEAR_OF_SACRIFICE.combatPreview", ("Hits", removed));
     }
 }

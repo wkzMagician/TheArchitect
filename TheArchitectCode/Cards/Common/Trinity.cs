@@ -34,7 +34,7 @@ public sealed class Trinity() : TheArchitectCard(1, CardType.Attack, CardRarity.
 
     protected override string GetCombatPreviewText()
     {
-        int damage = ArchitectCombatState.TimesPlayed(this) >= 2 ? DynamicVars["BigDamage"].IntValue : DynamicVars.Damage.IntValue;
-        return $"deals {damage} damage";
+        return GetLocalizedCombatDamagePreview("THEARCHITECT-TRINITY.combatPreview",
+            ArchitectCombatState.TimesPlayed(this) >= 2 ? DynamicVars["BigDamage"].BaseValue : DynamicVars.Damage.BaseValue);
     }
 }

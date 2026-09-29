@@ -11,17 +11,25 @@ namespace TheArchitect.TheArchitectCode.Helpers;
 /// </summary>
 public static class ArchitectKeywordHoverTips
 {
-    private const string IconPath = "res://TheArchitect/images/powers/power.png";
+    public static IHoverTip Enchant => Create("THEARCHITECT-ENCHANT", "enchant.png");
 
-    public static IHoverTip Enchant => Create("THEARCHITECT-ENCHANT");
+    public static IHoverTip RemoveEnchantments => Create("THEARCHITECT-REMOVE_ENCHANTMENTS", "remove.png");
 
-    public static IHoverTip RemoveEnchantments => Create("THEARCHITECT-REMOVE_ENCHANTMENTS");
+    public static IHoverTip RefreshEnchantments => Create("THEARCHITECT-REFRESH_ENCHANTMENTS", "refresh.png");
 
-    public static IHoverTip RefreshEnchantments => Create("THEARCHITECT-REFRESH_ENCHANTMENTS");
-
-    private static IHoverTip Create(string key)
+    public static IEnumerable<IHoverTip> IncludeEnchant(IEnumerable<IHoverTip> hoverTips)
     {
-        Texture2D icon = ResourceLoader.Load<Texture2D>(IconPath);
+        foreach (IHoverTip hoverTip in hoverTips)
+        {
+            yield return hoverTip;
+        }
+
+        yield return Enchant;
+    }
+
+    private static IHoverTip Create(string key, string iconName)
+    {
+        Texture2D icon = ResourceLoader.Load<Texture2D>($"res://TheArchitect/images/keywords/{iconName}");
         return new HoverTip(
             new LocString("static_hover_tips", $"{key}.title"),
             new LocString("static_hover_tips", $"{key}.description"),

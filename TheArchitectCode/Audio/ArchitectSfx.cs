@@ -6,8 +6,8 @@ namespace TheArchitect.TheArchitectCode.Audio;
 /// The base game ships character and UI sounds as FMOD events inside
 /// banks/desktop/sfx.bank + Master.strings.bank; there are no loose audio
 /// files to copy. Reuse those events directly here, or point a path at the
-/// Architect's own enemy events (banks/desktop/act1_b1.bank,
-/// "debuffenemy/enemy_attacks/architect/architect_ending_attack").
+/// Architect-specific enemy events are not available in the player's banks,
+/// so attack audio currently reuses the valid Ironclad cast event.
 ///
 /// To swap a sound later: change the value here (or use
 /// BaseLib.Utils.FmodAudio.RegisterEventReplacement) — no other file involved.
@@ -15,7 +15,7 @@ namespace TheArchitect.TheArchitectCode.Audio;
 public static class ArchitectSfx
 {
     /// <summary>Architect's own attack event (enemy boss, act1_b1.bank).</summary>
-    public const string ArchitectAttack = "event:/sfx/enemy/debuffenemy/enemy_attacks/architect/architect_ending_attack";
+    public const string ArchitectAttack = IroncladCast;
 
     /// <summary>Ironclad cast, reused until Architect-specific audio is authored.</summary>
     public const string IroncladCast = "event:/sfx/characters/ironclad/ironclad_cast";

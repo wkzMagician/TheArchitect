@@ -5,10 +5,10 @@ using MegaCrit.Sts2.Core.Entities.Enchantments;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards.Mocks;
+using MegaCrit.Sts2.Core.Models.Enchantments;
 using TheArchitect.Tests.Infrastructure;
 using TheArchitect.TheArchitectCode.Cards.Basic;
 using TheArchitect.TheArchitectCode.Cards.Uncommon;
-using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Helpers;
 using TheArchitect.TheArchitectCode.Relics;
 
@@ -33,7 +33,7 @@ public static class CalibrationRulerTests
         AssertEx.True(ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1) == null, "Unsupported stacking fails");
         await ArchitectEffectQueue.Drain(ctx.Player);
         AssertEx.Equal(5, ctx.Player.Creature.Block, "Failed enchant does not spend or trigger quota");
-        ArchitectEnchantmentHelper.RemoveAll(card);
+        ArchitectEnchantmentHelper.Remove(card);
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1);
         await ArchitectEffectQueue.Drain(ctx.Player);
         AssertEx.Equal(10, ctx.Player.Creature.Block, "New turn and rebuilding a stripped card qualify");
@@ -46,7 +46,6 @@ public static class CalibrationRulerTests
         await ctx.Relic<CalibrationRuler>();
         await ctx.Relic<CalibrationRuler>(ctx.Ally);
         var card = ctx.MockAttackInHand();
-        MultiEnchantRegistry.Register(card);
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1);
         await Hook.AfterPlayerTurnStart(ctx.CombatState, ctx.ChoiceContext, ctx.Player);
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1);
@@ -62,57 +61,55 @@ public static class CalibrationRulerTests
 public static class DismantlingPliersTests
 {
     [ArchitectTest]
-    public static async Task MultiEnchantRemovalGrantsEnergyOnceAndResetsOnOwnerTurn()
+    public static async Task SingleEnchantmentRemovalGrantsEnergyOnceAndResetsOnOwnerTurn()
     {
         using CombatTestContext ctx = new(includeAlly: true);
         await ctx.Relic<DismantlingPliers>();
         var card = ctx.MockAttackInHand();
-        MultiEnchantRegistry.Register(card);
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 2);
-        ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Swift, 1);
         int energy = ctx.Player.PlayerCombatState!.Energy;
-        ArchitectEnchantmentHelper.RemoveAll(card);
-        ArchitectEnchantmentHelper.RemoveAll(card);
+        AssertEx.True(ArchitectEnchantmentHelper.Remove(card), "The card loses its enchantment");
+        AssertEx.False(ArchitectEnchantmentHelper.Remove(card), "Removing an empty card does nothing");
         await ArchitectEffectQueue.Drain(ctx.Player);
-        AssertEx.Equal(energy + 1, ctx.Player.PlayerCombatState.Energy, "Multiple enchantments are one removed card");
+        AssertEx.Equal(energy + 1, ctx.Player.PlayerCombatState.Energy, "One removal grants energy once");
+
         await Hook.AfterPlayerTurnStart(ctx.CombatState, ctx.ChoiceContext, ctx.Ally!);
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1);
-        ArchitectEnchantmentHelper.RemoveAll(card);
+        ArchitectEnchantmentHelper.Remove(card);
         await ArchitectEffectQueue.Drain(ctx.Player);
         AssertEx.Equal(energy + 1, ctx.Player.PlayerCombatState.Energy, "Ally turn does not reset quota");
+
         await Hook.AfterPlayerTurnStart(ctx.CombatState, ctx.ChoiceContext, ctx.Player);
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1);
-        ArchitectEnchantmentHelper.RemoveAll(card);
+        ArchitectEnchantmentHelper.Remove(card);
         await ArchitectEffectQueue.Drain(ctx.Player);
         AssertEx.Equal(energy + 2, ctx.Player.PlayerCombatState.Energy, "Owner turn resets quota");
     }
 
     [ArchitectTest]
-    public static async Task TransferAndRebuildingKeptEnchantmentsDoNotProduceFalseEvents()
+    public static async Task TransferReportsOneRemovalAndOneAddition()
     {
         using CombatTestContext ctx = new();
         await ctx.Relic<DismantlingPliers>();
         await ctx.Relic<CalibrationRuler>();
         var source = ctx.MockAttackInHand();
         var target = ctx.MockAttackInHand();
-        MultiEnchantRegistry.Register(source);
-        MultiEnchantRegistry.Register(target);
         ArchitectEnchantmentHelper.Add(source, ArchitectEnchantKind.Sharp, 1);
-        ArchitectEnchantmentHelper.Add(source, ArchitectEnchantKind.Swift, 1);
+        await ArchitectEffectQueue.Drain(ctx.Player);
         int energy = ctx.Player.PlayerCombatState!.Energy;
+        int block = ctx.Player.Creature.Block;
+
         ArchitectEnchantmentHelper.Transfer(source, target);
+        await ArchitectEffectQueue.Drain(ctx.Player);
+        AssertEx.False(ArchitectEnchantmentHelper.HasAny(source), "Transfer removes the source enchantment");
+        AssertEx.True(ArchitectEnchantmentHelper.Has<Sharp>(target), "Transfer adds the enchantment to the target");
+        AssertEx.Equal(energy + 1, ctx.Player.PlayerCombatState.Energy, "Transfer reports one removal");
+        AssertEx.Equal(block, ctx.Player.Creature.Block, "Calibration Ruler still triggers only once this turn");
+        AssertEx.Equal(2, ArchitectCombatState.CardsEnchantedThisCombat(target), "Initial enchant and transfer each report one addition");
+
         ArchitectEnchantmentHelper.Refresh(target);
         await ArchitectEffectQueue.Drain(ctx.Player);
-        AssertEx.Equal(energy, ctx.Player.PlayerCombatState.Energy, "Transfer and refresh are not active removal");
-        await Hook.AfterPlayerTurnStart(ctx.CombatState, ctx.ChoiceContext, ctx.Player);
-        int block = ctx.Player.Creature.Block;
-        int applications = ArchitectCombatState.CardsEnchantedThisCombat(target);
-        ArchitectEnchantmentHelper.RemoveWhere(target, enchantment => enchantment is MegaCrit.Sts2.Core.Models.Enchantments.Sharp);
-        await ArchitectEffectQueue.Drain(ctx.Player);
-        AssertEx.Equal(energy + 1, ctx.Player.PlayerCombatState.Energy, "Partial active removal qualifies once");
-        AssertEx.Equal(block, ctx.Player.Creature.Block, "Rebuilding kept Swift does not count as a new enchantment");
-        AssertEx.Equal(applications, ArchitectCombatState.CardsEnchantedThisCombat(target), "Internal restoration does not advance enchant counters");
-        AssertEx.Equal(1, ArchitectEnchantmentHelper.Count(target), "Other enchantment survives removal");
+        AssertEx.Equal(energy + 1, ctx.Player.PlayerCombatState.Energy, "Refresh does not report a removal");
     }
 }
 
@@ -196,25 +193,38 @@ public static class ReflowInkwellTests
 public static class BlankCodexTests
 {
     [ArchitectTest]
-    public static async Task RequiresAPlayAndRemembersEnchantmentsRemovedDuringResolution()
+    public static async Task OrdinaryPlayDrawsTwoNextTurn()
     {
         using CombatTestContext ctx = new();
         var relic = await ctx.Relic<BlankCodex>();
+        var first = ctx.CardInDraw<MockSkillCard>();
+        var second = ctx.CardInDraw<MockSkillCard>();
+
         await relic.BeforeSideTurnEnd(ctx.ChoiceContext, CombatSide.Player, [ctx.Player.Creature]);
-        AssertEx.Equal(0, ctx.Player.Creature.Block, "Idle turn does not qualify");
+        await relic.AfterPlayerTurnStartEarly(ctx.ChoiceContext, ctx.Player);
+        AssertEx.True(ctx.Player.PlayerCombatState!.DrawPile.Cards.Contains(first), "Idle turn does not schedule a draw");
+
         await ctx.PlayFull(ctx.MockAttackInHand(), ctx.Enemy);
-        await relic.BeforeSideTurnEnd(ctx.ChoiceContext, CombatSide.Enemy, [ctx.Enemy]);
-        AssertEx.Equal(0, ctx.Player.Creature.Block, "Enemy turn does not qualify");
         await relic.BeforeSideTurnEnd(ctx.ChoiceContext, CombatSide.Player, [ctx.Player.Creature]);
-        await relic.BeforeSideTurnEnd(ctx.ChoiceContext, CombatSide.Player, [ctx.Player.Creature]);
-        AssertEx.Equal(8, ctx.Player.Creature.Block, "One ordinary play grants block once");
-        await Hook.AfterPlayerTurnStart(ctx.CombatState, ctx.ChoiceContext, ctx.Player);
+        await relic.AfterPlayerTurnStartEarly(ctx.ChoiceContext, ctx.Player);
+        AssertEx.True(ctx.Player.PlayerCombatState.Hand.Cards.Contains(first), "First bonus card is drawn");
+        AssertEx.True(ctx.Player.PlayerCombatState.Hand.Cards.Contains(second), "Second bonus card is drawn");
+    }
+
+    [ArchitectTest]
+    public static async Task EnchantedPlayDoesNotQualifyAfterItsEnchantmentIsRemoved()
+    {
+        using CombatTestContext ctx = new();
+        var relic = await ctx.Relic<BlankCodex>();
         var hammer = ctx.CardInHand<DivineHammerfall>();
         ArchitectEnchantmentHelper.Add(hammer, ArchitectEnchantKind.Sharp, 1);
         await ctx.PlayFull(hammer, ctx.Enemy);
         AssertEx.False(ArchitectEnchantmentHelper.HasAny(hammer), "Hammer removes its own enchantment");
+
+        var draw = ctx.CardInDraw<MockSkillCard>();
         await relic.BeforeSideTurnEnd(ctx.ChoiceContext, CombatSide.Player, [ctx.Player.Creature]);
-        AssertEx.Equal(8, ctx.Player.Creature.Block, "Start-of-play snapshot disqualifies the enchanted play");
+        await relic.AfterPlayerTurnStartEarly(ctx.ChoiceContext, ctx.Player);
+        AssertEx.True(ctx.Player.PlayerCombatState!.DrawPile.Cards.Contains(draw), "Start-of-play enchantment disqualifies the bonus draw");
     }
 }
 
@@ -235,17 +245,17 @@ public static class FinalizingSealTests
         ArchitectEnchantmentHelper.Add(duplicate, ArchitectEnchantKind.Swift, 1);
         for (int i = 0; i < 4; i++) ctx.CardInDraw<MockSkillCard>();
         await ctx.PlayFull(combat, ctx.Enemy);
-        AssertEx.Equal(EnchantmentStatus.Normal, ArchitectEnchantmentHelper.GetAll(combat)[0].Status, "Selected Swift is refreshed after it triggers");
+        AssertEx.Equal(EnchantmentStatus.Normal, ArchitectEnchantmentHelper.Get(combat)!.Status, "Selected Swift is refreshed after it triggers");
         int remaining = ctx.Player.PlayerCombatState!.DrawPile.Cards.Count;
         await ctx.PlayFull(combat, ctx.Enemy);
         AssertEx.Equal(remaining - 1, ctx.Player.PlayerCombatState.DrawPile.Cards.Count, "Refreshed enchantment triggers again");
         await ctx.PlayFull(duplicate, ctx.Enemy);
-        AssertEx.True(ArchitectEnchantmentHelper.GetAll(duplicate)[0].Status != EnchantmentStatus.Normal, "Same model with another deck identity is not sealed");
+        AssertEx.True(ArchitectEnchantmentHelper.Get(duplicate)!.Status != EnchantmentStatus.Normal, "Same model with another deck identity is not sealed");
         var clone = combat.CreateClone();
         clone.DeckVersion = selected;
         await ctx.PlayFull(clone, ctx.Enemy);
-        AssertEx.True(ArchitectEnchantmentHelper.GetAll(clone)[0].Status != EnchantmentStatus.Normal, "Combat clone cannot inherit seal even with a copied deck reference");
-        ArchitectEnchantmentHelper.RemoveAll(combat);
+        AssertEx.True(ArchitectEnchantmentHelper.Get(clone)!.Status != EnchantmentStatus.Normal, "Combat clone cannot inherit seal even with a copied deck reference");
+        ArchitectEnchantmentHelper.Remove(combat);
         await ctx.PlayFull(combat, ctx.Enemy);
         AssertEx.False(ArchitectEnchantmentHelper.HasAny(combat), "Seal never recreates removed enchantments");
     }

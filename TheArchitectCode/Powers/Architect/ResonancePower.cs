@@ -25,6 +25,6 @@ public sealed class ResonancePower : TheArchitectPower
             return;
         }
 
-        await ArchitectEnchantmentHelper.AttackAll(cardPlay.Card, context, Amount);
+        await ArchitectEnchantmentHelper.DamageAll(cardPlay.Card, context, Amount);
     }
 }

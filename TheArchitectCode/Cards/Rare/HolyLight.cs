@@ -17,7 +17,7 @@ public sealed class HolyLight() : TheArchitectCard(1, CardType.Skill, CardRarity
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Cards", 1)];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Glam, 1);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Glam, 1));
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {

@@ -29,6 +29,7 @@ public sealed class Proliferation() : TheArchitectCard(1, CardType.Attack, CardR
 
     protected override string GetCombatPreviewText()
     {
-        return string.Empty;
+        int hits = 1 + ArchitectCombatState.TimesPlayed(this);
+        return GetLocalizedCombatPreview("THEARCHITECT-PROLIFERATION.combatPreview", ("Hits", hits));
     }
 }

@@ -14,6 +14,8 @@ namespace TheArchitect.TheArchitectCode.Powers.Architect;
 
 public sealed class DrowsyEnginePower : TheArchitectPower
 {
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar("Energy", 2)];
+
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.None;
@@ -25,7 +27,7 @@ public sealed class DrowsyEnginePower : TheArchitectPower
             return;
         }
 
-        await PlayerCmd.GainEnergy(1, player);
-        await ArchitectEnchantmentHelper.AddDrowsy(player, 1, PileType.Hand);
+        await PlayerCmd.GainEnergy(2, player);
+        await ArchitectEnchantmentHelper.AddDrowsy(player, 1, PileType.Discard);
     }
 }

@@ -18,11 +18,11 @@ public sealed class RebirthPower : TheArchitectPower
 
     public override PowerStackType StackType => PowerStackType.None;
 
-    public override Task AfterCardPlayed(PlayerChoiceContext context, CardPlay cardPlay)
+    public override Task AfterCardPlayedLate(PlayerChoiceContext context, CardPlay cardPlay)
     {
         if (cardPlay.Card.Owner.Creature == Owner && ArchitectEnchantmentHelper.HasAny(cardPlay.Card))
         {
-            ArchitectEnchantmentHelper.Refresh(cardPlay.Card);
+            ArchitectEnchantmentHelper.Refresh(cardPlay.Card, triggerAutomaton: false);
         }
 
         return Task.CompletedTask;

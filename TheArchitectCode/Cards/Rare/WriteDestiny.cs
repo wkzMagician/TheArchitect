@@ -22,25 +22,13 @@ public sealed class WriteDestiny() : TheArchitectCard(3, CardType.Skill, CardRar
             choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", CanInscribe, this);
         if (card == null) return;
 
-        IReadOnlyList<EnchantmentModel> enchantments = ArchitectEnchantmentHelper.GetAll(card);
-        EnchantmentModel selected = enchantments[0];
-        if (enchantments.Count > 1)
-        {
-            List<CardModel> choices = enchantments.Select(enchantment =>
-            {
-                EnchantChoiceCard choice = (EnchantChoiceCard)CombatState!.CreateCard(ModelDb.Card<EnchantChoiceCard>(), Owner);
-                choice.SetEnchantment(enchantment);
-                return (CardModel)choice;
-            }).ToList();
-            if (await CardSelectCmd.FromChooseACardScreen(choiceContext, choices, Owner) is not EnchantChoiceCard choice) return;
-            selected = choice.SelectedEnchantment!;
-        }
+        EnchantmentModel selected = ArchitectEnchantmentHelper.Get(card)!;
 
         // Inscription copies the existing amount, rather than applying the combat multiplier again.
         CardModel deckCard = card.DeckVersion!;
-        CardCmd.ClearEnchantment(deckCard);
+        ArchitectEnchantmentHelper.Remove(deckCard);
         EnchantmentModel copy = EnchantmentModel.FromSerializable(selected.ToSerializable());
-        CardCmd.Enchant(copy, deckCard, selected.Amount);
+        ArchitectEnchantmentHelper.AddRaw(deckCard, copy, selected.Amount);
     }
 
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);

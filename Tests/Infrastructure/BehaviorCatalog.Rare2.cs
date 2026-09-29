@@ -15,11 +15,14 @@ public static partial class BehaviorCatalog
     {
         using CombatTestContext ctx = new();
         CursePurge card = ctx.CardInHand<CursePurge>();
-        CardModel c1 = ctx.CardInDeck<MockCurseCard>();
-        CardModel c2 = ctx.CardInDeck<MockCurseCard>();
+        CardModel c1 = ctx.CardInHand<MockCurseCard>();
+        CardModel c2 = ctx.CardInDraw<MockCurseCard>();
+        CardModel deckCurse = ctx.CardInDeck<MockCurseCard>();
         await ctx.Play(card);
-        AssertEx.Equal(6, CombatTestContext.PowerAmount<PlatingPower>(ctx.Player.Creature), "CursePurge should gain Plating per curse");
-        AssertEx.False(ctx.Player.Deck.Cards.Contains(c1) || ctx.Player.Deck.Cards.Contains(c2), "CursePurge should remove curses from deck");
+        AssertEx.Equal(6, CombatTestContext.PowerAmount<PlatingPower>(ctx.Player.Creature), "CursePurge should gain Plating per combat curse");
+        AssertEx.Equal(PileType.Exhaust, c1.Pile!.Type, "CursePurge exhausts curses from hand");
+        AssertEx.Equal(PileType.Exhaust, c2.Pile!.Type, "CursePurge exhausts curses from draw pile");
+        AssertEx.True(ctx.Player.Deck.Cards.Contains(deckCurse), "CursePurge should leave the master deck unchanged");
     }
 
     private static async Task Depose()
@@ -87,7 +90,7 @@ public static partial class BehaviorCatalog
         int beforeEnergy = ctx.Player.PlayerCombatState!.Energy;
         int beforeHp = ctx.Enemy.CurrentHp;
         await ctx.Play(card, ctx.Enemy);
-        AssertEx.Equal(5, ctx.HpLost(ctx.Enemy, beforeHp), "Ascend should deal damage");
+        AssertEx.Equal(8, ctx.HpLost(ctx.Enemy, beforeHp), "Ascend should deal damage");
         AssertEx.True(ctx.Player.PlayerCombatState.Hand.Cards.Contains(drawn), "Ascend should draw after repeated plays");
         AssertEx.Equal(beforeEnergy + 1, ctx.Player.PlayerCombatState.Energy, "Ascend should gain energy after enough plays");
     }
@@ -160,7 +163,7 @@ public static partial class BehaviorCatalog
         ArchitectEnchantmentHelper.Add(ctx.MockSkillInHand(block: 5), ArchitectEnchantKind.Nimble, 1m);
         int before = ctx.Enemy.CurrentHp;
         await ctx.Play(card, ctx.Enemy);
-        AssertEx.Equal(18, ctx.HpLost(ctx.Enemy, before), "AncientVerdict should count enchanted cards");
+        AssertEx.Equal(20, ctx.HpLost(ctx.Enemy, before), "AncientVerdict should add 4 damage for each of two enchanted combat cards");
     }
 
     private static async Task InfiniteBlueprint()

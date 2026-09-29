@@ -15,7 +15,7 @@ public sealed class OpeningDraft() : TheArchitectCard(0, CardType.Skill, CardRar
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Swift", 1), new CardsVar(1)];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Swift, DynamicVars["Swift"].IntValue);
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Swift, DynamicVars["Swift"].IntValue));
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {

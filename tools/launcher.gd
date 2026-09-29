@@ -12,7 +12,9 @@ func _launch() -> void:
 	var output: Array = []
 	var args := PackedStringArray([
 		"-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
-		ProjectSettings.globalize_path("res://tools/launch-sts2.ps1"),
+		ProjectSettings.globalize_path("res://tools/architect.ps1"),
+		"-Mode",
+		"run",
 		"-GodotPath", OS.get_executable_path()
 	])
 	if "--verify-only" in OS.get_cmdline_user_args():

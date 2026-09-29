@@ -8,6 +8,19 @@ namespace TheArchitect.Tests.Cards.Tokens;
 public static class EnchantChoiceCardTests
 {
     [ArchitectTest]
+    public static void StacklessEnchantmentsOmitAmountFromDescription()
+    {
+        EnchantChoiceCard card = TestModels.MutableCard<EnchantChoiceCard>();
+        card.SetOption(new ArchitectEnchantOption(ArchitectEnchantKind.PerfectFit, 1));
+        string stackless = card.GetDescriptionForPile(PileType.None);
+        AssertEx.False(stackless.Contains("1"), "Stackless enchantment choice should not show an amount");
+
+        card.SetOption(new ArchitectEnchantOption(ArchitectEnchantKind.Sharp, 3));
+        AssertEx.True(card.GetDescriptionForPile(PileType.None).Contains("3"),
+            "Stacking enchantment choice should retain its amount");
+    }
+
+    [ArchitectTest]
     public static void CarriesTheEnchantmentOptionItWasBuiltFor()
     {
         EnchantChoiceCard card = TestModels.MutableCard<EnchantChoiceCard>();

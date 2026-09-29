@@ -9,7 +9,6 @@ using TheArchitect.TheArchitectCode.Cards.Basic;
 using TheArchitect.TheArchitectCode.Cards.Common;
 using TheArchitect.TheArchitectCode.Cards.Rare;
 using TheArchitect.TheArchitectCode.Cards.Uncommon;
-using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Helpers;
 using TheArchitect.TheArchitectCode.Potions;
 using TheArchitect.TheArchitectCode.Powers.Architect;
@@ -72,9 +71,7 @@ public static class RevisionSolventTests
         var selected = Enumerable.Range(0, 3).Select(_ => ctx.MockAttackInHand()).ToArray();
         foreach (var card in selected)
         {
-            MultiEnchantRegistry.Register(card);
             ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1);
-            ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Swift, 1);
         }
         var drawn = ctx.CardInDraw<StrikeArchitect>();
         ArchitectEnchantmentHelper.Add(drawn, ArchitectEnchantKind.Sharp, 1);
@@ -84,7 +81,7 @@ public static class RevisionSolventTests
         ctx.Select(selected);
         await potion.OnUseWrapper(ctx.ChoiceContext, ctx.Player.Creature);
         AssertEx.True(selected.All(card => !ArchitectEnchantmentHelper.HasAny(card)), "Selected enchantments are removed");
-        AssertEx.Equal(12, ctx.Player.Creature.Block, "Three cards grant twelve block, not six enchantments");
+        AssertEx.Equal(12, ctx.Player.Creature.Block, "Three selected cards grant twelve block");
         AssertEx.Equal(3, CombatTestContext.PowerAmount<StrengthPower>(ctx.Player.Creature), "Destroyer triggers per card");
         AssertEx.Equal(energy + 1, ctx.Player.PlayerCombatState.Energy, "Pliers triggers once");
         AssertEx.Equal(0, ctx.Player.PlayerCombatState.DrawPile.Cards.Count, "Exactly three cards drawn");

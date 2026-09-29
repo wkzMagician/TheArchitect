@@ -10,6 +10,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class Recuperate() : TheArchitectCard(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
+
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(10, MegaCrit.Sts2.Core.ValueProps.ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

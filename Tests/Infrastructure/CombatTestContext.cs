@@ -212,7 +212,7 @@ public sealed class CombatTestContext : IDisposable
 
     public static int EnchantAmount(CardModel card)
     {
-        return ArchitectEnchantmentHelper.GetAll(card).FirstOrDefault()?.Amount ?? 0;
+        return ArchitectEnchantmentHelper.Get(card)?.Amount ?? 0;
     }
 
     public async Task<T> ApplyPower<T>(Creature? owner = null, decimal amount = 1m) where T : PowerModel

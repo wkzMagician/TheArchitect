@@ -33,7 +33,7 @@ public static class InfiniteBlueprintPowerTests
         AssertEx.Equal(3, CombatTestContext.EnchantAmount(existing), "Existing enchantment is unchanged");
         AssertEx.Equal(6, CombatTestContext.EnchantAmount(attack), "Sharp application doubles");
         AssertEx.Equal(10, CombatTestContext.EnchantAmount(block), "Nimble application doubles");
-        AssertEx.False(ArchitectEnchantmentHelper.CanReceiveAnotherEnchant(attack), "Blueprint no longer opens multiple slots");
+        AssertEx.False(ArchitectEnchantmentHelper.CanReceiveEnchantment(attack), "Blueprint no longer opens multiple slots");
         ArchitectEnchantmentHelper.Refresh(attack);
         AssertEx.Equal(6, CombatTestContext.EnchantAmount(attack), "Refresh does not double again");
         var transfer = ctx.CardInHand<StrikeArchitect>();

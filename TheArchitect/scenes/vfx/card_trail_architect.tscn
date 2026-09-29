@@ -1,10 +1,10 @@
 [gd_scene load_steps=15 format=3]
 
-[ext_resource type="Script" path="res://TheArchitectCode/Visuals/ArchitectCardTrailVfxNode.cs" id="1_bnsb1"]
+[ext_resource type="Script" uid="uid://b4nb7g4i8q7p1" path="res://TheArchitectCode/Visuals/ArchitectCardTrailVfxNode.cs" id="1_bnsb1"]
 [ext_resource type="Texture2D" path="res://TheArchitect/images/packed/vfx/trail.png" id="1_e7jwb"]
 [ext_resource type="Texture2D" path="res://TheArchitect/images/packed/vfx/trail2.png" id="3_h6nov"]
 [ext_resource type="Texture2D" path="res://TheArchitect/images/vfx/brush_particle_2.png" id="4_a6nh4"]
-[ext_resource type="Script" path="res://TheArchitectCode/Visuals/ArchitectCardTrailNode.cs" id="4_kmr8f"]
+[ext_resource type="Script" uid="uid://bnp3b5tfw7lmy" path="res://TheArchitectCode/Visuals/ArchitectCardTrailNode.cs" id="4_kmr8f"]
 [ext_resource type="Texture2D" path="res://TheArchitect/images/packed/vfx/small_card_silhouette.png" id="6_2t70h"]
 [ext_resource type="Texture2D" path="res://TheArchitect/images/vfx/vfx_ghostly_power_up/sparkle.png" id="7_65yqt"]
 [ext_resource type="CanvasItemMaterial" path="res://TheArchitect/themes/canvas_item_material_additive_shared.tres" id="shared_additive_mat"]

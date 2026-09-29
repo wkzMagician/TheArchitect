@@ -10,7 +10,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class CyclingEtch() : TheArchitectCard(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.RefreshEnchantments];
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant([ArchitectKeywordHoverTips.RefreshEnchantments]);
     protected override bool ShufflesAfterPlay => true;
     public override Task AfterCardPlayedLate(PlayerChoiceContext context, CardPlay play)
     {
@@ -23,7 +23,6 @@ public sealed class CyclingEtch() : TheArchitectCard(1, CardType.Attack, CardRar
     {
         ShuffleIntoDrawPileThisCombat = true;
         await ArchitectEnchantmentHelper.Attack(this, choiceContext, play.Target, DynamicVars.Damage.BaseValue);
-        ArchitectEnchantmentHelper.Refresh(this);
     }
 
     protected override void OnUpgrade()

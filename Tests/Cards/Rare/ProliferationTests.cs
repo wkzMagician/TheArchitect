@@ -15,7 +15,7 @@ public static class ProliferationTests
     }
 
     [ArchitectTest]
-    public static void CombatPreviewIsDisabled()
+    public static void CombatPreviewShowsCurrentAttackCount()
     {
         Proliferation card = TestModels.Card<Proliferation>();
 
@@ -23,6 +23,6 @@ public static class ProliferationTests
             .GetMethod("GetCombatPreviewText", BindingFlags.Instance | BindingFlags.NonPublic)!
             .Invoke(card, null)!;
 
-        AssertEx.Equal(string.Empty, preview, "Proliferation should not add dynamic combat preview text.");
+        AssertEx.True(preview.Contains("1", StringComparison.Ordinal), "Proliferation preview should show its current single hit.");
     }
 }

@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.HoverTips;
 using BaseLib.Utils;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -12,6 +13,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Tokens;
 // Token-only UI choice cards used by Tempering.
 public abstract class TemperingChoiceCard(ArchitectEnchantKind kind) : TheArchitectCard(-1, CardType.Skill, CardRarity.Token, TargetType.None)
 {
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
+
     public override MegaCrit.Sts2.Core.Models.CardPoolModel Pool => MegaCrit.Sts2.Core.Models.ModelDb.CardPool<TheArchitectTokenPool>();
 
     public ArchitectEnchantKind Kind { get; } = kind;

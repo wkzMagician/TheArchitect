@@ -66,8 +66,9 @@ public static partial class BehaviorCatalog
         MockAttackCard common = ctx.MockAttackInHand();
         int before = ctx.Enemy.CurrentHp;
         await ctx.Play(card, ctx.Enemy);
-        AssertEx.Equal(10, ctx.HpLost(ctx.Enemy, before), "EternalVerdict should deal damage");
-        AssertEx.True(CombatTestContext.HasEnchant<TezcatarasEmber>(common), "EternalVerdict should ember a common card");
+        AssertEx.Equal(14, ctx.HpLost(ctx.Enemy, before), "EternalVerdict should deal its current base damage");
+        AssertEx.True(ctx.Player.Creature.GetPower<RefreshNextCardEnchantmentPower>() is not null,
+            "EternalVerdict should refresh the next card's enchantments");
     }
 
     private static async Task RadiantMight()
@@ -153,10 +154,10 @@ public static partial class BehaviorCatalog
         using CombatTestContext ctx = new();
         CyclingEtch card = ctx.CardInHand<CyclingEtch>();
         ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1m);
-        ArchitectEnchantmentHelper.GetAll(card)[0].Status = MegaCrit.Sts2.Core.Entities.Enchantments.EnchantmentStatus.Disabled;
-        await ctx.Play(card, ctx.Enemy);
+        ArchitectEnchantmentHelper.Get(card)!.Status = MegaCrit.Sts2.Core.Entities.Enchantments.EnchantmentStatus.Disabled;
+        await ctx.PlayFull(card, ctx.Enemy);
         AssertEx.Equal(PileType.Draw, ctx.GetResultPile(card), "CyclingEtch should return to draw");
-        AssertEx.Equal(MegaCrit.Sts2.Core.Entities.Enchantments.EnchantmentStatus.Normal, ArchitectEnchantmentHelper.GetAll(card)[0].Status, "CyclingEtch should refresh enchantments");
+        AssertEx.Equal(MegaCrit.Sts2.Core.Entities.Enchantments.EnchantmentStatus.Normal, ArchitectEnchantmentHelper.Get(card)!.Status, "CyclingEtch should refresh enchantments");
     }
 
     private static async Task SkyrendJudgment()
@@ -166,8 +167,8 @@ public static partial class BehaviorCatalog
         int before1 = ctx.Enemy.CurrentHp;
         int before2 = ctx.SecondEnemy!.CurrentHp;
         await ctx.Play(card);
-        AssertEx.Equal(50, ctx.HpLost(ctx.Enemy, before1), "SkyrendJudgment should hit first enemy");
-        AssertEx.Equal(50, ctx.HpLost(ctx.SecondEnemy, before2), "SkyrendJudgment should hit second enemy");
+        AssertEx.Equal(40, ctx.HpLost(ctx.Enemy, before1), "SkyrendJudgment should hit first enemy");
+        AssertEx.Equal(40, ctx.HpLost(ctx.SecondEnemy, before2), "SkyrendJudgment should hit second enemy");
     }
 
     private static async Task TeaOfDrowsiness()
@@ -182,6 +183,6 @@ public static partial class BehaviorCatalog
         AssertEx.Equal(before + 2, ctx.Player.PlayerCombatState.Energy, "TeaOfDrowsiness should gain energy");
         int drowsy = ctx.CountInDraw<TheArchitect.TheArchitectCode.Cards.Tokens.Drowsy>()
             + ctx.CountInHand<TheArchitect.TheArchitectCode.Cards.Tokens.Drowsy>();
-        AssertEx.Equal(3, drowsy, "TeaOfDrowsiness should shuffle 3 Drowsy into the draw pile");
+        AssertEx.Equal(1, drowsy, "TeaOfDrowsiness should shuffle 1 Drowsy into the draw pile");
     }
 }

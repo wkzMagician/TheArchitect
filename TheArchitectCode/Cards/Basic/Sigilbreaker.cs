@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
@@ -9,6 +10,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Basic;
 
 public sealed class Sigilbreaker() : TheArchitectCard(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
 {
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
+
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new DamageVar(8, ValueProp.Move),
@@ -35,8 +38,18 @@ public sealed class Sigilbreaker() : TheArchitectCard(1, CardType.Attack, CardRa
     protected override void AddExtraArgsToDescription(LocString description)
     {
         base.AddExtraArgsToDescription(description);
-        int enchantedInHand = !IsMutable || Owner?.PlayerCombatState == null ? 0 : ArchitectEnchantmentHelper.CountOtherEnchantedCards(this, Owner.PlayerCombatState.Hand.Cards);
-        int damage = DynamicVars.Damage.IntValue + enchantedInHand * DynamicVars["BonusDamage"].IntValue;
-        description.Add("DynamicDamage", damage);
+        // The compendium formats descriptions on the canonical model, which has no combat owner.
+        // Use base damage there and only inspect hand/strength on a mutable combat card.
+        if (!IsMutable || Owner?.PlayerCombatState == null)
+        {
+            description.Add(ArchitectEnchantmentHelper.PreviewAttackDamageVar(this,
+                DynamicVars.Damage.BaseValue, "DynamicDamage"));
+            return;
+        }
+
+        int enchantedInHand = ArchitectEnchantmentHelper.CountOtherEnchantedCards(this, Owner.PlayerCombatState.Hand.Cards);
+        description.Add(ArchitectEnchantmentHelper.PreviewAttackDamageVar(this,
+            DynamicVars.Damage.BaseValue + enchantedInHand * DynamicVars["BonusDamage"].BaseValue,
+            "DynamicDamage"));
     }
 }

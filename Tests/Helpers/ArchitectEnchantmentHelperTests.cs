@@ -2,7 +2,6 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using TheArchitect.Tests.Infrastructure;
 using TheArchitect.TheArchitectCode.Cards.Basic;
 using TheArchitect.TheArchitectCode.Cards.Common;
-using TheArchitect.TheArchitectCode.Enchantments.Framework;
 using TheArchitect.TheArchitectCode.Extensions;
 using TheArchitect.TheArchitectCode.Helpers;
 
@@ -44,11 +43,14 @@ public static class ArchitectEnchantmentHelperTests
     [ArchitectTest]
     public static void BasicEnchantAmountsMatchConfiguredValues()
     {
-        AssertEx.Equal(2, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Nimble), "Nimble should be a 2-stack basic enchant.");
-        AssertEx.Equal(2, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Sharp), "Sharp should be a 2-stack basic enchant.");
+        AssertEx.Equal(3, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Nimble), "Nimble should be a 3-stack basic enchant.");
+        AssertEx.Equal(3, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Sharp), "Sharp should be a 3-stack basic enchant.");
         AssertEx.Equal(1, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Sown), "Sown should be a 1-stack basic enchant.");
         AssertEx.Equal(2, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Swift), "Swift should be a 2-stack basic enchant.");
-        AssertEx.Equal(2, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Instinct), "Instinct should be a 2-stack basic enchant.");
+        AssertEx.Equal(1, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Instinct), "Instinct uses one as its internal application amount.");
+        AssertEx.Equal(2, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Adroit), "Adroit standard amount");
+        AssertEx.Equal(4, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Vigorous), "Vigorous standard amount");
+        AssertEx.Equal(3, ArchitectEnchantmentHelper.AmountFor(ArchitectEnchantKind.Momentum), "Momentum standard amount");
     }
 
     [ArchitectTest]
@@ -78,8 +80,8 @@ public static class ArchitectEnchantmentHelperTests
     [ArchitectTest]
     public static void OrdinaryCardsDoNotSupportMultipleEnchantments()
     {
-        WardedCut card = TestModels.Card<WardedCut>();
-
-        AssertEx.False(MultiEnchantRegistry.SupportsMultiEnchant(card), "Ordinary cards should reject multiple enchantments by default.");
+        WardedCut card = TestModels.MutableCard<WardedCut>();
+        ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1);
+        AssertEx.False(ArchitectEnchantmentHelper.CanReceiveEnchantment(card), "Every card has one enchantment slot.");
     }
 }

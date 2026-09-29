@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="Script" path="res://TheArchitectCode/Visuals/ArchitectParticlesContainer.cs" id="1"]
+[ext_resource type="Script" uid="uid://cbw0xw37vcdaj" path="res://TheArchitectCode/Visuals/ArchitectParticlesContainer.cs" id="1"]
 [ext_resource type="Texture2D" path="res://TheArchitect/images/vfx/light.png" id="2"]
 
 [node name="ArchitectEnergyVfxBack" type="Node2D" node_paths=PackedStringArray("_architectParticles")]

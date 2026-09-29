@@ -9,19 +9,19 @@ using TheArchitect.TheArchitectCode.Helpers;
 
 namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
-public sealed class Doctrine() : TheArchitectCard(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+public sealed class Doctrine() : TheArchitectCard(2, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [CardKeyword.Retain, CardKeyword.Exhaust] : [CardKeyword.Exhaust];
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-        ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Sharp, 1)
-            .Concat(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Nimble, 1));
+        ArchitectKeywordHoverTips.IncludeEnchant(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Sharp, 1)
+            .Concat(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Nimble, 1)));
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         List<CardModel> hand = ArchitectEnchantmentHelper.Hand(Owner);
-        int sharp = hand.Sum(card => ArchitectEnchantmentHelper.GetAll(card).OfType<Sharp>().Sum(enchantment => enchantment.Amount));
-        int nimble = hand.Sum(card => ArchitectEnchantmentHelper.GetAll(card).OfType<Nimble>().Sum(enchantment => enchantment.Amount));
+        int sharp = hand.Sum(card => ArchitectEnchantmentHelper.Get(card) is Sharp enchantment ? enchantment.Amount : 0);
+        int nimble = hand.Sum(card => ArchitectEnchantmentHelper.Get(card) is Nimble enchantment ? enchantment.Amount : 0);
 
         if (sharp > 0)
         {
@@ -35,7 +35,8 @@ public sealed class Doctrine() : TheArchitectCard(2, CardType.Skill, CardRarity.
 
         foreach (CardModel card in hand)
         {
-            ArchitectEnchantmentHelper.RemoveWhere(card, enchantment => enchantment is Sharp or Nimble);
+            if (ArchitectEnchantmentHelper.Get(card) is Sharp or Nimble)
+                ArchitectEnchantmentHelper.Remove(card);
         }
     }
     protected override void OnUpgrade() => AddKeyword(CardKeyword.Retain);

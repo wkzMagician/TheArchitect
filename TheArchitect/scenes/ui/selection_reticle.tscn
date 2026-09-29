@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="Script" path="res://TheArchitectCode/Visuals/ArchitectSelectionReticle.cs" id="1_lc2fu"]
+[ext_resource type="Script" uid="uid://c6bm5iwbkujw4" path="res://TheArchitectCode/Visuals/ArchitectSelectionReticle.cs" id="1_lc2fu"]
 [ext_resource type="Texture2D" path="res://TheArchitect/images/ui/combat/combat_reticle.png" id="2_75ikg"]
 
 [node name="SelectionReticle" type="Control"]

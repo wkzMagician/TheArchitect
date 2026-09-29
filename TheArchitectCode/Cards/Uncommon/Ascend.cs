@@ -19,7 +19,7 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class Ascend() : TheArchitectCard(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(5, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(8, ValueProp.Move), new EnergyVar("Energy", 1)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
@@ -46,12 +46,12 @@ public sealed class Ascend() : TheArchitectCard(1, CardType.Attack, CardRarity.U
         int priorPlays = ArchitectCombatState.TimesPlayed(this);
         if (priorPlays >= 2)
         {
-            return $"also draws 1 card and gains {EnergyIconHelper.GetPrefix(this)}1 Energy";
+            return GetLocalizedCombatPreview("THEARCHITECT-ASCEND.combatPreviewDrawAndEnergy");
         }
 
         if (priorPlays >= 1)
         {
-            return "also draws 1 card";
+            return GetLocalizedCombatPreview("THEARCHITECT-ASCEND.combatPreviewDraw");
         }
 
         return string.Empty;

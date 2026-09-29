@@ -14,8 +14,8 @@ public sealed class Tempering() : TheArchitectCard(1, CardType.Skill, CardRarity
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("EnchantAmount", 3)];
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-        ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Sharp, DynamicVars["EnchantAmount"].IntValue)
-            .Concat(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Nimble, DynamicVars["EnchantAmount"].IntValue));
+        ArchitectKeywordHoverTips.IncludeEnchant(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Sharp, DynamicVars["EnchantAmount"].IntValue)
+            .Concat(ArchitectEnchantmentHelper.HoverFor(ArchitectEnchantKind.Nimble, DynamicVars["EnchantAmount"].IntValue)));
 
     private TemperingChoiceCard CreateChoiceCard(ArchitectEnchantKind kind)
     {

@@ -5,17 +5,18 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
 
 namespace TheArchitect.TheArchitectCode.Helpers;
 
 public static class ArchitectCardSelectionHelper
 {
-    public static async Task<CardModel?> ChooseFromHand(PlayerChoiceContext choiceContext, Player player, string promptKey, Func<CardModel, bool>? filter, AbstractModel source)
+    public static async Task<CardModel?> ChooseFromHand(PlayerChoiceContext choiceContext, Player player, string promptKey, Func<CardModel, bool>? filter, AbstractModel source, int min = 1)
     {
         return (await CardSelectCmd.FromHand(
             choiceContext,
             player,
-            new CardSelectorPrefs(new LocString("cards", promptKey), 1),
+            new CardSelectorPrefs(new LocString(LocalizationTableFor(source), promptKey), min, 1),
             filter,
             source)).FirstOrDefault();
     }
@@ -37,10 +38,13 @@ public static class ArchitectCardSelectionHelper
         return (await CardSelectCmd.FromHand(
             choiceContext,
             player,
-            new CardSelectorPrefs(new LocString("cards", promptKey), min, max),
+            new CardSelectorPrefs(new LocString(LocalizationTableFor(source), promptKey), min, max),
             filter,
             source)).ToList();
     }
+
+    private static string LocalizationTableFor(AbstractModel source) =>
+        source is PowerModel ? "powers" : "cards";
 
     public static async Task<List<CardModel>> ChooseManyFromDrawPile(PlayerChoiceContext choiceContext, Player player, string promptKey, int min, int max, Func<CardModel, bool>? filter)
     {

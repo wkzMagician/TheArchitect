@@ -1,11 +1,11 @@
 {
   "THEARCHITECT-INSCRIPTION_POTION.title": "Inscription Potion",
-  "THEARCHITECT-INSCRIPTION_POTION.description": "Enchant a card in your hand with Sharp {EnchantAmount} or Nimble {EnchantAmount} for this combat.",
-  "THEARCHITECT-INSCRIPTION_POTION.selectionScreenPrompt": "Choose a card to Enchant.",
+  "THEARCHITECT-INSCRIPTION_POTION.description": "[gold]Enchant[/gold] a card in your hand with [gold]Sharp[/gold] {EnchantAmount} or [gold]Nimble[/gold] {EnchantAmount} for this combat.",
+  "THEARCHITECT-INSCRIPTION_POTION.selectionScreenPrompt": "Choose a card to [gold]Enchant[/gold].",
   "THEARCHITECT-REVISION_SOLVENT.title": "Revision Solvent",
-  "THEARCHITECT-REVISION_SOLVENT.description": "Remove all Enchantments from up to 3 cards in your hand. For each affected card, draw {Cards} card(s) and gain {Block} Block.",
-  "THEARCHITECT-REVISION_SOLVENT.selectionScreenPrompt": "Choose up to 3 Enchanted cards.",
+  "THEARCHITECT-REVISION_SOLVENT.description": "[gold]Remove[/gold] all [gold]Enchantments[/gold] from up to 3 cards in your hand. For each affected card, draw {Cards} card(s) and gain {Block} Block.",
+  "THEARCHITECT-REVISION_SOLVENT.selectionScreenPrompt": "Choose up to 3 [gold]Enchanted[/gold] cards.",
   "THEARCHITECT-REPRISE_ELIXIR.title": "Reprise Elixir",
-  "THEARCHITECT-REPRISE_ELIXIR.description": "Choose a card in your hand. The next time you manually play it this turn, replay it {Replays} additional time(s).",
-  "THEARCHITECT-REPRISE_ELIXIR.selectionScreenPrompt": "Choose a card to replay this turn."
+  "THEARCHITECT-REPRISE_ELIXIR.description": "Choose a card in your hand. The next time you manually play it this turn, [gold]replay[/gold] it {Replays} additional time(s).",
+  "THEARCHITECT-REPRISE_ELIXIR.selectionScreenPrompt": "Choose a card to [gold]replay[/gold] this turn."
 }

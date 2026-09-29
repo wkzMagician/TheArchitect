@@ -20,11 +20,11 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 public sealed class DivineHammerfall() : TheArchitectCard(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
+    ArchitectKeywordHoverTips.IncludeEnchant([
         ArchitectKeywordHoverTips.RemoveEnchantments,
         HoverTipFactory.FromPower<WeakPower>(),
         HoverTipFactory.FromPower<VulnerablePower>()
-    ];
+    ]);
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(15, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
@@ -35,13 +35,14 @@ public sealed class DivineHammerfall() : TheArchitectCard(2, CardType.Attack, Ca
             return;
         }
 
-        ArchitectEnchantmentHelper.RemoveAll(this);
         if (play.Target != null)
         {
             await ArchitectEnchantmentHelper.ApplyWeak(choiceContext, play.Target, 2m, Owner.Creature, this);
             await ArchitectEnchantmentHelper.ApplyVulnerable(choiceContext, play.Target, 2m, Owner.Creature, this);
         }
+        ArchitectEnchantmentHelper.Remove(this);
     }
+
 
     protected override void OnUpgrade()
     {
@@ -51,7 +52,7 @@ public sealed class DivineHammerfall() : TheArchitectCard(2, CardType.Attack, Ca
     protected override string GetCombatPreviewText()
     {
         return ArchitectEnchantmentHelper.HasAny(this)
-            ? "removes this card's Enchantments and applies 2 Weak and 2 Vulnerable"
+            ? GetLocalizedCombatPreview("THEARCHITECT-DIVINE_HAMMERFALL.combatPreview")
             : string.Empty;
     }
 }

@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
@@ -7,6 +8,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class SoulExchange() : TheArchitectCard(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
+
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [CardKeyword.Exhaust, CardKeyword.Retain] : [CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
@@ -26,7 +29,7 @@ public sealed class SoulExchange() : TheArchitectCard(0, CardType.Skill, CardRar
             choiceContext,
             Owner,
             $"{Id.Entry}.selectionScreenPromptTarget",
-            card => card != source && ArchitectEnchantmentHelper.CanReceiveTransferredEnchantments(card, source),
+            card => card != source && ArchitectEnchantmentHelper.CanReceiveTransferredEnchantment(card, source),
             this);
         if (target == null)
         {

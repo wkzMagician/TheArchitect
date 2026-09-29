@@ -67,7 +67,32 @@ public abstract class TheArchitectCard(int cost, CardType type, CardRarity rarit
 
     protected string FormatCombatPreview(string text)
     {
-        return string.IsNullOrWhiteSpace(text) ? string.Empty : $" (Currently {text})";
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return string.Empty;
+        }
+
+        LocString preview = new("cards", "THEARCHITECT-COMBAT_PREVIEW");
+        preview.Add("Preview", text);
+        return preview.GetFormattedText();
+    }
+
+    protected string GetLocalizedCombatPreview(string key, params (string Name, decimal Value)[] args)
+    {
+        LocString preview = new("cards", key);
+        foreach ((string name, decimal value) in args)
+        {
+            preview.Add(name, value);
+        }
+
+        return preview.GetFormattedText();
+    }
+
+    protected string GetLocalizedCombatDamagePreview(string key, decimal baseDamage)
+    {
+        LocString preview = new("cards", key);
+        preview.Add(ArchitectEnchantmentHelper.PreviewAttackDamageVar(this, baseDamage));
+        return preview.GetFormattedText();
     }
 
     protected static string CountNoun(int count, string singular, string? plural = null)
@@ -130,8 +155,9 @@ public abstract class TheArchitectCard(int cost, CardType type, CardRarity rarit
         base.AddExtraArgsToDescription(description);
         // The compendium renders canonical models; their Owner getter asserts
         // mutability even when no combat is active.
-        bool inCombat = IsMutable && (CombatState != null || Owner?.PlayerCombatState != null);
-        description.Add("CombatPreview", inCombat ? FormatCombatPreview(GetCombatPreviewText()) : string.Empty);
+        bool inCombatHandCard = IsMutable && Pile?.Type == PileType.Hand &&
+            (CombatState != null || Owner?.PlayerCombatState != null);
+        description.Add("CombatPreview", inCombatHandCard ? FormatCombatPreview(GetCombatPreviewText()) : string.Empty);
     }
 
     protected virtual void ApplyStartingEnchantments()
