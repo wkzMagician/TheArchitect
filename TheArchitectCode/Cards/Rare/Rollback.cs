@@ -14,7 +14,10 @@ public sealed class Rollback() : TheArchitectCard(1, CardType.Skill, CardRarity.
     {
         if (await ArchitectEnchantmentHelper.ChooseFromHand(choiceContext, Owner, $"{Id.Entry}.selectionScreenPrompt", card => card != this, this) is CardModel selected)
         {
-            ArchitectCombatState.MarkForShuffle(selected);
+            if (selected is not TheArchitectCard { HasBuiltInDrawPileReturn: true })
+            {
+                ArchitectCombatState.MarkForShuffle(selected);
+            }
         }
     }
 

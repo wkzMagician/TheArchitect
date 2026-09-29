@@ -59,6 +59,7 @@ public abstract class TheArchitectCard(int cost, CardType type, CardRarity rarit
     protected bool ShuffleIntoDrawPileThisCombat { get; set; }
     protected virtual bool ShufflesAfterPlay => ShuffleIntoDrawPileThisCombat;
     protected virtual CardPilePosition ShufflePosition => CardPilePosition.Random;
+    public bool HasBuiltInDrawPileReturn => ShufflesAfterPlay;
 
     protected virtual string GetCombatPreviewText()
     {
