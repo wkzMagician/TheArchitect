@@ -23,3 +23,6 @@ obj/
 
 # Local art production materials
 /assets/relic-potion-production/
+
+# Machine-specific development tools
+/tools/
