@@ -16,7 +16,7 @@ public sealed class FinalJudgmentOfTheRadiantScepter() : TheArchitectCard(1, Car
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        int hits = ArchitectCombatState.TimesPlayed(this) >= 9 ? 10 : 1;
+        int hits = ArchitectCombatState.TimesPlayed(this) >= 4 ? 10 : 1;
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .WithHitCount(hits)
             .FromCard(this)
@@ -27,7 +27,7 @@ public sealed class FinalJudgmentOfTheRadiantScepter() : TheArchitectCard(1, Car
 
     protected override string GetCombatPreviewText()
     {
-        int hits = ArchitectCombatState.TimesPlayed(this) >= 9 ? 10 : 1;
+        int hits = ArchitectCombatState.TimesPlayed(this) >= 4 ? 10 : 1;
         return GetLocalizedCombatPreview("THEARCHITECT-FINAL_JUDGMENT_OF_THE_RADIANT_SCEPTER.combatPreview", ("Hits", hits));
     }
 }

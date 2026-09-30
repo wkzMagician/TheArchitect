@@ -20,6 +20,32 @@ namespace TheArchitect.Tests.Cards;
 public static class FullEngineRegressionTests
 {
     [ArchitectTest]
+    public static async Task ShieldOfSacrificeExcludesItselfAndAppliesNimblePerCard()
+    {
+        foreach (int count in new[] { 0, 1, 3 })
+        foreach (bool fullPlay in new[] { false, true })
+        {
+            using CombatTestContext ctx = new();
+            ShieldOfSacrifice shield = ctx.CardInHand<ShieldOfSacrifice>();
+            ArchitectEnchantmentHelper.Add(shield, ArchitectEnchantKind.Nimble, 2);
+            var affected = Enumerable.Range(0, count).Select(_ => ctx.MockAttackInHand()).ToArray();
+            foreach (var card in affected)
+                ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1);
+            ctx.MockSkillInHand(block: 5);
+
+            AssertEx.True(shield.GetDescriptionForPile(PileType.Hand).Contains($"{count * 9}"),
+                "Shield preview must exclude itself and apply Nimble to each affected card");
+            if (fullPlay) await ctx.PlayFull(shield);
+            else await ctx.Play(shield);
+
+            AssertEx.Equal(count * 9, ctx.Player.Creature.Block, "Each other enchanted card grants 7 + 2 block");
+            AssertEx.True(ArchitectEnchantmentHelper.HasAny(shield), "Shield keeps its own enchantment");
+            foreach (var card in affected)
+                AssertEx.True(!ArchitectEnchantmentHelper.HasAny(card), "Other cards lose their enchantments");
+        }
+    }
+
+    [ArchitectTest]
     public static async Task ScalingDamagePreviewsUseHoveredTargetsVulnerability()
     {
         using CombatTestContext ctx = new();
@@ -33,6 +59,12 @@ public static class FullEngineRegressionTests
             "Ancient Verdict previews damage against the Vulnerable target");
         AssertEx.True(hammer.GetDescriptionForPile(PileType.Hand, ctx.Enemy).Contains("15"),
             "Monument Hammer previews damage against the Vulnerable target");
+        ArchitectEnchantmentHelper.Add(ctx.MockAttackInHand(), ArchitectEnchantKind.Sharp, 1);
+        string hammerDescription = hammer.GetDescriptionForPile(PileType.Hand, ctx.Enemy);
+        AssertEx.True(hammerDescription.Contains("22"),
+            "Monument Hammer shows its scaled damage against the Vulnerable target in the description");
+        AssertEx.True(!hammerDescription.Contains('（') && !hammerDescription.Contains('('),
+            "Monument Hammer has no parenthetical damage preview");
         AssertEx.True(trinity.GetDescriptionForPile(PileType.Hand, ctx.Enemy).Contains("15"),
             "Trinity previews damage against the Vulnerable target");
     }

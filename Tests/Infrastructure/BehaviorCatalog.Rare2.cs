@@ -137,7 +137,7 @@ public static partial class BehaviorCatalog
     {
         using CombatTestContext ctx = new();
         FinalJudgmentOfTheRadiantScepter card = ctx.CardInHand<FinalJudgmentOfTheRadiantScepter>();
-        ctx.MarkPlayed(card, 9);
+        ctx.MarkPlayed(card, 4);
         int before = ctx.Enemy.CurrentHp;
         await ctx.Play(card, ctx.Enemy);
         AssertEx.Equal(100, ctx.HpLost(ctx.Enemy, before), "FinalJudgment should hit ten times after enough plays");

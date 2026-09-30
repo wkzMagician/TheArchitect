@@ -30,7 +30,7 @@
 | 附魔 | Enchantment | 施加这个附魔。 | Apply this Enchantment. |
 | 抹除 | Erasure | 选择1张手牌。为其附魔灵魂之力。 | Choose a card in your hand. Enchant it with Soul's Power. |
 | 永恒裁决 | Eternal Verdict | 造成{Damage:diff()}点伤害。随机为1张可接受特兹卡塔拉的余烬的普通手牌附魔特兹卡塔拉的余烬1。 | Deal {Damage:diff()} damage. Enchant 1 random common card in your hand that can receive Tezcatara's Ember with Tezcatara's Ember 1. |
-| 辉杖终裁 | Final Judgment | 造成{Damage:diff()}点伤害。若此牌已打出10次或以上，则攻击10次。{IfUpgraded:show:将其置于你的抽牌堆顶。\\|将其洗入你的抽牌堆。}{CombatPreview} | Deal {Damage:diff()} damage. If this card has been played 10 or more times, attack 10 times. {IfUpgraded:show:Place it on top of your draw pile.\\|Shuffle it into your draw pile.}{CombatPreview} |
+| 辉杖终裁 | Final Judgment | 造成{Damage:diff()}点伤害。若此牌已打出5次或以上，则攻击10次。{IfUpgraded:show:将其置于你的抽牌堆顶。\\|将其洗入你的抽牌堆。}{CombatPreview} | Deal {Damage:diff()} damage. If this card has been played 5 or more times, attack 10 times. {IfUpgraded:show:Place it on top of your draw pile.\\|Shuffle it into your draw pile.}{CombatPreview} |
 | 创造形态 | Form of Creation | 每回合你打出的前{Cards:diff()}张已附魔牌：获得{Energy:diff()}点能量并抽1张牌。 | The first {Cards:diff()} Enchanted cards you play each turn: gain {Energy:diff()} Energy and draw 1 card. |
 | 天工宏构 | Grand Opus | 造成{Damage:diff()}点伤害X次。获得{Block:diff()}点格挡X次。 | Deal {Damage:diff()} damage X times. Gain {Block:diff()} Block X times. |
 | 守势沉眠 | Guarded Drowse | 获得{Block:diff()}点格挡。将1张昏睡加入你的手牌。 | Gain {Block:diff()} Block. Add 1 Drowsy to your hand. |
@@ -45,7 +45,7 @@
 | 安眠曲 | Lullaby | 对所有敌人施加{Weak:diff()}层虚弱。此牌初始附带华彩1。 | Apply {Weak:diff()} Weak to ALL enemies. This card starts with Glam 1. |
 | 魔法阵 | Magic Circle | 获得{Block:diff()}点格挡。此牌初始附带迅速{Swift:diff()}。 | Gain {Block:diff()} Block. This card starts with Swift {Swift:diff()}. |
 | 动量打击 | Momentum Strike | 造成{Damage:diff()}点伤害。选择1张手牌。使其获得动量{Momentum:diff()}。 | Deal {Damage:diff()} damage. Choose a card in your hand. It gains Momentum {Momentum:diff()}. |
-| 传说之锤 | Monument Hammer | 造成{Damage:diff()}点伤害。本场战斗中每附魔1次，此牌便增加{Scaling:diff()}点伤害。{CombatPreview} | Deal {Damage:diff()} damage. This card deals {Scaling:diff()} more damage for each card Enchanted this combat.{CombatPreview} |
+| 传说之锤 | Monument Hammer | 造成{DynamicDamage:diff()}点伤害。本场战斗中每附魔1次，此牌便增加{Scaling:diff()}点伤害。 | Deal {DynamicDamage:diff()} damage. This card deals {Scaling:diff()} more damage for each card Enchanted this combat. |
 | 全知全能 | Omnipotence | 在你的回合开始时，随机选择{Cards:diff()}张手牌，分别随机获得1种适用于它的附魔。 | At the start of your turn, choose {Cards:diff()} random cards in your hand. Enchant each with 1 random compatible Enchantment. |
 | 先发草案 | Opening Draft | 选择1张手牌。为其附魔迅速{Swift:diff()}。抽{Cards:diff()}张牌。 | Choose a card in your hand. Enchant it with Swift {Swift:diff()}. Draw {Cards:diff()} card. |
 | 神谕 | Oracle | 免费打出你抽牌堆中最靠近顶端的1张已附魔牌，然后移除其附魔。 | Play the Enchanted card closest to the top of your draw pile for free, then remove its Enchantment. |
@@ -67,7 +67,7 @@
 | 创世之力 | Seedcore Cannon | 造成{Damage:diff()}点伤害。此牌初始附带播种3。 | Deal {Damage:diff()} damage. This card starts with Sown 3. |
 | 碎片齐射 | Shard Barrage | 对所有敌人造成{Damage:diff()}点伤害{Hits}次。 | Deal {Damage:diff()} damage to ALL enemies {Hits} times. |
 | 共筑圣所 | Shared Sanctum | 每个回合结束时，每名玩家随机选择1张手牌，使其随机获得1种适用于它的附魔。 | At the end of each turn, choose 1 random card in each player's hand. Enchant it with 1 random compatible Enchantment. |
-| 牺牲之盾 | Shield of Sacrifice | 移除你手牌中所有牌的附魔。每张受影响的牌提供{Block:diff()}点格挡。{CombatPreview} | Remove all Enchantments from cards in your hand. Gain {Block:diff()} Block for each card affected.{CombatPreview} |
+| 牺牲之盾 | Shield of Sacrifice | 移除你手牌中所有其他牌的附魔。每张受影响的牌提供{Block:diff()}点格挡。{CombatPreview} | Remove all Enchantments from other cards in your hand. Gain {Block:diff()} Block for each card affected.{CombatPreview} |
 | 刻纹破击 | Sigilbreaker | 造成{DynamicDamage}点伤害。你的手牌中每有1张其他已附魔的牌，此牌便增加{BonusDamage:diff()}点伤害。 | Deal {DynamicDamage} damage. Gains {BonusDamage:diff()} damage for each other Enchanted card in your hand. |
 | 裂空神罚 | Skyrend Judgment | 对所有敌人造成{Damage:diff()}点伤害。本场战斗中每打出1张已附魔的牌，此牌费用降低1。 | Deal {Damage:diff()} damage to ALL enemies. Costs 1 less this combat each time you play an Enchanted card. |
 | 灵魂交换 | Soul Exchange | 选择1张已附魔的手牌和另一张手牌。将前者的附魔转移给后者。 | Choose 1 Enchanted card in your hand and another card in your hand. Move the Enchantments from the former to the latter. |

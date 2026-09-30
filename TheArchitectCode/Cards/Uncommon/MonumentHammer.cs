@@ -2,6 +2,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using TheArchitect.TheArchitectCode.Helpers;
@@ -25,9 +26,11 @@ public sealed class MonumentHammer() : TheArchitectCard(2, CardType.Attack, Card
         DynamicVars["Scaling"].UpgradeValueBy(3m);
     }
 
-    protected override string GetCombatPreviewText()
+    protected override void AddExtraArgsToDescription(LocString description)
     {
-        return GetLocalizedCombatDamagePreview("THEARCHITECT-MONUMENT_HAMMER.combatPreview",
-            DynamicVars.Damage.BaseValue + ArchitectCombatState.CardsEnchantedThisCombat(this) * DynamicVars["Scaling"].BaseValue);
+        base.AddExtraArgsToDescription(description);
+        description.Add(ArchitectEnchantmentHelper.PreviewAttackDamageVar(this,
+            DynamicVars.Damage.BaseValue + ArchitectCombatState.CardsEnchantedThisCombat(this) * DynamicVars["Scaling"].BaseValue,
+            "DynamicDamage"));
     }
 }

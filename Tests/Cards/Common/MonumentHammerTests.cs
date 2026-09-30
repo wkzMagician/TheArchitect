@@ -1,4 +1,3 @@
-using System.Reflection;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using TheArchitect.Tests.Infrastructure;
 using TheArchitect.TheArchitectCode.Cards.Common;
@@ -24,16 +23,16 @@ public static class MonumentHammerTests
     }
 
     [ArchitectTest]
-    public static void CombatPreviewWorksBeforeCardHasCombatState()
+    public static void DescriptionShowsDamageWithoutParentheticalPreviewBeforeCombat()
     {
         MonumentHammer card = TestModels.Card<MonumentHammer>();
 
-        string preview = (string)typeof(MonumentHammer)
-            .GetMethod("GetCombatPreviewText", BindingFlags.Instance | BindingFlags.NonPublic)!
-            .Invoke(card, null)!;
+        string description = card.GetDescriptionForPile(PileType.None);
 
         AssertEx.True(
-            preview is "deals 10 damage" or "造成10点伤害",
-            $"Monument Hammer reward preview should use the base damage in the active language before the card has combat state. Actual: {preview}");
+            description.Contains("10"),
+            $"Monument Hammer description should show base damage before combat. Actual: {description}");
+        AssertEx.True(!description.Contains('（') && !description.Contains('('),
+            "Monument Hammer should not display a parenthetical damage preview");
     }
 }

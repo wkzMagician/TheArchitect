@@ -24,10 +24,11 @@ public sealed class ShieldOfSacrifice() : TheArchitectCard(1, CardType.Skill, Ca
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        int removed = ArchitectEnchantmentHelper.RemoveAll(ArchitectEnchantmentHelper.Hand(Owner));
-        if (removed > 0)
+        int removed = ArchitectEnchantmentHelper.RemoveAll(
+            ArchitectEnchantmentHelper.Hand(Owner).Where(card => !ReferenceEquals(card, this)));
+        for (int i = 0; i < removed; i++)
         {
-            await ArchitectEnchantmentHelper.GainBlock(this, play, DynamicVars.Block.BaseValue * removed);
+            await ArchitectEnchantmentHelper.GainBlock(this, play, DynamicVars.Block.BaseValue);
         }
     }
 
@@ -38,7 +39,11 @@ public sealed class ShieldOfSacrifice() : TheArchitectCard(1, CardType.Skill, Ca
 
     protected override string GetCombatPreviewText()
     {
-        int removed = ArchitectEnchantmentHelper.Hand(Owner).Count(ArchitectEnchantmentHelper.HasAny);
-        return GetLocalizedCombatPreview("THEARCHITECT-SHIELD_OF_SACRIFICE.combatPreview", ("Block", DynamicVars.Block.IntValue * removed));
+        int removed = ArchitectEnchantmentHelper.CountOtherEnchantedCards(this, ArchitectEnchantmentHelper.Hand(Owner));
+        BlockVar block = new(DynamicVars.Block.BaseValue, DynamicVars.Block.Props);
+        block.UpdateCardPreview(this, CardPreviewMode.Normal, null,
+            IsMutable && CombatState != null && Pile?.Type is PileType.Hand or PileType.Play);
+        return GetLocalizedCombatPreview("THEARCHITECT-SHIELD_OF_SACRIFICE.combatPreview",
+            ("Block", Math.Max(0, (int)block.PreviewValue) * removed));
     }
 }
