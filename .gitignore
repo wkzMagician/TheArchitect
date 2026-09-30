@@ -20,3 +20,6 @@ obj/
 *.log
 *.bak
 .worktrees/
+
+# Local art production materials
+/assets/relic-potion-production/
