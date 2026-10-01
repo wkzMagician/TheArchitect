@@ -30,7 +30,7 @@
 | 附魔 | Enchantment | 施加这个附魔。 | Apply this Enchantment. |
 | 抹除 | Erasure | 选择1张手牌。为其附魔灵魂之力。 | Choose a card in your hand. Enchant it with Soul's Power. |
 | 永恒裁决 | Eternal Verdict | 造成{Damage:diff()}点伤害。随机为1张可接受特兹卡塔拉的余烬的普通手牌附魔特兹卡塔拉的余烬1。 | Deal {Damage:diff()} damage. Enchant 1 random common card in your hand that can receive Tezcatara's Ember with Tezcatara's Ember 1. |
-| 辉杖终裁 | Final Judgment | 造成{Damage:diff()}点伤害。若此牌已打出5次或以上，则攻击10次。{IfUpgraded:show:将其置于你的抽牌堆顶。\\|将其洗入你的抽牌堆。}{CombatPreview} | Deal {Damage:diff()} damage. If this card has been played 5 or more times, attack 10 times. {IfUpgraded:show:Place it on top of your draw pile.\\|Shuffle it into your draw pile.}{CombatPreview} |
+| 辉杖终裁 | Final Judgment | 造成{Damage:diff()}点伤害。若此牌已打出5次或以上，则攻击10次。{IfUpgraded:show:将其置于你的抽牌堆顶。\\|将其洗入你的抽牌堆。}{CombatPreview} | Deal {Damage:diff()} damage. If this card has been played 7 or more times, attack 10 times. {IfUpgraded:show:Place it on top of your draw pile.\\|Shuffle it into your draw pile.}{CombatPreview} |
 | 创造形态 | Form of Creation | 每回合你打出的前{Cards:diff()}张已附魔牌：获得{Energy:diff()}点能量并抽1张牌。 | The first {Cards:diff()} Enchanted cards you play each turn: gain {Energy:diff()} Energy and draw 1 card. |
 | 天工宏构 | Grand Opus | 造成{Damage:diff()}点伤害X次。获得{Block:diff()}点格挡X次。 | Deal {Damage:diff()} damage X times. Gain {Block:diff()} Block X times. |
 | 守势沉眠 | Guarded Drowse | 获得{Block:diff()}点格挡。将1张昏睡加入你的手牌。 | Gain {Block:diff()} Block. Add 1 Drowsy to your hand. |
