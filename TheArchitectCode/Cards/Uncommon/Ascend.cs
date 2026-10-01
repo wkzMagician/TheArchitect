@@ -19,6 +19,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class Ascend() : TheArchitectCard(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
+    protected override bool ShouldGlowGoldInternal => IsMutable && CombatState != null && (ArchitectCombatState.TimesPlayed(this) >= 1);
+
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(8, ValueProp.Move), new EnergyVar("Energy", 1)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

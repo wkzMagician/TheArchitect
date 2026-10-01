@@ -84,15 +84,21 @@ public static partial class BehaviorCatalog
     private static async Task ResonancePowerBehavior()
     {
         using CombatTestContext ctx = new(includeSecondEnemy: true);
-        ResonancePower power = await ctx.ApplyPower<ResonancePower>(amount: 3m);
+        await ctx.ApplyPower<ResonancePower>(amount: 3m);
         MockAttackCard card = ctx.MockAttackInHand();
-        ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1m);
-        CardPlay play = new() { Card = card, Target = ctx.Enemy, ResultPile = PileType.Discard, Resources = new ResourceInfo { EnergySpent = 0, EnergyValue = 0, StarsSpent = 0, StarValue = 0 }, IsAutoPlay = false, PlayIndex = 0, PlayCount = 1 };
         int before1 = ctx.Enemy.CurrentHp;
         int before2 = ctx.SecondEnemy!.CurrentHp;
-        await power.AfterCardPlayed(ctx.ChoiceContext, play);
-        AssertEx.Equal(3, ctx.HpLost(ctx.Enemy, before1), "ResonancePower should deal unpowered damage to first enemy");
-        AssertEx.Equal(3, ctx.HpLost(ctx.SecondEnemy, before2), "ResonancePower should deal unpowered damage to second enemy");
+        ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1m);
+        await ArchitectEffectQueue.Drain(ctx.Player);
+        AssertEx.Equal(3, ctx.HpLost(ctx.Enemy, before1), "Resonance should damage first enemy on enchant");
+        AssertEx.Equal(3, ctx.HpLost(ctx.SecondEnemy, before2), "Resonance should damage second enemy on enchant");
+        ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Sharp, 1m);
+        ArchitectEnchantmentHelper.Refresh(card);
+        await ArchitectEffectQueue.Drain(ctx.Player);
+        AssertEx.Equal(3, ctx.HpLost(ctx.Enemy, before1), "Failed enchantment and refresh should not trigger Resonance");
+        before1 = ctx.Enemy.CurrentHp;
+        await ctx.PlayFull(card, ctx.Enemy);
+        AssertEx.Equal(7, ctx.HpLost(ctx.Enemy, before1), "Playing enchanted attack should only deal its own damage including Sharp");
     }
 
     private static async Task TestSubjectPowerBehavior()

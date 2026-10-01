@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.Loader;
 using Godot;
+using ScriptManagerBridge = Godot.Bridge.ScriptManagerBridge;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Modding;
@@ -16,6 +17,9 @@ public partial class MainFile : Node
     public static void Initialize()
     {
         WriteRunnerStatus("mod-initialize");
+        // Mod assemblies are loaded outside Godot's main project assembly. Register
+        // their scripts before BaseLib instantiates and converts custom scenes.
+        ScriptManagerBridge.LookupScriptsInAssembly(typeof(MainFile).Assembly);
         Harmony harmony = new(ModId);
         harmony.PatchAll();
         if (System.Environment.GetEnvironmentVariable("THEARCHITECT_RUN_TESTS") == "1" || File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "TheArchitect.run-tests")) || File.Exists(Path.Combine(System.Environment.GetEnvironmentVariable("THEARCHITECT_GAME_PROJECT") ?? string.Empty, "TheArchitect.run-tests")))
@@ -104,6 +108,4 @@ public partial class MainFile : Node
     }
 
 }
-
-
 

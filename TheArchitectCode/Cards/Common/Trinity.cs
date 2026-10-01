@@ -19,6 +19,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class Trinity() : TheArchitectCard(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
+    protected override bool ShouldGlowGoldInternal => IsMutable && CombatState != null && (ArchitectCombatState.TimesPlayed(this) >= 2);
+
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(10, ValueProp.Move), new DynamicVar("BigDamage", 30)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

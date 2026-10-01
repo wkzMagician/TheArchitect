@@ -10,6 +10,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class CyclingEtch() : TheArchitectCard(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
+    protected override bool ShouldGlowGoldInternal => IsMutable && CombatState != null && (ArchitectEnchantmentHelper.HasInactive(this));
+
     protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant([ArchitectKeywordHoverTips.RefreshEnchantments]);
     protected override bool ShufflesAfterPlay => true;
     public override Task AfterCardPlayedLate(PlayerChoiceContext context, CardPlay play)

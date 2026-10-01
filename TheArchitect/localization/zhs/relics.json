@@ -1,4 +1,7 @@
 {
+  "THEARCHITECT-GENESIS_COMPASS.title": "创世罗盘",
+  "THEARCHITECT-GENESIS_COMPASS.description": "每场战斗开始时，为你起始[gold]手牌[/gold]中每张可[gold]附魔[/gold]的牌分别赋予1种随机基础[gold]附魔[/gold]（[gold]灵巧[/gold]3、[gold]锋利[/gold]3、[gold]播种[/gold]1、[gold]迅速[/gold]2或[gold]本能[/gold]）。",
+  "THEARCHITECT-GENESIS_COMPASS.flavor": "它不再寻找世界的方向。世界开始遵循它的刻度。",
   "THEARCHITECT-FOUNDATIONAL_COMPASS.title": "奠基罗盘",
   "THEARCHITECT-FOUNDATIONAL_COMPASS.description": "每场战斗开始时，从你起始[gold]手牌[/gold]中随机选择1张可[gold]附魔[/gold]的牌，赋予其1种随机基础[gold]附魔[/gold]（[gold]灵巧[/gold]3、[gold]锋利[/gold]3、[gold]播种[/gold]1、[gold]迅速[/gold]2或[gold]本能[/gold]）。",
   "THEARCHITECT-FOUNDATIONAL_COMPASS.flavor": "每一座建筑，都始于一条标定的基线。",

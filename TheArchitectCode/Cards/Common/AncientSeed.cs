@@ -10,6 +10,9 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class AncientSeed() : TheArchitectCard(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
+    protected override bool ShouldGlowGoldInternal => IsMutable && CombatState != null && (ArchitectEnchantmentHelper.HasInactive(this));
+
+    protected override bool ShufflesAfterPlay => IsUpgraded || base.ShufflesAfterPlay;
     protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant([ArchitectKeywordHoverTips.RefreshEnchantments]);
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -17,7 +20,6 @@ public sealed class AncientSeed() : TheArchitectCard(0, CardType.Attack, CardRar
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        ShuffleIntoDrawPileThisCombat = IsUpgraded;
         await ArchitectEnchantmentHelper.Attack(this, choiceContext, play.Target, DynamicVars.Damage.BaseValue);
         await ArchitectEnchantmentHelper.GainBlock(this, play, DynamicVars.Block.BaseValue);
         await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.IntValue, Owner);

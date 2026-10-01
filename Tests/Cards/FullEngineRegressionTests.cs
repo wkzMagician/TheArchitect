@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models.Cards.Mocks;
 using MegaCrit.Sts2.Core.Models.Powers;
 using TheArchitect.Tests.Infrastructure;
+using TheArchitect.TheArchitectCode.Cards;
 using TheArchitect.TheArchitectCode.Cards.Basic;
 using TheArchitect.TheArchitectCode.Cards.Ancient;
 using TheArchitect.TheArchitectCode.Cards.Common;
@@ -98,10 +99,11 @@ public static class FullEngineRegressionTests
         ArchitectEnchantmentHelper.Add(hammer, ArchitectEnchantKind.Sharp, 1);
         ctx.CardInDraw<MockSkillCard>();
         int energy = ctx.Player.PlayerCombatState!.Energy;
+        await ArchitectEffectQueue.Drain(ctx.Player);
         int hp = ctx.Enemy.CurrentHp;
         await ctx.PlayFull(hammer, ctx.Enemy);
         AssertEx.Equal(8, judgment.EnergyCost.GetWithModifiers(CostModifiers.All), "Own enchanted play still discounts after stripping itself");
-        AssertEx.Equal(19, ctx.HpLost(ctx.Enemy, hp), "Hammer deals 16; Resonance deals 3 unpowered damage unaffected by Vulnerable");
+        AssertEx.Equal(16, ctx.HpLost(ctx.Enemy, hp), "Hammer deals 16; playing an enchanted card no longer triggers Resonance");
         AssertEx.Equal(energy + 1, ctx.Player.PlayerCombatState.Energy, "Creation rewards the enchanted play snapshot");
     }
 
@@ -151,6 +153,48 @@ public static class FullEngineRegressionTests
         AssertEx.True(ctx.Player.Deck.Cards.Contains(other), "Other copy is retained");
         await card.AfterCombatEnd(null!);
         AssertEx.Equal(1, ctx.Player.Deck.Cards.Count, "Played card is not added again");
+    }
+
+    [ArchitectTest]
+    public static async Task UpgradeOnlyReturningCardsResolveToTheExpectedPile()
+    {
+        foreach (bool seed in new[] { true, false })
+        foreach (bool upgraded in new[] { false, true })
+        foreach (bool enchanted in new[] { false, true })
+        foreach (bool auto in new[] { false, true })
+        {
+            using CombatTestContext ctx = new();
+            TheArchitectCard card = seed
+                ? ctx.CardInHand<AncientSeed>()
+                : ctx.CardInHand<Proliferation>();
+            if (upgraded) card.UpgradeInternal();
+            if (enchanted) ArchitectEnchantmentHelper.Add(card, ArchitectEnchantKind.Swift, 1);
+            AssertEx.Equal(upgraded, card.HasBuiltInDrawPileReturn,
+                "Upgrade return must be known before the first play");
+
+            for (int play = 0; play < 2; play++)
+            {
+                for (int i = 0; i < 3; i++) ctx.CardInDraw<MockSkillCard>();
+                await ctx.PlayFull(card, ctx.Enemy, auto: auto);
+                AssertEx.Equal(upgraded ? PileType.Draw : PileType.Discard, card.Pile!.Type,
+                    $"{card.GetType().Name} upgraded={upgraded}, enchanted={enchanted}, auto={auto}, play={play + 1}");
+            }
+        }
+    }
+
+    [ArchitectTest]
+    public static async Task AncientSeedPreservesGrantedDrawPileReturnWithoutAnUpgrade()
+    {
+        using CombatTestContext ctx = new();
+        var card = ctx.CardInHand<AncientSeed>();
+        card.EnableShuffleIntoDrawPile();
+        for (int play = 0; play < 2; play++)
+        {
+            ctx.CardInDraw<MockSkillCard>();
+            await ctx.PlayFull(card, ctx.Enemy);
+            AssertEx.Equal(PileType.Draw, card.Pile!.Type, "Seed preserves a granted return on every play");
+            AssertEx.True(card.HasBuiltInDrawPileReturn, "Playing base Seed must not clear a granted return");
+        }
     }
 
     [ArchitectTest]

@@ -29,6 +29,18 @@ public sealed class TeachAToFishPower : TheArchitectPower
         return new Data();
     }
 
+    public bool CanTriggerFor(CardModel card)
+    {
+        if (card.Owner.Creature != Owner) return false;
+        Data data = GetInternalData<Data>();
+        return card.Type switch
+        {
+            CardType.Attack => !data.AttackDone && ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(card, ArchitectEnchantKind.Sharp),
+            CardType.Skill => !data.SkillDone && ArchitectEnchantmentHelper.CanTargetForSpecificEnchant(card, ArchitectEnchantKind.Nimble),
+            _ => false
+        };
+    }
+
     public override async Task BeforeCardPlayed(CardPlay cardPlay)
     {
         if (cardPlay.Card.Owner.Creature != Owner)

@@ -18,13 +18,13 @@ public sealed class ResonancePower : TheArchitectPower
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay cardPlay)
+    public async Task OnCardEnchanted(CardModel card)
     {
-        if (cardPlay.Card.Owner.Creature != Owner || !ArchitectCombatState.WasEnchantedOnPlay(cardPlay.Card))
+        if (card.Owner.Creature != Owner)
         {
             return;
         }
 
-        await ArchitectEnchantmentHelper.DamageAll(cardPlay.Card, context, Amount);
+        await ArchitectEnchantmentHelper.DamageAll(card, new ThrowingPlayerChoiceContext(), Amount);
     }
 }

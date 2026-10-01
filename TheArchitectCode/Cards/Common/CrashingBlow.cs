@@ -17,6 +17,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class CrashingBlow() : TheArchitectCard(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
+    protected override bool ShouldGlowGoldInternal => IsMutable && CombatState != null && (ArchitectEnchantmentHelper.HasAny(this));
+
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DynamicVar("Vulnerable", 1), new DynamicVar("EnchantVulnerableBonus", 1)];
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>

@@ -17,6 +17,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class Chant() : TheArchitectCard(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
 {
+    protected override bool ShouldGlowGoldInternal => IsMutable && CombatState != null && (ArchitectEnchantmentHelper.HasAny(this));
+
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6, ValueProp.Move), new DynamicVar("Weak", 1), new DynamicVar("EnchantWeakBonus", 1)];
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>

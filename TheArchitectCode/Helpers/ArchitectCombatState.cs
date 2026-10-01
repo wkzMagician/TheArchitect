@@ -14,6 +14,7 @@ public static class ArchitectCombatState
         public int EnchantedCardsPlayedThisTurn;
         public readonly Dictionary<Player, int> EnchantedByPlayerThisCombat = [];
         public readonly Dictionary<Player, int> PlayedByPlayerThisTurn = [];
+        public readonly Dictionary<Player, int> EnchantedSeriesByPlayerThisTurn = [];
         public readonly Dictionary<Player, int> PlayedByPlayerThisCombat = [];
         public readonly HashSet<CardModel> PotionTargets = [];
     }
@@ -37,6 +38,7 @@ public static class ArchitectCombatState
         State state = States.GetValue(combatState, _ => new State());
         state.EnchantedCardsPlayedThisTurn = 0;
         state.PlayedByPlayerThisTurn.Clear();
+        state.EnchantedSeriesByPlayerThisTurn.Clear();
     }
 
     public static void OnTurnStart(Player player)
@@ -44,6 +46,7 @@ public static class ArchitectCombatState
         if (player.Creature.CombatState is not { } combat) return;
         State state = States.GetOrCreateValue(combat);
         state.PlayedByPlayerThisTurn[player] = 0;
+        state.EnchantedSeriesByPlayerThisTurn[player] = 0;
         state.EnchantedCardsPlayedThisTurn = state.PlayedByPlayerThisTurn.Values.Sum();
         ExpirePotionReplays(player);
     }
@@ -67,7 +70,7 @@ public static class ArchitectCombatState
         state.EnchantedByPlayerThisCombat[card.Owner] = state.EnchantedByPlayerThisCombat.GetValueOrDefault(card.Owner) + 1;
     }
 
-    public static void RecordPlayed(CardModel card)
+    public static void RecordPlayed(CardModel card, bool isFirstInSeries = true)
     {
         CardState cardState = CardStates.GetOrCreateValue(card);
         cardState.TimesPlayedThisCombat++;
@@ -87,10 +90,19 @@ public static class ArchitectCombatState
 
         State state = States.GetValue(combatState, _ => new State());
         state.EnchantedCardsPlayedThisCombat++;
+        if (isFirstInSeries)
+        {
+            state.EnchantedSeriesByPlayerThisTurn[card.Owner] = state.EnchantedSeriesByPlayerThisTurn.GetValueOrDefault(card.Owner) + 1;
+        }
         state.EnchantedCardsPlayedThisTurn++;
         state.PlayedByPlayerThisTurn[card.Owner] = state.PlayedByPlayerThisTurn.GetValueOrDefault(card.Owner) + 1;
         state.PlayedByPlayerThisCombat[card.Owner] = state.PlayedByPlayerThisCombat.GetValueOrDefault(card.Owner) + 1;
     }
+
+    public static int EnchantedCardSeriesPlayedThisTurn(Player player) =>
+        player.Creature.CombatState is { } combat
+            ? States.GetOrCreateValue(combat).EnchantedSeriesByPlayerThisTurn.GetValueOrDefault(player)
+            : 0;
 
     public static int CardsEnchantedThisCombat(CardModel card)
     {
@@ -132,6 +144,8 @@ public static class ArchitectCombatState
 
         CardStates.GetValue(card, _ => new CardState()).PendingReplays += repeats;
     }
+
+    public static int PendingReplays(CardModel card) => CardStates.TryGetValue(card, out CardState? state) ? state.PendingReplays : 0;
 
     public static int ConsumePendingReplays(CardModel card)
     {

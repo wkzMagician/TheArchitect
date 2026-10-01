@@ -18,6 +18,8 @@ public sealed class Drowsy : CustomCardModel
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
+    public override int MaxUpgradeLevel => 0;
+
     public override string PortraitPath => "drowsy.png".CardImagePath();
 
     public override string CustomPortraitPath => "drowsy.png".BigCardImagePath();

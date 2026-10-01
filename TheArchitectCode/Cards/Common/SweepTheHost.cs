@@ -9,6 +9,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class SweepTheHost() : TheArchitectCard(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
+    protected override bool ShouldGlowGoldInternal => IsMutable && CombatState != null && (ArchitectEnchantmentHelper.HasAny(this));
+
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
 
     public override TargetType TargetType => ArchitectEnchantmentHelper.HasAny(this) ? TargetType.AllEnemies : TargetType.AnyEnemy;

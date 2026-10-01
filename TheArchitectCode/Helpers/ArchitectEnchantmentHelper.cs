@@ -217,6 +217,8 @@ public static class ArchitectEnchantmentHelper
 
     public static bool HasAny(CardModel card) => card.Enchantment != null;
 
+    public static bool HasInactive(CardModel card) => card.Enchantment?.Status == EnchantmentStatus.Disabled;
+
     public static bool Has<T>(CardModel card) where T : EnchantmentModel => card.Enchantment is T;
 
     public static EnchantmentModel? Get(CardModel card) => card.Enchantment;
@@ -475,7 +477,12 @@ public static class ArchitectEnchantmentHelper
         for (int i = 0; i < count; i++)
         {
             CardModel drowsy = player.Creature.CombatState!.CreateCard(ModelDb.Card<Drowsy>(), player);
-            await CardPileCmd.AddGeneratedCardToCombat(drowsy, pileType, player, pileType == PileType.Draw ? CardPilePosition.Random : CardPilePosition.Bottom);
+            var result = await CardPileCmd.AddGeneratedCardToCombat(drowsy, pileType, player, pileType == PileType.Draw ? CardPilePosition.Random : CardPilePosition.Bottom);
+            if (pileType is PileType.Draw or PileType.Discard)
+            {
+                // Generated pile cards need the fly-in preview to update the UI count.
+                CardCmd.PreviewCardPileAdd(result);
+            }
         }
     }
 

@@ -14,29 +14,13 @@ namespace TheArchitect.TheArchitectCode.Powers.Architect;
 
 public sealed class FormOfCreationPower : TheArchitectPower
 {
-    private sealed class Data
-    {
-        public int TriggeredThisTurn;
-    }
-
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    protected override object InitInternalData()
-    {
-        return new Data();
-    }
-
-    public override Task AfterEnergyReset(Player player)
-    {
-        if (player == Owner.Player)
-        {
-            GetInternalData<Data>().TriggeredThisTurn = 0;
-        }
-
-        return Task.CompletedTask;
-    }
+    public bool CanTriggerFor(CardModel card) => card.Owner.Creature == Owner &&
+        ArchitectEnchantmentHelper.HasAny(card) &&
+        ArchitectCombatState.EnchantedCardSeriesPlayedThisTurn(card.Owner) < Amount;
 
     public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay cardPlay)
     {
@@ -45,13 +29,12 @@ public sealed class FormOfCreationPower : TheArchitectPower
             return;
         }
 
-        Data data = GetInternalData<Data>();
-        if (data.TriggeredThisTurn >= Amount)
+        // The combat hook records this play before powers inspect it.
+        if (ArchitectCombatState.EnchantedCardSeriesPlayedThisTurn(cardPlay.Card.Owner) > Amount)
         {
             return;
         }
 
-        data.TriggeredThisTurn++;
         await PlayerCmd.GainEnergy(1, cardPlay.Card.Owner);
         await CardPileCmd.Draw(context, 1, cardPlay.Card.Owner);
     }

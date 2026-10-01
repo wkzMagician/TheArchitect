@@ -1,5 +1,8 @@
 using BaseLib.Abstracts;
+using BaseLib.Utils.NodeFactories;
+using Godot;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Screens.Shops;
 using System.IO;
 using TheArchitect.Tests.Infrastructure;
 using TheArchitect.TheArchitectCode.Character;
@@ -8,6 +11,38 @@ namespace TheArchitect.Tests.Character;
 
 public static class TheArchitectVisualTests
 {
+    [ArchitectTest]
+    public static async Task MerchantSceneResolvesItsScriptWithoutAnExtraFactoryWrapper()
+    {
+        var finished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        Callable.From(() =>
+        {
+            NMerchantCharacter? merchant = null;
+            try
+            {
+                var character = ModelDb.Character<TheArchitect.TheArchitectCode.Character.TheArchitect>();
+                var packed = GD.Load<PackedScene>(character.CustomMerchantAnimPath);
+                merchant = NodeFactory<NMerchantCharacter>.CreateFromScene(packed);
+                AssertEx.True(merchant is TheArchitect.TheArchitectCode.Visuals.ArchitectMerchantCharacter,
+                    "Merchant scene should resolve its C# script instead of being wrapped by BaseLib.");
+                AssertEx.Equal("SpineSprite", merchant.GetChild(0).GetClass().ToString(),
+                    "Merchant initialization and PlayAnimation require the first child to be a SpineSprite.");
+                ((SceneTree)Engine.GetMainLoop()).Root.AddChild(merchant);
+                merchant.PlayAnimation("relaxed_loop", loop: true);
+                finished.SetResult();
+            }
+            catch (Exception error)
+            {
+                finished.SetException(error);
+            }
+            finally
+            {
+                merchant?.QueueFree();
+            }
+        }).CallDeferred();
+        await finished.Task.WaitAsync(TimeSpan.FromSeconds(20));
+    }
+
     [ArchitectTest]
     public static void UsesCustomCharacterModelAndArchitectVisualScene()
     {

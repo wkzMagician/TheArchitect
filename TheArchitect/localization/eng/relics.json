@@ -1,4 +1,7 @@
 {
+  "THEARCHITECT-GENESIS_COMPASS.title": "Genesis Compass",
+  "THEARCHITECT-GENESIS_COMPASS.description": "At the start of each combat, give each enchantable card in your starting [gold]hand[/gold] a random basic [gold]Enchantment[/gold] ([gold]Nimble[/gold] 3, [gold]Sharp[/gold] 3, [gold]Sown[/gold] 1, [gold]Swift[/gold] 2, or [gold]Instinct[/gold]).",
+  "THEARCHITECT-GENESIS_COMPASS.flavor": "It no longer seeks the direction of the world. The world follows its markings.",
   "THEARCHITECT-FOUNDATIONAL_COMPASS.title": "Foundational Compass",
   "THEARCHITECT-FOUNDATIONAL_COMPASS.description": "At the start of each combat, randomly choose 1 card in your starting hand that can be [gold]Enchanted[/gold]. Give it a random basic [gold]Enchantment[/gold] ([gold]Nimble[/gold] 3, [gold]Sharp[/gold] 3, [gold]Sown[/gold] 1, [gold]Swift[/gold] 2, or [gold]Instinct[/gold]).",
   "THEARCHITECT-FOUNDATIONAL_COMPASS.flavor": "Every structure begins with a marked line.",

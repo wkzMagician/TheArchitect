@@ -68,9 +68,9 @@ public static class ContentAcceptanceTests
     }
 
     [ArchitectTest]
-    public static void AllEightRelicsAndThreePotionsAreRegisteredAndLoadMatchingArt()
+    public static void AllNineRelicsAndThreePotionsAreRegisteredAndLoadMatchingArt()
     {
-        AssertEx.Equal(8, ModelDb.RelicPool<TheArchitectRelicPool>().AllRelics.Count(), "Official-sized relic pool");
+        AssertEx.Equal(9, ModelDb.RelicPool<TheArchitectRelicPool>().AllRelics.Count(), "Relic pool includes the ancient compass upgrade");
         AssertEx.Equal(3, ModelDb.PotionPool<TheArchitectPotionPool>().AllPotions.Count(), "Official-sized potion pool");
         foreach (Type type in Models<TheArchitectRelic>())
         {

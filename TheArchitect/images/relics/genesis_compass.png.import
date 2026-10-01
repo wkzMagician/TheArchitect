@@ -2,26 +2,25 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b72g8bjvq2aeq"
-path.s3tc="res://.godot/imported/fate_vortex_power.png-53d66b426df79a2d77a4c3a273ba2dec.s3tc.ctex"
+uid="uid://cqk0jk70v5411"
+path="res://.godot/imported/genesis_compass.png-8ab09a594b8dea57aa16b68c9790bed9.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
-source_file="res://TheArchitect/images/powers/big/fate_vortex_power.png"
-dest_files=["res://.godot/imported/fate_vortex_power.png-53d66b426df79a2d77a4c3a273ba2dec.s3tc.ctex"]
+source_file="res://TheArchitect/images/relics/genesis_compass.png"
+dest_files=["res://.godot/imported/genesis_compass.png-8ab09a594b8dea57aa16b68c9790bed9.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
-compress/lossy_quality=1.0
-compress/uastc_level=2
-compress/rdo_quality_loss=0
-compress/hdr_compression=0
+compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
+compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=false
@@ -32,7 +31,7 @@ process/channel_remap/red=0
 process/channel_remap/green=1
 process/channel_remap/blue=2
 process/channel_remap/alpha=3
-process/fix_alpha_border=false
+process/fix_alpha_border=true
 process/premult_alpha=false
 process/normal_map_invert_y=false
 process/hdr_as_srgb=false

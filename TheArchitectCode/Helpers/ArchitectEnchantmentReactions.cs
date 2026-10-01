@@ -24,6 +24,8 @@ internal static class ArchitectEnchantmentReactions
         foreach (CalibrationRuler relic in card.Owner.Relics.OfType<CalibrationRuler>())
             ArchitectEffectQueue.Track(card.Owner, relic.OnFirstEnchantment(card));
 
+        if (card.Owner.Creature.GetPower<ResonancePower>() is { } resonance)
+            ArchitectEffectQueue.Track(card.Owner, resonance.OnCardEnchanted(card));
         if (card.Owner.Creature.GetPower<SanctuaryPower>() is { } sanctuary)
             ArchitectEffectQueue.Track(card.Owner,
                 CreatureCmd.GainBlock(card.Owner.Creature, sanctuary.Amount, ValueProp.Move, null));

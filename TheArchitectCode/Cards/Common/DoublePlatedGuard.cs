@@ -17,6 +17,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class DoublePlatedGuard() : TheArchitectCard(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 {
+    protected override bool ShouldGlowGoldInternal => IsMutable && CombatState != null && (ArchitectEnchantmentHelper.HasAny(this));
+
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6, ValueProp.Move)];

@@ -17,6 +17,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Common;
 
 public sealed class OriginalSin() : TheArchitectCard(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
+    protected override bool ShouldGlowGoldInternal => IsMutable && CombatState != null && (IsPlayable);
+
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [ArchitectKeywordHoverTips.Enchant];
 
     protected override bool IsPlayable => ArchitectEnchantmentHelper.Hand(Owner).All(card => !ArchitectEnchantmentHelper.HasAny(card));

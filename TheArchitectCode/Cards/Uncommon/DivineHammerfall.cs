@@ -19,6 +19,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class DivineHammerfall() : TheArchitectCard(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
+    protected override bool ShouldGlowGoldInternal => IsMutable && CombatState != null && (ArchitectEnchantmentHelper.HasAny(this));
+
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     ArchitectKeywordHoverTips.IncludeEnchant([
         ArchitectKeywordHoverTips.RemoveEnchantments,

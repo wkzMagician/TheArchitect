@@ -28,7 +28,7 @@ public static class ArchitectCombatHooksPatch
     private static class AfterPlay
     {
         // Count all card types before powers/relics inspect the completed play.
-        private static void Prefix(CardPlay cardPlay) => ArchitectCombatState.RecordPlayed(cardPlay.Card);
+        private static void Prefix(CardPlay cardPlay) => ArchitectCombatState.RecordPlayed(cardPlay.Card, cardPlay.IsFirstInSeries);
         private static void Postfix(ref Task __result, CardPlay cardPlay) => __result = Finish(__result, cardPlay.Card.Owner);
         private static async Task Finish(Task original, Player player)
         {

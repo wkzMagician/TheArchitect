@@ -17,6 +17,8 @@ namespace TheArchitect.TheArchitectCode.Cards.Uncommon;
 
 public sealed class Reforge() : TheArchitectCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
+    protected override bool ShouldGlowGoldInternal => IsMutable && CombatState != null && (ArchitectEnchantmentHelper.Hand(Owner).Any(card => card != this && ArchitectEnchantmentHelper.HasInactive(card)));
+
     protected override IEnumerable<IHoverTip> ExtraHoverTips => ArchitectKeywordHoverTips.IncludeEnchant([ArchitectKeywordHoverTips.RefreshEnchantments]);
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [CardKeyword.Retain] : [CardKeyword.Retain, CardKeyword.Exhaust];
 
